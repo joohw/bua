@@ -25,13 +25,24 @@ import { OVERLAY_GLOBAL, OVERLAY_SCRIPT, type OverlayState } from './overlay.js'
 
 /* ─────────────────────── 常量 ─────────────────────── */
 
-const BRIDGE_PORT_KEY = 'bridgePort';
 const LOG_KEY = 'activityLog';
 const CONSENT_KEY = 'onboardingAcceptedAt';
 const MAX_LOG = 200;
 
-/** 默认桥端口。桥端 `--port 0` 时会用随机端口，此时由用户在引导页填写。 */
-const DEFAULT_BRIDGE_PORT = 17432;
+/**
+ * 桥端口 —— **硬编码，不可配置**。
+ *
+ * 为什么固定：端口可配引入了一个纯粹自找的失败模式 —— 用户在扩展里填了一个端口、
+ * 桥起在另一个端口，两边都「看起来正常」但连不上，而错误信息只有一句
+ * 「请确认 bua-server 已启动」，完全指不到真正的原因。这个坑真实发生过。
+ *
+ * 固定之后：报错必定是「桥没跑」，指向明确。代价是无法自定义端口，
+ * 换来的是不会配错。若 17432 被占用，桥会明确报端口冲突并让用户换端口启动，
+ * 而不是让扩展去猜。
+ *
+ * 选 17432 的理由：落在 17xxx 私有段、避开常见服务，与本机已用端口无冲突。
+ */
+const BRIDGE_PORT = 17432;
 
 /* ─────────────────────── 持久状态 ─────────────────────── */
 
@@ -150,12 +161,6 @@ function detectChromeVersion(): string | null {
 
 
 /* ─────────────────────── 存储辅助 ─────────────────────── */
-
-async function getPort(): Promise<number> {
-  const bag = await chrome.storage.local.get(BRIDGE_PORT_KEY);
-  const value = bag[BRIDGE_PORT_KEY];
-  return typeof value === 'number' ? value : DEFAULT_BRIDGE_PORT;
-}
 
 async function getLog(): Promise<ActivityEntry[]> {
   const bag = await chrome.storage.local.get(LOG_KEY);
@@ -304,7 +309,7 @@ async function connect(): Promise<void> {
   const accepted = await isConsentGiven();
   if (!accepted) return; // 未经用户同意不建立连接
 
-  const port = await getPort();
+  const port = BRIDGE_PORT;
   const socket = new WebSocket(`ws://127.0.0.1:${port}`);
   ws = socket;
 
@@ -723,10 +728,12 @@ chrome.runtime.onStartup.addListener(() => {
 // SW 被回收后重新唤醒时也尝试连接（MV3 的常见情况）
 void connect();
 
-// 端口或同意状态在引导页被修改时重连
+// 同意状态变化时重连（用户刚在引导页确认 → 立刻建连；撤销则需要断开）
+// 端口已固定，不再监听它的变化。
 chrome.storage.onChanged.addListener((changes, area) => {
   if (area !== 'local') return;
-  if (BRIDGE_PORT_KEY in changes || CONSENT_KEY in changes) {
+  if (CONSENT_KEY in changes) {
+    retryDelayMs = 2_000;
     ws?.close();
     ws = null;
     void connect();
@@ -755,7 +762,7 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
       const log = await getLog();
       sendResponse({
         connected: ws !== null && ws.readyState === WebSocket.OPEN,
-        port: await getPort(),
+        port: BRIDGE_PORT,
         consentGiven: await isConsentGiven(),
         attachedTabs: [...attachedTabs],
         capabilities: currentCapabilities,
@@ -782,7 +789,7 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
       await new Promise((r) => setTimeout(r, 350));
       sendResponse({
         connected: ws !== null && ws.readyState === WebSocket.OPEN,
-        port: await getPort(),
+        port: BRIDGE_PORT,
       });
     });
     return true; // 异步响应

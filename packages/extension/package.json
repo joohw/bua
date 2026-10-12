@@ -8,8 +8,9 @@
   "scripts": {
     "build": "node scripts/build.mjs",
     "typecheck": "tsc -p tsconfig.json --noEmit",
+    "pretest": "node scripts/demo-overlay.mjs",
     "test": "node --test --test-concurrency=1 --test-timeout=20000 test/*.test.mjs",
-    "test:e2e": "node --test --test-concurrency=1 --test-timeout=180000 test/e2e-real.test.mjs",
+    "test:e2e": "node --test --test-concurrency=1 --test-timeout=180000 test/e2e/*.test.mjs",
     "demo": "node scripts/demo-overlay.mjs",
     "preflight": "node scripts/preflight.mjs",
     "pack": "node scripts/pack.mjs",

@@ -38,7 +38,6 @@ BUA 扩展包内**没有任何网络请求代码**。它不联系服务器、不
 
 | 数据 | 内容 | 保留 |
 |---|---|---|
-| 桥端口 | 你填写的本地端口号 | 直到你卸载扩展 |
 | 授权时间戳 | 你确认风险告知的时间 | 直到你卸载扩展 |
 | 能力快照 | 当前 CDP 是否可用 | 直到你卸载扩展 |
 | 操作流水 | 最近 200 条操作记录（方法名、意图描述、结果） | 超出后自动丢弃；可在弹窗中一键清空 |
@@ -95,6 +94,16 @@ BUA 的职责边界很清楚：它只把浏览器操作能力提供给本机程�
 > The use of information received from Google APIs will adhere to the Chrome Web Store User Data
 > Policy, including the Limited Use requirements.
 
+### 关于远程代码申报的说明
+
+本扩展在商店 Privacy 面板中**如实申报了「使用远程代码」**。这里解释清楚它指的是什么，以免与隐私问题混淆：
+
+- **扩展包内没有任何远程代码。** 没有远端 `<script>`、没有 `eval()`、没有 `new Function()`、没有远端 `import`。
+- 申报的原因是：扩展使用 `chrome.debugger` API 执行本机程序下发的浏览器操作指令。Chrome 官方在 Manifest V3 要求中把 **Debugger API 与 User Scripts API 列为允许远程执行的两个例外**，并要求使用者必须申报。
+- **这与隐私无关**：所有指令都来自本机，扩展不接收任何来自网络的内容，也不向外发送任何内容。
+
+官方依据：[Additional Requirements for Manifest V3](https://developer.chrome.com/docs/webstore/program-policies/mv3-requirements)
+
 ## 9. 儿童隐私
 
 本扩展不面向 13 岁以下儿童，也不会有意收集儿童的任何信息。
@@ -116,21 +125,11 @@ BUA 的职责边界很清楚：它只把浏览器操作能力提供给本机程�
 我们鼓励你不信任任何隐私声明，而是自己验证：
 
 1. 打开 `chrome://extensions`，找到 BUA，点击「详情」
-2. 查看权限列表 —— 你会看到它**没有申请任何网站访问权限**
+2. 查看权限列表 —— 你会看到它**没有申请任何网站访问权限**（`host_permissions` 为空）
 3. 在 `chrome://extensions` 打开开发者模式，使用「检查视图 → service worker」
    打开扩展的后台调试器
 4. 切到 Network 标签 —— 你会看到**没有任何网络请求**
 5. 阅读源码：`packages/extension/src/background.ts` 中唯一的 socket 是
-   `ws://127.0.0.1:<本地端口>`
+   `ws://127.0.0.1:17432`
 
----
-
-## 附：关于远程代码申报
-
-本扩展在商店 Privacy 面板中**如实申报了「使用远程代码」**。这里解释清楚它指的是什么，以免与隐私问题混淆：
-
-- **扩展包内没有任何远程代码。** 没有远端 `<script>`、没有 `eval()`、没有 `new Function()`、没有远端 `import`。
-- 申报的原因是：扩展使用 `chrome.debugger` API 执行本机程序下发的浏览器操作指令。Chrome 官方在 Manifest V3 要求中把 **Debugger API 与 User Scripts API 列为允许远程执行的两个例外**，并要求使用者必须申报。
-- **这与隐私无关**：所有指令都来自本机，扩展不接收任何来自网络的内容，也不向外发送任何内容。
-
-官方依据：[Additional Requirements for Manifest V3](https://developer.chrome.com/docs/webstore/program-policies/mv3-requirements)
+**在线版本**：https://joohw.github.io/bua/privacy.html

@@ -156,7 +156,6 @@
   <table>
     <thead><tr><th>数据</th><th>内容</th><th>保留</th></tr></thead>
     <tbody>
-      <tr><td>桥端口</td><td>你填写的本地端口号</td><td>直到你卸载扩展</td></tr>
       <tr><td>授权时间戳</td><td>你确认风险告知的时间</td><td>直到你卸载扩展</td></tr>
       <tr><td>能力快照</td><td>当前 CDP 是否可用</td><td>直到你卸载扩展</td></tr>
       <tr><td>操作流水</td><td>最近 200 条操作记录（方法名、意图描述、结果）</td><td>超出后自动丢弃，可一键清空</td></tr>
@@ -278,7 +277,7 @@
     <li>切到 Network 标签 —— 你会看到<strong>没有任何网络请求</strong></li>
     <li>
       阅读源码：<code>packages/extension/src/background.ts</code> 中唯一的 socket 是
-      <code>ws://127.0.0.1:&lt;本地端口&gt;</code>
+      <code>ws://127.0.0.1:17432</code>
     </li>
   </ol>
 

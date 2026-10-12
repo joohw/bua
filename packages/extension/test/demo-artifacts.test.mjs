@@ -64,16 +64,32 @@ function makeElement(tag) {
     },
     enumerable: true,
   });
+  /*
+   * isConnected 必须实现 —— 覆盖层用它判断宿主是否仍在文档里，以便在页面
+   * 执行 `body.innerHTML = ...` 之后自愈重建。桩里漏掉它会让 overlay 认为
+   * 宿主已脱离，从而反复重建、永远读不到光晕。
+   */
+  Object.defineProperty(el, 'isConnected', {
+    get() {
+      let n = el;
+      while (n.parent !== null && n.parent !== undefined) n = n.parent;
+      return n.__isDocumentRoot === true;
+    },
+    enumerable: true,
+  });
   return el;
 }
 
 function makeSandbox() {
   const body = makeElement('body');
+  const documentElement = makeElement('html');
+  documentElement.appendChild(body);
+  documentElement.__isDocumentRoot = true; // 连接性的终点
   const sandbox = {
     document: {
       readyState: 'complete',
       body,
-      documentElement: makeElement('html'),
+      documentElement,
       createElement: makeElement,
       addEventListener: () => {},
       write: (html) => {

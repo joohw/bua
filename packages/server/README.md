@@ -17,8 +17,8 @@
 
 ```sh
 pnpm --filter @bua/server run build
-node packages/server/dist/cli.js          # 默认随机端口
-node packages/server/dist/cli.js --port 17432
+node packages/server/dist/cli.js          # 用默认端口 17432（与扩展硬编码的一致）
+node packages/server/dist/cli.js --port 18000
 ```
 
 启动后打印一行，形如：
@@ -27,6 +27,14 @@ node packages/server/dist/cli.js --port 17432
 bua: 桥已就绪  ws://127.0.0.1:17432
 bua: 等待扩展连接…（无鉴权，本机任意进程均可连）
 ```
+
+### 端口是固定的
+
+默认端口 **17432** 与扩展里硬编码的 `BRIDGE_PORT` 对齐 —— 直接敲 `bua-server` 就能连上，不需要两边对端口。
+
+**为什么固定**：端口可配引入了一个纯粹自找的失败模式 —— 用户在扩展里填一个端口、桥起在另一个端口，两边都「看起来正常」但连不上，而错误信息只有一句「请确认 bua-server 已启动」，完全指不到真正原因。
+
+**若 17432 被占用**：桥会明确报端口冲突并给出排查命令（`netstat -ano | findstr :17432`）。换端口启动后**必须重新加载扩展**（`chrome://extensions` → 刷新图标）：
 
 ## 角色模型
 
