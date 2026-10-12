@@ -1,0 +1,24 @@
+{
+  "name": "@bua/dsh-bundle",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "description": "把 BUA 的浏览器操作能力装进 DeepSeek Harness：一个只含配置的组合包，通过 MCP 连接 bua-mcp。",
+  "exports": {
+    "./locale/*.json": "./locale/*.json",
+    "./icon": "./icon.svg"
+  },
+  "files": [
+    "cordis.patch.yml",
+    "locale/*.json",
+    "icon.svg"
+  ],
+  "scripts": {
+    "test": "node --test --test-concurrency=1 --test-timeout=20000 test/*.test.mjs"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  }
+}

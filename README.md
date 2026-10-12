@@ -85,9 +85,53 @@ packages/
 ├── extension/   # Chrome MV3 扩展（控制节点）—— 边缘泛光指示状态
 ├── server/      # 本地桥：ws 服务端 + Host 校验 + 会话路由 + 审计
 ├── sdk/         # agent 侧 SDK（对齐 Codex 形状）
-├── mcp/         # MCP 适配器（未开始）
-└── cli/         # bua 命令行（未开始，桥自带 CLI）
+├── mcp/         # MCP 服务器 —— 任意 MCP agent 接入（DSH / Claude Code / Codex）
+└── dsh-bundle/  # DSH 组合包（零代码，只含配置）—— 让 DSH 一键装上
 ```
+
+## 接入方式
+
+三种，按你的 agent 选。
+
+**① DSH** —— 装组合包，工具以 `mcp__bua__*` 出现：
+
+```
+把 D:\bua\packages\dsh-bundle 这个组合包安装到当前 profile
+```
+
+细节见 [dsh-bundle 文档](packages/dsh-bundle/README.md)。
+
+**② 任何 MCP 客户端** —— 直接配 stdio：
+
+```json
+{ "mcpServers": { "bua": {
+    "command": "node",
+    "args": ["<仓库>/packages/mcp/dist/stdio.js"],
+    "env": { "BUA_BRIDGE_PORT": "17432" } } } }
+```
+
+细节见 [mcp 文档](packages/mcp/README.md)。
+
+**③ 自己写代码** —— 用 SDK：
+
+```ts
+import { connect } from '@bua/sdk';
+const agent = await connect({ port: 17432, client: { name: 'my-agent' } });
+```
+
+细节见 [sdk 文档](packages/sdk/README.md)。
+
+### MCP 工具一览
+
+共 **14 个**，工具名前缀 `mcp__bua__`。读取优先，变更型一律要求 `targetDescription`：
+
+| 类别 | 工具 |
+|---|---|
+| 后端 | `browser_info` |
+| 标签 | `tabs_list` `tab_open` `tab_info` `tab_navigate` `tab_close` |
+| 观察 | `tab_dom_snapshot` `tab_text` `tab_screenshot` `tab_evaluate` |
+| 交互 | `tab_click` `tab_fill` `tab_type` `tab_click_at` |
+
 
 ## API 速览
 
@@ -123,18 +167,33 @@ console.log(await tab.text());
 
 ## 测试
 
+### 本地扩展开发
+
+运行 `pnpm --filter @bua/extension dev`，然后在当前 Chrome 的
+`chrome://extensions` 开启开发者模式，加载 `packages/extension/dist`。
+开发模式监听扩展源码、页面、manifest 和协议源码，保存后自动重新构建，
+并生成内联 source map，方便在 DevTools 中调试 TypeScript。
+
+选项页改动后刷新页面；Popup 改动后关闭再打开；后台脚本或 manifest
+改动后点击扩展卡片的“重新加载”。文件监听不会自动重启扩展。
+按 Ctrl+C 停止监听。发布时仍使用 `pnpm --filter @bua/extension build`，
+生成不含开发 source map 的产物。
+
 ```sh
-pnpm -r run test                                   # 128 项单元 / 集成测试
-pnpm --filter @bua/extension run test:e2e          # 13 项真实浏览器端到端
+pnpm -r --filter "./packages/**" run test            # 147 项单元 / 集成 / 协议测试
+pnpm --filter @bua/extension run test:e2e            # 13 项真实浏览器端到端
 ```
 
 | 包 | 测试数 | 覆盖 |
 |---|---|---|
-| `protocol` | 24 | 授权/风险分级、占位符解析、错误码 |
+| `protocol` | 24 | 风险分级、占位符解析、错误码 |
 | `server` | 44 | Host/Origin 拦截（含绕过尝试）、协议、路由、审计 |
 | `sdk` | 20 | 请求形状、CDP 返回值解包、错误映射、事件、心跳、真桥接线 |
-| `extension` | 40 | 覆盖层行为（隔离的 vm 上下文）、演示产物 |
+| `mcp` | 21 | 真 MCP 协议（工具目录 / schema / 调用 / 错误分派）+ **real stdio 子进程 E2E** |
+| `extension` | 27 | 覆盖层行为（隔离的 vm 上下文）、演示产物 |
+| `dsh-bundle` | 11 | 组合包配置自检（含「args 路径真实存在」与「端口与扩展一致」） |
 | **实机 E2E** | **13** | Chrome for Testing 加载真实扩展 + 真实 CDP |
+
 
 
 ## 边缘泛光

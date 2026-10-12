@@ -1,0 +1,31 @@
+# BUA 的 DSH 组合包
+#
+# 本文件把 BUA 的浏览器操作能力接入 DeepSeek Harness。
+#
+# 走 MCP 而不是原生 Host 插件，理由：
+#   1. 同一套 MCP 服务器也能给 Claude Code / Codex 用 —— 一份实现多处复用
+#   2. 组合包因此**不含任何代码**，只有配置，上架/审阅成本最低
+#   3. DSH 已有成熟的 MCP 客户端（工具命名 mcp__bua__*、环境擦除、重连都由它负责）
+#
+# `bua-mcp` 由 DSH 作为子进程拉起，它再作为客户端连本机 BUA 桥（127.0.0.1:17432）。
+# 桥需要单独启动：bua-server
+#
+# ⚠️ 下面的 args 是**本机绝对路径**。换机器或移动仓库后需要改这里。
+#    获取当前路径：node -e "console.log(require('path').resolve('packages/mcp/dist/stdio.js'))"
+#    想免去绝对路径，可把 @bua/mcp 发布到 npm 后改用：
+#      command: npx
+#      args: ['-y', '@bua/mcp']
+
+- insert:
+    - id: bua-mcp
+      name: '@deepseek-ai/dsh-mcp-client'
+      config:
+        serverName: bua
+        transport: stdio
+        command: node
+        args:
+          - D:\bua\packages\mcp\dist\stdio.js
+        # 桥端口已固定为 17432，与扩展一致；此处显式声明只为可读性
+        env:
+          BUA_BRIDGE_PORT: '17432'
+        failOnStartupError: false
