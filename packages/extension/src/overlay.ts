@@ -119,7 +119,21 @@ function overlayMain(globalKey: string): void {
   let hasExplicitState = false;
 
   function build(): void {
-    if (host !== null) return;
+    // 除了「还没建立」之外，还要处理「曾被建立但已被页面移除」的情况。
+    //
+    // 真实场景：SPA 或任何执行 `document.body.innerHTML = ...` 的页面会把我们的
+    // 宿主元素一起清掉（它是 body 的子节点）。此时 host 引用仍指向一个已脱离文档
+    // 的节点 —— 若不检查 `isConnected`，覆盖层就永远消失了。
+    if (host !== null && host.isConnected) return;
+    if (host !== null) {
+      // 旧节点已脱离，丢弃后重建
+      host = null;
+      glow = null;
+      badge = null;
+      badgeText = null;
+      warnBox = null;
+    }
+
     const parent = document.body ?? document.documentElement;
     if (parent === null || parent === undefined) return;
 

@@ -59,6 +59,17 @@ function makeElement(tag) {
       return sr;
     },
   };
+  // isConnected：真实 DOM 语义 —— 沿 parent 链能走到一个「文档根」才算连接。
+  // 页面执行 `body.innerHTML = ...` 时子节点会被摘除，parent 变 null，
+  // 覆盖层据此判断需要重建。
+  Object.defineProperty(el, 'isConnected', {
+    get() {
+      let n = el;
+      while (n.parent !== null && n.parent !== undefined) n = n.parent;
+      return n.__isDocumentRoot === true;
+    },
+    enumerable: true,
+  });
   // textContent = '' 应清空子节点（真实 DOM 语义）
   let text = '';
   Object.defineProperty(el, 'textContent', {
@@ -78,6 +89,7 @@ function makeSandbox({ readyState = 'complete' } = {}) {
   const body = makeElement('body');
   const documentElement = makeElement('html');
   documentElement.appendChild(body);
+  documentElement.__isDocumentRoot = true; // 连接性的终点
   const listeners = [];
 
   const document = {
@@ -286,6 +298,38 @@ test('readyState=complete 且先 set(degraded)：自初始化不覆盖', () => {
   // 再注入一次不应改变状态（幂等 + 不覆盖）
   inject(sandbox);
   assert.equal(badgeLabel(findHost(sandbox.__body)).textContent, 'BUA 降级模式');
+});
+
+/* ─────────────────────── 页面清空 DOM 后的自愈 ─────────────────────── */
+
+test('宿主被页面移除后，set() 会重建（SPA 重写 innerHTML 的真实场景）', () => {
+  const sandbox = makeSandbox();
+  const api = inject(sandbox);
+  api.set({ state: 'active' });
+  const before = findHost(sandbox.__body);
+  assert.ok(before, '初始应存在');
+
+  // 模拟 `document.body.innerHTML = '...'` —— 宿主作为 body 的子节点被摘除
+  before.remove();
+  assert.equal(findHost(sandbox.__body), undefined, '应已被移除');
+
+  api.set({ state: 'active', label: '重建后' });
+  const after = findHost(sandbox.__body);
+  assert.ok(after, '应重建宿主元素');
+  assert.notEqual(after, before, '应是新元素');
+  assert.equal(badgeLabel(after).textContent, '重建后', '状态应重新应用');
+});
+
+test('宿主仍在文档中时不重复创建', () => {
+  const sandbox = makeSandbox();
+  const api = inject(sandbox);
+  api.set({ state: 'active' });
+  const first = findHost(sandbox.__body);
+  api.set({ state: 'active' });
+  api.set({ state: 'paused' });
+  const hosts = sandbox.__body.children.filter((c) => c.id === 'bua-edge-glow-host');
+  assert.equal(hosts.length, 1, '不应产生第二个宿主');
+  assert.equal(findHost(sandbox.__body), first, '应复用同一元素');
 });
 
 /* ─────────────────────── 页面安全契约 ─────────────────────── */

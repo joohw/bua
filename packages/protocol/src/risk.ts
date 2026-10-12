@@ -32,27 +32,27 @@ export const ACTION_RISK_STRENGTH: Readonly<Record<ActionRisk, number>> = Object
 /**
  * 不可逆或影响外部系统的动作。
  *
- * 这个集合的判定标准是「**用户能不能撤销**」：能在页面上点回去的算 `write`，
- * 一旦发生就无法挽回、或已经影响到浏览器之外（发出消息、付了钱、文件落了盘）的算 `destructive`。
+ * ⚠️ **这个集合刻意很小，而且是空的。** 原因是实测得出的结论：
+ * **单靠方法名无法可靠判定「破坏性」。**
  *
- * 注意：这里按**方法名**判定是粗粒度的。同一个 `locator.click` 点「下一页」和点
- * 「确认支付」风险天差地别。真正精准的判定需要页面语义信息，那属于扩展侧运行时职责。
- * 因此本集合只覆盖**语义上明确**的破坏性方法；剩余判断交给 agent 的
- * `targetDescription` 与自我约束。
+ * 同一个 `locator.click` 点「下一页」和点「确认支付」风险天差地别；
+ * `cua.downloadMedia` 只是触发下载，并没有毁掉任何东西。把这类方法一股脑
+ * 标成 destructive 只会制造噪声，让审计里真正危险的条目被淹没。
+ *
+ * 真正准确的判定需要**页面语义**（这个按钮是不是 submit、表单里有没有金额），
+ * 那属于扩展侧运行时职责，不是方法名能表达的。
+ *
+ * 因此当前策略是：
+ * - 方法名只区分 `read` / `write`（可靠）
+ * - 破坏性意图通过 {@link looksDestructive} 从 `targetDescription` 里做**启发式**识别
+ * - 保留这个空集合作为显式扩展点：将来若某个方法在语义上确定有害，加进来即可
  */
 export const DESTRUCTIVE_METHODS: ReadonlySet<string> = new Set<string>([
-  // 文件落盘 / 上传下载
-  'locator.downloadMedia',
-  'cua.downloadMedia',
-  'dom_cua.downloadMedia',
-  'content.export',
-  'content.exportGsuite',
-  'content.exportYouTubeTranscript',
-  // 剪贴板写入
-  'ax.paste',
-  // 关闭标签 —— 可能丢失未保存的表单
-  'tab.close',
-  'tabs.close',
+  // 目前为空 —— 见上方说明。曾经的候选及放弃理由：
+  //   content.export*      → 导出用户自己看得见的内容，不是破坏
+  //   cua.downloadMedia    → 触发下载，没有数据损失
+  //   ax.paste             → 向页面输入文本，属 write
+  //   tab.close / tabs.close → 用户可见但可撤销（标签可恢复）
 ]);
 
 /**
@@ -96,7 +96,33 @@ export const READ_ONLY_METHODS: ReadonlySet<string> = new Set<string>([
   'capabilities.list',
   'capabilities.get',
   'audit.trail',
+
+  /*
+   * `playwright.evaluate` 归为 read。
+   *
+   * 理由是它在本设计里**就是首选的读取机制**（对齐 Codex 的
+   * `evaluate` 语义：「Evaluate JavaScript in a read-only page scope」）。
+   * 它当然可以改页面，但把它标成 write 会迫使 agent 每次读值都编一句
+   * targetDescription，结果是描述变成噪声、审计失去意义。
+   *
+   * 若部署方要更严的约束，可关闭 `capabilities.evaluate`（协议里已有该开关）。
+   */
+  'playwright.evaluate',
+  'locator.evaluate',
+
+  /*
+   * 标签级导航归为 read。
+   *
+   * `tabs.new` 只是开一个标签，没有副作用落到既有页面上；`back` / `forward` /
+   * `reload` 是纯导航，意图由用户或 agent 的表达已经说清。
+   * 注意 `tab.goto` **不在此列** —— 它要跨到别处去，值得让 agent 说明意图。
+   */
+  'tabs.new',
+  'tab.back',
+  'tab.forward',
+  'tab.reload',
 ]);
+
 
 /**
  * 判定一个方法的风险级别。
@@ -114,3 +140,64 @@ export function classifyRisk(method: string): ActionRisk {
 export function requiresTargetDescription(risk: ActionRisk): boolean {
   return risk !== 'read';
 }
+
+/* ─────────────────── 破坏性意图的启发式识别 ─────────────────── */
+
+/**
+ * 从人类可读描述里识别**可能造成不可逆后果**的意图。
+ *
+ * 为什么是启发式：见 {@link DESTRUCTIVE_METHODS} 的说明 —— 方法名无法表达
+ * 「确认支付」与「下一页」的区别，但 **agent 自己写的 targetDescription 可以**。
+ * 这是把不可靠信息变成可用信号的唯一低摩擦途径。
+ *
+ * 用途（**都是信息性的，不拦截**）：
+ * - 审计里把这些条目单独标出来，用户回看时能直接定位有后果的操作
+ * - 弹窗里以「危险」标签呈现
+ * - 将来若做操作回放时间线，可用于着色
+ *
+ * ### 已知局限
+ *
+ * 1. **会被绕过**：agent 写「点一下那个按钮」就识别不出来。这不是安全边界。
+ * 2. **语言偏中文/英文**：其他语言覆盖不全，需要时补词表。
+ * 3. **可能误报**：说「不要删除」也会命中。宁可误报——误报只影响标注。
+ */
+const DESTRUCTIVE_INTENT_PATTERNS: readonly RegExp[] = [
+  // 中文
+  /支付|付款|结算|下单|购买|买入|充值|转账|汇款/,
+  /提交|确认提交|发送|发布|上传|投递/,
+  /删除|清空|移除|注销|解绑|退订|取消订单/,
+  /确认|同意并|授权|签约|开通/,
+  // 英文
+  /\b(pay|payment|checkout|purchase|buy|subscribe|donate|transfer)\b/i,
+  // 「下单」在英文里是 place/confirm/submit + order，不写成 payment
+  /\b(place|confirm|submit|create|complete)\s+(an?\s+)?(order|booking|reservation)\b/i,
+  /\b(submit|send|post|publish|upload|delete|remove|confirm|cancel)\b/i,
+  // 金额与订单号是很强的信号
+  /[¥$€£]\s?\d/,
+  /\b\d+\s?(usd|usdt|cny|rmb|eur)\b/i,
+];
+
+export interface DestructiveSignal {
+  /** 是否疑似破坏性。 */
+  destructive: boolean;
+  /** 命中的模式（便于调试与审计解释）。 */
+  matches: string[];
+}
+
+/**
+ * 判断一个 `targetDescription` 是否疑似破坏性意图。
+ *
+ * @param targetDescription - agent 提供的人类可读目标描述
+ */
+export function looksDestructive(targetDescription: string | undefined): DestructiveSignal {
+  if (targetDescription === undefined || targetDescription.trim().length === 0) {
+    return { destructive: false, matches: [] };
+  }
+  const matches: string[] = [];
+  for (const re of DESTRUCTIVE_INTENT_PATTERNS) {
+    const m = re.exec(targetDescription);
+    if (m !== null) matches.push(m[0]);
+  }
+  return { destructive: matches.length > 0, matches };
+}
+

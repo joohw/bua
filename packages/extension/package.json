@@ -8,12 +8,17 @@
   "scripts": {
     "build": "node scripts/build.mjs",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "test": "node --test --test-concurrency=1 --test-timeout=20000 test/*.test.mjs"
+    "test": "node --test --test-concurrency=1 --test-timeout=20000 test/*.test.mjs",
+    "test:e2e": "node --test --test-concurrency=1 --test-timeout=180000 test/e2e-real.test.mjs",
+    "demo": "node scripts/demo-overlay.mjs"
   },
   "devDependencies": {
     "@bua/protocol": "workspace:*",
+    "@bua/server": "workspace:*",
     "@types/chrome": "^0.0.287",
     "esbuild": "^0.24.2",
-    "typescript": "^5.7.2"
+    "puppeteer-core": "^25.13.0",
+    "typescript": "^5.7.2",
+    "ws": "^8.18.0"
   }
 }

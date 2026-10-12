@@ -52,7 +52,15 @@ interface ActivityEntry {
  */
 let ws: WebSocket | null = null;
 let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
-let attachedTabs = new Set<number>();
+const attachedTabs = new Set<number>();
+
+/**
+ * 后端**实际具备**的能力。
+ *
+ * 初始全 `false`，直到 {@link detectCapabilities} 探测成功才置位 ——
+ * 宁可先说「不知道」，也不要在探测前谎报具备 CDP。这个值会随 `bua.event`
+ * 的 `backend.ready` 上报给桥，桥再广播给所有 agent。
+ */
 let currentCapabilities: Capabilities = {
   cdp: false,
   screenshots: false,
@@ -60,8 +68,86 @@ let currentCapabilities: Capabilities = {
   downloads: false,
   evaluate: false,
   management: false,
-  notes: [],
+  notes: ['尚未探测。'],
 };
+
+let capabilitiesProbed = false;
+
+/**
+ * 探测本实例实际具备的能力。
+ *
+ * 关键场景是**企业策略拒绝 CDP**（Chrome 155+）：那种情况下
+ * `chrome.debugger.attach()` 在任何目标上都失败，且无法用
+ * `runtime_allowed_hosts` 绕过。必须在能力里如实报告，让 agent 降级。
+ *
+ * 探测方式：对任意一个真实标签尝试 attach，成功即 `cdp: true`。
+ */
+async function detectCapabilities(): Promise<void> {
+  if (capabilitiesProbed) return;
+
+  const [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
+  const probeTabId = tab?.id;
+
+  if (probeTabId === undefined) {
+    currentCapabilities = {
+      ...currentCapabilities,
+      notes: ['没有可探测的标签（未打开任何页面）。'],
+    };
+    return;
+  }
+
+  try {
+    await chrome.debugger.attach({ tabId: probeTabId }, '1.3');
+    // attach 成功即具备完整 CDP 面
+    currentCapabilities = {
+      cdp: true,
+      screenshots: true,
+      fileUploads: true,
+      downloads: true,
+      evaluate: true,
+      management: true,
+      notes: [],
+    };
+    capabilitiesProbed = true;
+    await chrome.debugger.detach({ tabId: probeTabId }).catch(() => {});
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    const byPolicy = /restricted by policy/i.test(message);
+    currentCapabilities = {
+      cdp: false,
+      screenshots: !/Screenshot capture is restricted by policy/i.test(message),
+      fileUploads: false,
+      downloads: false,
+      evaluate: true, // chrome.scripting 仍可在页面里执行 JS
+      management: true, // chrome.tabs / bookmarks 等不受 CDP 策略影响
+      notes: [
+        byPolicy
+          ? '⚠ 企业策略拒绝了 CDP，已降级到 chrome.scripting 模式'
+          : `⚠ 无法 attach CDP：${message}`,
+        '真实输入事件、截图与跨 iframe 一致控制不可用',
+      ],
+    };
+    capabilitiesProbed = true; // 策略性失败不会因重试而改变
+  }
+
+  // 上报给桥，桥再广播给所有 agent（含降级说明）
+  send({
+    jsonrpc: '2.0',
+    method: 'bua.event',
+    params: {
+      type: 'backend.ready',
+      chromeVersion: detectChromeVersion(),
+      capabilities: currentCapabilities,
+    },
+  });
+  await refreshAllOverlays();
+}
+
+function detectChromeVersion(): string | null {
+  if (typeof navigator === 'undefined') return null;
+  return /\bChrome\/([\d.]+)/.exec(navigator.userAgent)?.[1] ?? null;
+}
+
 
 /* ─────────────────────── 存储辅助 ─────────────────────── */
 
@@ -233,13 +319,13 @@ async function connect(): Promise<void> {
         client: {
           extensionId: chrome.runtime.id,
           extensionVersion: chrome.runtime.getManifest().version,
-          ...(typeof navigator !== 'undefined' && /\bChrome\/(\d+)/.exec(navigator.userAgent) !== null
-            ? { chromeVersion: /\bChrome\/(\d+[\d.]*)/.exec(navigator.userAgent)?.[1] ?? '' }
-            : {}),
+          ...(detectChromeVersion() !== null ? { chromeVersion: detectChromeVersion() } : {}),
         },
         capabilities: ['cdp', 'screenshots', 'downloads', 'evaluate', 'management'],
       },
     });
+    // 连上桥后探测真实能力并上报 —— 不在探测前谎报具备 CDP
+    void detectCapabilities();
   });
 
   socket.addEventListener('message', (ev) => {
@@ -480,10 +566,84 @@ async function handleBridgeMessage(raw: unknown): Promise<void> {
     return;
   }
 
+  /* ── 不需要 tabId 的方法（走 chrome.* 而非 CDP）── */
+  switch (method) {
+    case M.tabsList: {
+      const tabs = await chrome.tabs.query({});
+      await respond({
+        tabs: tabs.map((t) => ({
+          id: t.id,
+          url: t.url,
+          title: t.title,
+          active: t.active === true,
+          pinned: t.pinned === true,
+          windowId: t.windowId,
+          status: t.status,
+        })),
+      });
+      return;
+    }
+    case M.tabsNew: {
+      const url = typeof params['url'] === 'string' ? params['url'] : undefined;
+      const tab = await chrome.tabs.create({
+        ...(url !== undefined ? { url } : {}),
+        active: params['visible'] === true,
+      });
+      await respond({ tabId: tab.id, url: tab.url, title: tab.title });
+      return;
+    }
+    case M.tabsSelected: {
+      const [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
+      await respond(tab === undefined ? { tab: null } : { tab: { id: tab.id, url: tab.url, title: tab.title } });
+      return;
+    }
+    case M.tabClose:
+    case M.tabsClose: {
+      const target = typeof params['tabId'] === 'number' ? params['tabId'] : undefined;
+      if (target === undefined) {
+        await respond(null, BUA_ERROR_CODES.UNSUPPORTED, '关闭标签需要 tabId');
+        return;
+      }
+      await detachTab(target);
+      await chrome.tabs.remove(target);
+      await respond({ ok: true });
+      return;
+    }
+    case M.browserGetDefault:
+    case M.browserList: {
+      const manifest = chrome.runtime.getManifest();
+      await respond({
+        browsers: [
+          {
+            id: 'extension',
+            name: '本机 Chrome',
+            family: 'chrome',
+            type: 'extension',
+            tabs: (await chrome.tabs.query({})).map((t) => ({ id: t.id, url: t.url, title: t.title })),
+            metadata: { extensionInstanceId: chrome.runtime.id },
+          },
+        ],
+        capabilities: currentCapabilities,
+        version: manifest.version,
+      });
+      return;
+    }
+    default:
+      break;
+  }
+
   // ── 需要标签的方法 ──
-  const tabId = typeof params['tabId'] === 'number' ? params['tabId'] : undefined;
+  // 未显式给 tabId 时回落到当前活动标签。这让 agent 在「就是操作眼前这一页」的
+  // 常见场景下少一次往返；显式传 tabId 时行为完全可预测。
+  let tabId = typeof params['tabId'] === 'number' ? params['tabId'] : undefined;
   if (tabId === undefined) {
-    await respond(null, BUA_ERROR_CODES.UNSUPPORTED, `方法 ${method} 需要 tabId`);
+    const [active] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
+    if (active?.id !== undefined) {
+      tabId = active.id;
+    }
+  }
+  if (tabId === undefined) {
+    await respond(null, BUA_ERROR_CODES.TAB_NOT_FOUND, `方法 ${method} 需要 tabId，且当前没有活动标签`);
     return;
   }
 
@@ -499,6 +659,17 @@ async function handleBridgeMessage(raw: unknown): Promise<void> {
     await respond(null, BUA_ERROR_CODES.UNSUPPORTED, `方法 ${method} 尚未实现`);
     return;
   }
+
+  /*
+   * 在派发操作**之前**刷新覆盖层。
+   *
+   * 两个原因：
+   * 1. 自愈 —— 覆盖层是 body 的子节点，会被任何执行
+   *    `document.body.innerHTML = ...` 的页面清掉。每次操作前重绘保证它一直在。
+   * 2. 时序 —— 本方法自身可能就是读覆盖层状态的调用（例如 agent 用
+   *    `playwright.evaluate` 检查泛光），此时必须先重建再执行，否则读到「不存在」。
+   */
+  await refreshOverlay(tabId);
 
   try {
     let last: unknown = null;

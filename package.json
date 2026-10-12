@@ -16,6 +16,7 @@
     "clean": "pnpm -r exec rm -rf dist node_modules/.cache"
   },
   "devDependencies": {
+    "puppeteer-core": "^25.13.0",
     "typescript": "^5.7.2"
   }
 }

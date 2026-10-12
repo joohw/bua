@@ -18,6 +18,11 @@ packages/extension/release/
 # 截图单独放 docs/images/ 作为静态说明，不在此忽略）
 packages/extension/dist-demo/
 
+# 实机 e2e 的临时产物：Chrome profile 与截图
+# （截图稳定后手动拷进 docs/images/ 作为证据，不在这里跟踪）
+packages/extension/.e2e-profile/
+packages/extension/e2e-out/
+
 # 运行时产物（桥的 token、blob、日志）
 .bua/
 *.log

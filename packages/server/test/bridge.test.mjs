@@ -530,7 +530,7 @@ test('被拒的调用也进审计（含错误码）', async () => {
   }
 });
 
-test('destructive 方法被标为 destructive 风险', async () => {
+test('downloadMedia 被标为 write（方法名无法判定破坏性）', async () => {
   const b = await startBridge();
   try {
     const ext = await connectExtension(b.url);
@@ -544,7 +544,10 @@ test('destructive 方法被标为 destructive 风险', async () => {
     await a.request('cua.downloadMedia', { tabId: 't_1', targetDescription: '发票 PDF' });
     await sleep(80);
     const entry = b.audits.find((e) => e.method === 'cua.downloadMedia');
-    assert.equal(entry.risk, 'destructive');
+    // 触发下载没有数据损失，因此按 write 处理而不是 destructive。
+    // 真正的破坏性意图由 protocol 的 looksDestructive 从描述里启发式识别，
+    // 属信息性标注，不进桥的审计字段。
+    assert.equal(entry.risk, 'write');
   } finally {
     await b.close();
   }
