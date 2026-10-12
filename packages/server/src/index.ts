@@ -192,11 +192,22 @@ export class Bridge {
       clearInterval(this.#heartbeatTimer);
       this.#heartbeatTimer = null;
     }
+
+    /*
+     * 先 `terminate()` 再关服务器。
+     *
+     * 用 terminate（立即销毁底层 socket）而不是 close（走优雅挥手），原因有二：
+     *
+     * 1. **保证进程能退出** —— 优雅关闭依赖客户端回 FIN；在测试等场景里对端可能
+     *    已经不正常，握手会一直挂着，导致 `wss.close()` 的回调永不触发。
+     * 2. **语义正确** —— 服务器关停时它就是要把所有连接断掉，没有「等对方先说完」
+     *    的义务。桥本身不做鉴权，也不需要靠优雅关闭保护什么。
+     */
     for (const ws of this.#sockets.values()) {
       try {
-        ws.close(WS_CLOSE_CODES.NORMAL, 'bridge shutting down');
+        ws.terminate();
       } catch {
-        /* 关闭期间的错误忽略 */
+        /* 已经断开 */
       }
     }
     this.#sockets.clear();

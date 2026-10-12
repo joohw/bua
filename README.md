@@ -82,42 +82,60 @@ BUA 明确**不做**这三件事（kill 端口占用进程 / 踢旧连接 / 无�
 ```
 packages/
 ├── protocol/    # 唯一真源：类型、方法名、schema
-├── extension/   # Chrome MV3 扩展（控制节点）
-├── server/      # 本地桥：ws 服务端 + Host 校验 + 会话路由
+├── extension/   # Chrome MV3 扩展（控制节点）—— 边缘泛光指示状态
+├── server/      # 本地桥：ws 服务端 + Host 校验 + 会话路由 + 审计
 ├── sdk/         # agent 侧 SDK（对齐 Codex 形状）
-├── mcp/         # MCP 适配器（可选）
-└── cli/         # bua 命令行
+├── mcp/         # MCP 适配器（未开始）
+└── cli/         # bua 命令行（未开始，桥自带 CLI）
 ```
 
 ## API 速览
 
-BUA 的 agent 侧 API 直接对齐 Codex，为同一个标签提供**四个抽象层次**，让 agent 按任务精度选择：
+```ts
+import { connect } from '@bua/sdk';
 
-```js
+const agent = await connect({ port: 17432, client: { name: 'my-agent' } });
 const browser = await agent.browsers.getDefault();
 
-// 接管用户已经打开的一个标签（不是新开一个）
+// 接管用户**已经打开**的标签 —— 真实登录态，不用重新登录
 const [userTab] = await browser.user.openTabs();
 const tab = await browser.user.claimTab(userTab);
 
-// ① Playwright 层：语义定位，最稳 —— 默认首选
-const el = tab.playwright.getByRole("button", { name: "提交" });
-await el.click();
+// 默认优先用语义定位
+await tab.playwright.getByRole('button', { name: '提交' })
+  .click({ targetDescription: '提交按钮' });
 
-// ② AX 层：无障碍树，用于视觉确认与结构化读取
-await tab.ax.write("both");
-
-// ③ DomCUA 层：可见 DOM 节点 id，坐标不稳时的折中
-const dom = await tab.dom_cua.get_visible_dom();
-
-// ④ CUA 层：视口坐标，无语义元素时的兜底
-await tab.cua.click({ x: 320, y: 480 });
-
-// 能力协商：只做后端真正支持的事
-const caps = await tab.capabilities.list();
-const cdp = await tab.capabilities.get("cdp");
-await cdp.send("Network.enable");
+console.log(await tab.text());
 ```
+
+**所有变更型方法必须传 `targetDescription`** —— 人类可读的意图描述，例如 `"结算按钮（￥299）"`。因为**坐标无法让人判断风险，描述可以**。它进审计日志，是用户在无鉴权模型下唯一的追溯手段。
+
+同一个标签提供**四层操作抽象**，按任务精度选：
+
+| 层 | 入口 | 何时用 |
+|---|---|---|
+| Playwright | `tab.playwright` | **默认首选**，语义定位 |
+| AX | `tab.ax` | 视觉确认与结构化读取 |
+| DomCUA | `tab.domCua` | 坐标不稳时的折中 |
+| CUA | `tab.cua` | 无语义元素时的兜底（真实鼠标事件） |
+
+详见 [SDK 文档](packages/sdk/README.md)。
+
+## 测试
+
+```sh
+pnpm -r run test                                   # 128 项单元 / 集成测试
+pnpm --filter @bua/extension run test:e2e          # 13 项真实浏览器端到端
+```
+
+| 包 | 测试数 | 覆盖 |
+|---|---|---|
+| `protocol` | 24 | 授权/风险分级、占位符解析、错误码 |
+| `server` | 44 | Host/Origin 拦截（含绕过尝试）、协议、路由、审计 |
+| `sdk` | 20 | 请求形状、CDP 返回值解包、错误映射、事件、心跳、真桥接线 |
+| `extension` | 40 | 覆盖层行为（隔离的 vm 上下文）、演示产物 |
+| **实机 E2E** | **13** | Chrome for Testing 加载真实扩展 + 真实 CDP |
+
 
 ## 边缘泛光
 

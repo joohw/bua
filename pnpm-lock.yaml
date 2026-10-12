@@ -45,6 +45,28 @@ importers:
         specifier: ^5.7.2
         version: 5.9.3
 
+  packages/sdk:
+    dependencies:
+      '@bua/protocol':
+        specifier: workspace:*
+        version: link:../protocol
+      ws:
+        specifier: ^8.18.0
+        version: 8.22.0
+    devDependencies:
+      '@bua/server':
+        specifier: workspace:*
+        version: link:../server
+      '@types/node':
+        specifier: ^22.10.2
+        version: 22.20.5
+      '@types/ws':
+        specifier: ^8.5.13
+        version: 8.18.2
+      typescript:
+        specifier: ^5.7.2
+        version: 5.9.3
+
   packages/server:
     dependencies:
       '@bua/protocol':
