@@ -6,9 +6,17 @@
 
 | 文件 | 内容 | 状态 |
 |---|---|---|
+| [01-competitors.md](01-competitors.md) | **同类项目调研**。浏览器 MCP 服务器、扩展路线 agent、WebMCP 标准、真实浏览器 vs 独立浏览器（含全部已知绕过方案矩阵）、安全威胁模型。195 行对比表格，事实按「✅已确认 / 🟡间接 / ⚠️推测」三级标注 | ✅ 完成 |
+| [02-store-policy.md](02-store-policy.md) | **Chrome Web Store 上架硬性约束**。`debugger` 权限审核口径、远程代码政策边界、`<all_urls>` 结论、native messaging 连锁约束、隐私合规红线、替代渠道对比 | ✅ 完成 |
 | [03-codex-api-reference.md](03-codex-api-reference.md) | **Codex 浏览器扩展完整 API 参考**。22 个接口 / 67 个类型 / **219 条声明**，逐条核对一致（输入 219 / 输出 219）。BUA 的 API 对齐基准 | ✅ 完成 |
-| [02-store-policy.md](02-store-policy.md) | **Chrome Web Store 上架硬性约束**。含 `debugger` 权限审核口径、远程代码政策边界、`<all_urls>` 结论、native messaging 连锁约束、隐私合规红线、替代渠道对比 | ✅ 完成 |
-| 01-competitors.md | 同类项目调研：浏览器 MCP 服务器、扩展路线 agent、WebMCP 标准、真实浏览器 vs 独立浏览器、安全模型 | ⏳ 进行中 |
+
+## 三份报告各自改变了什么
+
+| 报告 | 对设计的实际影响 |
+|---|---|
+| 01-competitors | **推翻了「origin 白名单即安全边界」的假设**（三方独立承认 URL 白名单不可靠）；确立「动作级闸门」为核心差异化；补出传输层 Origin/Host 双校验要求；发现 open-browser-use 仅 365★ 的时间窗口 |
+| 02-store-policy | **确认技术路线可上架**（Debugger API 是官方明文允许的远程执行例外）；删掉冗余的 `<all_urls>`；确定放弃 native messaging 改走 WebSocket；暴露「调试横幅不可关闭，用户关掉即终止会话」这一硬 UX 约束 |
+| 03-codex-api-reference | 提供 API 对齐的**唯一权威依据**（逐条声明原文，可逐字核对） |
 
 ## `_raw/` — 官方文档存档
 

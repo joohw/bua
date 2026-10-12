@@ -82,14 +82,37 @@
   "result": {
     "sessionId": "s_7f3a…",
     "heartbeatMs": 15000,
-    "grant": { "level": "read", "origins": [], "expiresAt": null }
+    "grant": { "level": "read", "origins": [], "expiresAt": null },
+    "capabilities": {
+      "cdp": true,
+      "fileUploads": false,
+      "downloads": false
+    }
   }
 }
 ```
 
 **鉴权失败的响应**：桥关闭连接（code `4001`），不回 JSON-RPC 错误体。
 
-### 2.4 授权层级
+### 2.4 传输层强制校验（L1）
+
+三条**必须**在 WS upgrade 阶段完成，任一不合格一律 `403` 且不建立连接：
+
+| # | 校验项 | 规则 | 依据 |
+|---|---|---|---|
+| 1 | **绑定地址** | 硬绑 `127.0.0.1`，**不提供** `0.0.0.0` 选项 | MCP 规范 SHOULD |
+| 2 | **`Origin` 头** | 只接受 `chrome-extension://<扩展ID>` 与显式的本地客户端来源 | MCP 规范 **MUST**（防浏览器发起的攻击） |
+| 3 | **`Host` 头** | 只接受 `127.0.0.1:<port>` / `localhost:<port>` | **防 DNS rebinding**，不可用 `*` 关闭 |
+
+**明确不做**：
+
+- ❌ `killProcessOnPort` —— 端口被占用就报错并提示用户换端口，**绝不强杀用户进程**
+- ❌ 踢旧连接 —— 多客户端并存，各自独立会话
+- ❌ 无 token 的裸监听
+
+> 这三条是竞品调研中发现的**行业反面教材**：Browser MCP（7.2k★）开 `9009` 无 token、无 Origin 校验，且会强杀占用该端口的进程、新连接直接踢掉旧连接。BUA 明确不做。
+
+### 2.5 授权层级
 
 对齐 Codex 的授权语义，并扩展到域名与时限：
 
@@ -396,7 +419,63 @@ JSON-RPC 错误对象中，`error.data.buaCode` 携带机器可路由的错误�
 
 ---
 
-## 5. 超时与心跳
+## 5. 变更型动作的强制字段（L3）
+
+**这是 BUA 相对所有现有项目的核心差异。** 竞品调研结论：**几乎没有项目做「支付/提交类」的动作级识别** —— open-browser-use 的 `SECURITY.md` 只写了「应当确认 uploads / downloads / form submission / purchases / deletion」，但那是**建议，不是实现**。
+
+### 5.1 `targetDescription`：人类可读的目标描述
+
+所有 `write` 与 `destructive` 类动作**必须**携带 `targetDescription`。缺失时桥**拒绝**该调用（`BUA_UNSUPPORTED`）。
+
+```jsonc
+// ❌ 拒绝：坐标无法让人判断风险
+{ "method": "cua.click", "params": { "tabId": "t_1", "x": 320, "y": 480 } }
+
+// ✅ 接受：审批 UI 能展示人类可读的目标
+{
+  "method": "cua.click",
+  "params": {
+    "tabId": "t_1", "x": 320, "y": 480,
+    "targetDescription": "结算按钮（￥299，含运费）"
+  }
+}
+```
+
+理由：**坐标本身无法让人判断风险，描述可以。** 这个设计的原型是 Playwright MCP 的 `browser_click` —— 它的 `element` 参数注释即 *"used to obtain permission"*。
+
+### 5.2 动作风险三级分级
+
+分级**在扩展侧硬编码**，**不信任 agent 传的任何 hint**（MCP 规范明确警告 tool annotations 不可信）。
+
+| 级别 | 动作 | 审批 | 强制字段 |
+|---|---|---|---|
+| `read` | 截图、DOM/无障碍快照、列标签、读 URL/标题 | 免审批 | — |
+| `write` | 点击、输入、滚动、选择、导航 | 按 origin 授权 | `targetDescription` |
+| `destructive` | **提交表单、支付/结算、删除、发送消息、上传/下载文件、写剪贴板、关闭标签** | **每次必审批** | `targetDescription` + 审批 UI 展示 origin 与关键参数 |
+
+> `destructive` 的识别不能依赖 agent 自律 —— 页面内容可能被提示注入污染。必须在扩展侧按「当前 tab 顶层 URL 的 origin + 动作类型 + 目标元素语义」判定。
+
+### 5.3 TOCTOU 强校验
+
+`page_info` / `dom_snapshot` 返回 `snapshotId`；后续动作必须携带它。**不匹配则拒绝（`BUA_HANDLE_STALE`）并要求 agent 重新观察。**
+
+防止「观察」与「操作」之间页面变化导致的误操作 —— 现有项目普遍只靠 prompt 约束，没有协议级机制。
+
+### 5.4 敏感字段占位符
+
+agent 传占位符，**扩展侧替换为真实值再输入**：
+
+```jsonc
+{ "method": "locator.fill", "params": {
+    "locatorId": "l_9", "value": "{{secret:github_password}}",
+    "targetDescription": "密码输入框" } }
+```
+
+真实值**永不进入 agent 上下文**。这同时覆盖了 `browserAuth` 能力（对齐 Codex：凭据在扩展侧填入，值不穿过桥）。
+
+---
+
+## 6. 超时与心跳
 
 | 项 | 默认 | 说明 |
 |---|---|---|
@@ -409,7 +488,7 @@ JSON-RPC 错误对象中，`error.data.buaCode` 携带机器可路由的错误�
 
 ---
 
-## 6. 多 agent 与会话隔离
+## 7. 多 agent 与会话隔离
 
 BUA 要同时服务多个 agent，规则：
 
@@ -423,13 +502,18 @@ BUA 要同时服务多个 agent，规则：
 
 ---
 
-## 7. 待定项
+## 8. 待定项
 
-| # | 问题 | 影响 |
-|---|---|---|
-| 1 | 默认端口具体选哪个（避开 19387/3080/9222 等已占用） | 安装体验 |
-| 2 | 截图落盘目录（`$BUA_HOME/blobs`？系统临时目录？） | 磁盘与隐私 |
-| 3 | `locatorId` 句柄的 TTL 与回收策略 | 内存泄漏风险 |
-| 4 | 是否需要 native messaging 兜底「扩展未运行」场景 | 安装流程复杂度 |
-| 5 | `browserAuth` 的凭据 UI 放在扩展 side panel 还是宿主页面 | 安全性与实现量 |
-| 6 | 协议是否需要二进制帧（`ArrayBuffer`）传大截图 | 性能 |
+| # | 问题 | 影响 | 来源 |
+|---|---|---|---|
+| 1 | 默认端口具体选哪个（避开 19387 / 3080 / 9222 等已占用） | 安装体验 | 自身 |
+| 2 | 截图落盘目录（`~/.bua/blobs`？系统临时目录？） | 磁盘与隐私 | 自身 |
+| 3 | `locatorId` 句柄的 TTL 与回收策略 | 内存泄漏风险 | 自身 |
+| 4 | `browserAuth` 的凭据 UI 放在扩展 side panel 还是宿主页面 | 安全性与实现量 | 自身 |
+| 5 | 协议是否需要二进制帧（`ArrayBuffer`）传大截图 | 性能 | 自身 |
+| 6 | **`chrome.debugger` 与已打开的 DevTools 的冲突行为** | 决定降级逻辑 | 竞品调研附录 B |
+| 7 | **能否 attach `chrome://` 页面与 OOPIF** | 决定能力边界声明 | 竞品调研附录 B |
+| 8 | `host_permissions` 与 `debugger` 并存时 Chrome 的警告文案细节 | 影响 onboarding 措辞 | 竞品调研附录 B |
+| 9 | WebMCP 的 `registration_id` 快照失效语义是否照抄 | TOCTOU 防护强度 | 竞品调研 §3.1 |
+| 10 | 是否需要「profile 快照」补充模式（后台 headless，不抢用户窗口） | 与主路径互补，但需用户完全退出浏览器 | 竞品调研 §4.2 |
+

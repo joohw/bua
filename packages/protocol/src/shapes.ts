@@ -131,6 +131,68 @@ export interface InputModifiers {
   modifiers?: KeyboardModifier[];
 }
 
+/* ──────────────────── 变更型动作的强制字段（L3） ──────────────────── */
+
+/**
+ * 动作风险级别。**在扩展侧硬编码判定，不信任 agent 传的 hint**
+ * （MCP 规范明确警告 tool annotations 不可信）。
+ *
+ * - `read`        截图 / 快照 / 列标签 —— 免审批
+ * - `write`       点击 / 输入 / 滚动 / 导航 —— 按 origin 授权
+ * - `destructive` 提交表单 / 支付 / 删除 / 发送消息 / 上传下载 / 写剪贴板 / 关标签
+ *                 —— **每次必审批**
+ */
+export type ActionRisk = 'read' | 'write' | 'destructive';
+
+/**
+ * 所有 `write` 与 `destructive` 动作**必须**携带的人类可读目标描述。
+ *
+ * 理由：**坐标本身无法让人判断风险，描述可以。**
+ * 审批 UI 展示的正是这个字段。
+ *
+ * 设计原型是 Playwright MCP 的 `browser_click` —— 其 `element` 参数注释即
+ * *"used to obtain permission"*。
+ *
+ * @example "结算按钮（￥299，含运费）"
+ */
+export interface WithTargetDescription {
+  /** 扩展侧校验非空；缺失时桥拒绝该调用。 */
+  targetDescription: string;
+}
+
+/**
+ * TOCTOU 防护：观察类方法返回 `snapshotId`，后续变更动作必须携带。
+ * 不匹配则拒绝（`BUA_HANDLE_STALE`）并要求 agent 重新观察。
+ *
+ * 防止「观察」与「操作」之间页面变化导致的误操作。
+ */
+export interface WithSnapshotId {
+  snapshotId: string;
+}
+
+/**
+ * 敏感字段占位符。agent 传 `{{secret:name}}`，**扩展侧替换为真实值再输入**，
+ * 真实值永不进入 agent 上下文。
+ */
+export const SECRET_PLACEHOLDER_PATTERN = /^\{\{secret:([a-zA-Z0-9_.-]+)\}\}$/;
+
+/** 从占位符中取出密钥名；不是占位符则返回 `null`。 */
+export function parseSecretPlaceholder(value: string): string | null {
+  const m = SECRET_PLACEHOLDER_PATTERN.exec(value);
+  return m?.[1] ?? null;
+}
+
+/**
+ * 是否包含**任意位置**的占位符。
+ *
+ * 注意与 {@link parseSecretPlaceholder} 的区别：那个要求整个值就是占位符，
+ * 这个用于在自由文本里检测混入的占位符（例如往输入框里填一段含密码的文本）。
+ */
+export function containsSecretPlaceholder(value: string): boolean {
+  return /\{\{secret:[a-zA-Z0-9_.-]+\}\}/.test(value);
+}
+
+
 /* ───────────────────────────── 审计 ───────────────────────────── */
 
 /**

@@ -186,32 +186,93 @@ JSON-RPC 2.0 over WebSocket。见 `docs/protocol.md`。
 
 这是整个项目**最需要认真对待**的部分。一个能读你所有标签页、Cookie、并代你点击的组件，权限等级等同于「遥控你的浏览器」。
 
-### 4.1 威胁与对策
+### 4.0 ⚠️ 先纠正一个错误认知：origin 白名单不是安全边界
 
-| 威胁 | 对策 |
+设计初期我把「域名白名单」当成主要安全机制。**竞品调研证明这是错的**，三方独立来源都承认 URL 级白名单不可靠：
+
+| 来源 | 原文 |
 |---|---|
-| **本机任意进程连上桥，劫持浏览器** | 桥启动时生成一次性高熵 token，写入仅当前用户可读的文件；扩展配对时读取并持久化。**未通过 token 校验的连接立即断开，不泄露任何信息** |
-| 恶意网页驱动 agent 做危险操作 | 域名白名单（默认拒绝）+ 敏感操作二次确认（提交、支付、删除） |
-| agent 越权读敏感页面 | 按会话/域名的 scope；`browser.user.getTabContext` 只返回有界上下文 |
-| 凭据泄露进模型上下文 | `browserAuth` 能力在扩展侧填表，**值永不穿过桥**（对齐 Codex 的做法） |
-| 提示注入（页面内容当指令） | 所有页面取回内容一律标记为**不可信数据**，并在系统提示层声明 |
-| 端口被外部访问 | 桥**只绑 `127.0.0.1`**，不提供任何监听外部接口的选项 |
+| Playwright MCP 官方注释 | `--allowed-origins` *"does not serve as a security boundary and does not affect redirects"* |
+| chrome-devtools-mcp | 拒绝含 regexp group 的 pattern，理由是「在重定向和子资源上无法强制执行」 |
+| **Chrome 155 官方博客** | *"Because CDP operates beneath the web platform's origin model, **origin-based filtering cannot securely restrict it**"* |
 
-### 4.2 授权层级（对齐并扩展 Codex）
+**原因是结构性的**：CDP 位于 Web 平台 origin 模型**之下**。一旦 `attach()` 成功，就能读到该 tab 的一切（含跨域 iframe 内容），并对任意 origin 发起导航。白名单只能约束**我们自己代码愿意检查的东西** —— 它不是一道墙，是一个自觉。
+
+> 所以本项目的定位必须说清楚：**origin 白名单是用户体验工具和纵深防御的一层，不是安全边界。真正的闸门是扩展侧的动作级校验。**
+
+### 4.1 分层机制
+
+#### L1 · 传输层（防本机劫持 + DNS rebinding）
+
+| # | 措施 | 说明 |
+|---|---|---|
+| 1 | **硬绑 `127.0.0.1`** | 不提供 `0.0.0.0` 选项。（MCP 规范 SHOULD） |
+| 2 | **强制 `Origin` 校验** | WS upgrade 时校验，允许值 = `chrome-extension://<我们的扩展ID>` + 显式本地客户端来源；不合法一律 403。（MCP 规范 **MUST**） |
+| 3 | **强制 `Host` 头校验** | 只接受 `127.0.0.1:<port>` / `localhost:<port>`，其余 403 —— **这是防 DNS rebinding 的关键**，且不可用 `*` 关闭 |
+| 4 | **握手 token（≥256 bit）** | 桥启动时生成，写入仅当前用户可读的文件（`~/.bua/bridge.json`）。校验失败**立即断开、记审计、限速**。⭐ **这是业界空白，BUA 的核心差异化** |
+| 5 | **不做 `killProcessOnPort`** | 端口占用 → 报错并提示用户换端口。**绝不强杀用户进程** |
+| 6 | **不踢旧连接** | 多客户端并存，各自独立会话。不搞「新连接踢旧连接」 |
+| 7 | **只追加审计日志** | 所有动作记 `{ts, sessionId, method, targetUrl, origin, approvedBy, result}` |
+
+**为什么 4–6 要写这么细**：这三条是现有项目的**反面教材**。Browser MCP（7.2k★）开 `9009` 端口**无 token、无 Origin 校验**，而且 `killProcessOnPort(9009)` 会**强杀用户机器上占用该端口的任意进程**，新连接还会直接把旧连接 `ws.close()` 踢掉。mcp-chrome（12.5k★）的 README Roadmap 里 **`- [ ] Authentication` 至今未完成**。
+
+#### L2 · 授权层（谁能调、能调什么）
+
+| # | 措施 | 说明 |
+|---|---|---|
+| 8 | **per-session origin 白名单** | 会话建立时声明；**每次 tab-scoped 动作前校验当前 tab 顶层 URL 的 origin**，`navigate` 校验**目标 URL** |
+| 9 | **扩展内可视授权 UI** | 按 origin 允许/拒绝/一次性，可撤销。**不要把授权只放在配置文件里** —— 用户改不动就等于没有 |
+| 10 | **`localhost` 自动放行需谨慎** | 本地服务常是用户自己的 dashboard，但也是 SSRF 目标。默认放行但**可关** |
+| 11 | **能力开关** | 抄 Codex 的 `capabilities.fileUploads` / `.downloads` / `.mediaDownloads`：在 `getInfo` 里声明，命令执行前先校验 |
+| 12 | **无 CDP 降级模式** | `attach()` 失败（尤其 Chrome 155 的政策错误串）→ 降级到 `chrome.scripting` + `chrome.tabs`，并**在 capabilities 里如实声明**可用子集。⭐ **现有项目无一实现** |
+
+#### L3 · 动作层（防误操作与提示注入）
+
+| # | 措施 | 说明 |
+|---|---|---|
+| 13 | **动作风险三级分级** | 扩展侧**硬编码**，**不信任 agent 传的 hint**（MCP 规范明确警告 tool annotations 不可信）。见下表 |
+| 14 | **审批信息嵌进 action schema** | ⭐ 所有 `write`/`destructive` 动作**必须**携带人类可读的目标描述字段 `targetDescription`。坐标无法让人判断风险，描述可以 —— 抄 Playwright MCP `browser_click` 的 `element` 参数（其注释即 *"used to obtain permission"*） |
+| 15 | **敏感字段占位符** | agent 传 `{{secret:github_password}}`，**扩展侧替换为真实值再输入**，真实值永不进入 agent 上下文 |
+| 16 | **TOCTOU 强校验** | `page_info` / `dom_snapshot` 返回 `snapshotId`；后续动作携带它，**不匹配则拒绝并要求重新观察** |
+| 17 | **不做 `networkidle` 等待** | 不可靠（Codex 显式拒绝该模式），改用显式条件等待 |
+| 18 | **`evaluate` 可关闭** | 关闭时禁止 `javascript:` / `data:` 导航 |
+| 19 | **明确不做** | 不开本地 CDP 端口；不做二进制补丁；不提供 `--remote-allow-origins=*` |
+
+**动作风险分级表**（L3-13）：
+
+| 级别 | 动作 | 审批策略 |
+|---|---|---|
+| `read` | 截图、DOM/无障碍快照、列标签、读 URL/标题 | **免审批**（对标 MCP `readOnlyHint`） |
+| `write` | 点击、输入、滚动、选择、导航 | 按 origin 授权即可 |
+| `destructive` | **提交表单、支付/结算、删除、发送消息、上传/下载文件、写剪贴板、关闭标签** | **每次必审批**，且审批 UI 必须展示：人类可读目标描述 + 目标 origin + 关键参数 |
+
+> `destructive` 的识别**必须在扩展侧**，不能靠 agent 自律。open-browser-use 的 `SECURITY.md` 写了「Integrations should confirm uploads, downloads, ... form submission, purchases, deletion」—— 但那是**建议，不是实现**。BUA 要把它做成机制。
+
+### 4.2 授权层级
 
 ```
-未授权 → 只能看到「有这些标签」，不能读内容
-只读   → 可读 DOM/截图，不能点击输入
-可交互 → 可点击/输入/导航
-受限交互 → 以上，但敏感操作需逐次确认（默认档）
-完全   → 无逐次确认
+none                 → 只能看到「有这些标签」，读不到内容
+read                 → 可读 DOM / 截图 / 无障碍树
+interact             → 可点击、输入、导航
+restricted-interact  → 上述 + 破坏性动作逐次确认（默认档）
+full                 → 无逐次确认
 ```
 
-每个授权可限定域名范围，且有 TTL（对齐 Codex 的 `expired` 语义）。
+每个授权可限定 origin 范围与 TTL。**但见 §4.0：这是 UX 与纵深防御，安全靠 L3 的动作级闸门。**
 
 ### 4.3 审计轨迹
 
-继承 Codex 的 `management.getAuditTrail()` 设计并推广到**所有变更型操作**：每次变更记录「操作 + 变更前状态」，使撤销成为可能。这是一个 AI 操作浏览器必须有的东西 —— 用户得能回答「它到底改了什么」。
+继承 Codex 的 `management.getAuditTrail()` 并推广到**所有变更型操作**：每次变更记录「操作 + 变更前状态」+ **`sessionId`**，使撤销与追责都成为可能。
+
+多 agent 场景下 `sessionId` 是关键 —— 用户必须能回答「**是谁**改了我的浏览器」。
+
+### 4.4 信任边界声明
+
+> **BUA 把用户的真实浏览器暴露给本地调用方。它不是沙箱。**
+> 能访问本机用户账号的进程 = 能访问浏览器自动化通道。
+
+这条要写进 README，不能含糊。诚实的边界声明比虚假的安全感更有价值。
+
 
 ---
 
@@ -319,7 +380,66 @@ Chrome 155（2026-10-06 stable）起，管理员若配置了 `runtime_blocked_ho
 
 ---
 
-## 6. 路线图
+## 6. 竞品洞察与差异化
+
+完整报告见 [`research/01-competitors.md`](../research/01-competitors.md)。
+
+### 6.1 BUA 路线的定位优势：零本地 CDP 端口
+
+调研覆盖了全部「拿到用户真实浏览器」的已知方案，结论是**扩展 + `chrome.debugger` 在「安全性」与「真实登录态」两项上同时最优**：
+
+| 方案 | 真登录态 | 本地端口 | 关键问题 |
+|---|---|---|---|
+| **扩展 + `chrome.debugger`**（← BUA） | ✅ | **无 CDP 端口** | 需要 `debugger` 权限警告 |
+| 扩展 + 本地 WebSocket | ✅ | 有（需自建鉴权） | 行业普遍无鉴权 |
+| `--remote-debugging-port` | ✅ | **有，且无认证** | Chrome 136+ 对默认 profile **静默失效**；144+ 每次连接弹窗 |
+| Chrome for Testing | ❌ | 有 | 不是用户的浏览器 |
+| profile 快照 | ⚠️ 登录可能失效 | 有 | 需用户完全退出浏览器 |
+| 二进制补丁 | ✅ | 有 | 破坏签名、更新即失效、杀软可疑 |
+
+**这是 BUA 的核心卖点**：它根本不需要在 `127.0.0.1` 上开 CDP 端口，因此「本机任意进程连上调试端口即接管浏览器」这个风险面**不存在**。
+
+> 但 BUA **自己的桥**仍监听本地端口（扩展要连它），所以 token 鉴权是硬需求 —— 见 §4.1 L1。
+
+### 6.2 三个必须补齐的行业空白（差异化，非抄袭）
+
+| # | 空白 | 现状 | BUA 做法 |
+|---|---|---|---|
+| 1 | **本地桥的握手鉴权** | ⭐ **全行业没有**。Browser MCP（7.2k★）无 token 无 Origin 校验；mcp-chrome（12.5k★）Roadmap 里 `- [ ] Authentication` 未完成；open-browser-use 自述 *"Planned hardening includes client tokens, peer validation"* | ≥256 bit token + Origin/Host 双校验（§4.1 L1） |
+| 2 | **动作风险三级分类** | 竞品**无一实现**。open-browser-use 的 SECURITY.md 只是**建议** | 扩展侧硬编码分级 + 破坏性动作逐次审批 + `targetDescription` 强制字段（§4.1 L3） |
+| 3 | **无 CDP 降级模式** | **现有项目无一实现**。企业策略拒绝 `attach()` 时直接不可用 | 降级到 `chrome.scripting` + `chrome.tabs`，并在 capabilities 里如实声明（§4.1 L2-12） |
+
+### 6.3 值得采纳的既有共识
+
+调研发现三个已成共识的设计，BUA 应当对齐而非重新发明：
+
+1. **显式 `tabId` 路由**（chrome-devtools-mcp 的 `--pageIdRouting` 默认开启，专为并发 agent session 设计）—— 优于隐式 current-tab
+2. **session TTL + 后台清理**（browser-use 的 `session_timeout_minutes` + `cleanup_loop`）
+3. **tab group 作可视锚点 + `chrome.storage.local` 持久化** —— 对抗 MV3 service worker 被杀（open-browser-use 存 tab group id / origins / active tab id）
+
+另外 **WebMCP 支持已成共识**：open-browser-use 有 `webmcp_list_tools` / `webmcp_invoke_tool`，chrome-devtools-mcp 也有对应工具。其 `registration_id` 的**快照失效语义**值得照抄作 TOCTOU 防护。
+
+### 6.4 时间窗口
+
+最同构的对手 **open-browser-use 仅 365 stars**（MIT），自我定位与本项目几乎相同（*"an open-source alternative to the Chrome Browser Use capability recently shipped in Codex.app"*），架构参考价值极大，**但尚未形成生态壁垒**，且自述安全模型空白：
+
+> *"The SDKs and CLI do not implement a Codex-style site policy, command allowlist, or user approval workflow"*
+
+窗口是开的。
+
+### 6.5 明确不采纳的路线
+
+| 路线 | 为什么不做 |
+|---|---|
+| `--remote-debugging-port` 开在真实 profile | CDP 端口无认证；Chrome 136+ 对默认 profile 静默失效。三方（chrome-devtools-mcp 官方、MCP 规范、patch-browser 作者）独立指出其不安全 |
+| 二进制补丁（patch-browser） | 破坏代码签名与完整性校验、Chrome 每次更新即失效、需管理员权限、杀软/EDR 高度可疑、企业环境不可接受 |
+| `--remote-allow-origins=*` | 等于放行任意来源 |
+| `killProcessOnPort` | 强杀用户进程，不可接受 |
+| 「新连接踢旧连接」 | 破坏多 agent 并发前提 |
+
+---
+
+## 7. 路线图
 
 ### M0 — 可行性验证（已完成 ✅）
 - [x] 证明 `chrome.debugger` 路线可行（CDP 全链路实测：读 DOM / 点击 / 真实键盘鼠标事件注入 / 截图）
@@ -340,8 +460,16 @@ Chrome 155（2026-10-06 stable）起，管理员若配置了 `runtime_blocked_ho
 - [ ] `browser.user.claimTab` + `openTabs`
 
 ### M3 — 多 agent 与安全
-- [ ] 会话隔离与标签所有权
-- [ ] 域名白名单 + 敏感操作确认 + 审计轨迹
+- [ ] **L1 传输层**：Origin + Host 双校验、token 握手（≥256 bit）、只绑 127.0.0.1、不踢旧连接、不 kill 端口占用进程
+- [ ] **L3 动作级闸门**（核心差异化）：动作风险三级分级（扩展侧硬编码）、破坏性动作逐次审批、审批 UI 展示人类可读目标描述
+- [ ] `targetDescription` 强制字段（所有 write/destructive 动作）
+- [ ] 会话隔离与标签所有权；显式 `tabId` 路由（对齐 chrome-devtools-mcp `--pageIdRouting` 的做法，优于隐式 current-tab）
+- [ ] session TTL + 后台清理（对齐 browser-use 的 `session_timeout_minutes` + `cleanup_loop`）
+- [ ] tab group 作可视锚点 + `chrome.storage.local` 持久化（对抗 MV3 service worker 被杀）
+- [ ] 扩展内可视授权 UI（按 origin，可撤销）
+- [ ] **无 CDP 降级模式**：`attach()` 被企业策略拒绝时降级到 `chrome.scripting`，并在 capabilities 里如实声明
+- [ ] 敏感字段占位符（`{{secret:name}}`，真实值不进 agent 上下文）
+- [ ] TOCTOU 强校验（`snapshotId` 不匹配即拒绝）
 - [ ] `browserAuth` 能力
 - [ ] MCP 适配器
 
@@ -354,9 +482,15 @@ Chrome 155（2026-10-06 stable）起，管理员若配置了 `runtime_blocked_ho
 - [ ] 检查打包产物无远端 `https://` import（防 `Blue Argon`）
 - [ ] 提交 Chrome Web Store；随后以同套材料提交 Edge Add-ons
 
+### M5 — 生态分发（对齐 open-browser-use 的四件套）
+- [ ] CLI + JS/Python SDK
+- [ ] MCP server（stdio）
+- [ ] agent skill + `AGENTS.md`
+
+
 ---
 
-## 7. 未决问题
+## 8. 未决问题
 
 | # | 问题 | 结论 | 状态 |
 |---|---|---|---|
@@ -381,7 +515,7 @@ Chrome 155（2026-10-06 stable）起，管理员若配置了 `runtime_blocked_ho
 
 ---
 
-## 8. 命名与许可
+## 9. 命名与许可
 
 - 项目名 **BUA**（Browser Use Agent），仓库 `bua`
 - 目标许可：**MIT**（与生态一致，降低采用门槛）

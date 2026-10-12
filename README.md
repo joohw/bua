@@ -6,23 +6,58 @@
 
 ---
 
-## 这是什么
+> Playwright 让你操作「一个浏览器」。BUA 让你操作「用户的**那个**浏览器」。
 
-BUA 是一个 Chrome MV3 扩展 + 本地桥 + 精简 SDK。它把「控制浏览器」做成一个中立、可被任何 agent 复用的能力：
+BUA 是一个 Chrome MV3 扩展 + 本地桥 + 精简 SDK，把「控制浏览器」做成一个中立、可被**任何** agent 复用的能力：DSH、Claude Code、Codex、自研脚本都能连同一个桥。
 
-- **用真实浏览器** —— 真实标签页、真实 Cookie、真实登录态。不需要重新登录，不用过风控
-- **不用重启浏览器** —— 通过扩展内的 `chrome.debugger` 从内部 attach，绕开「Chrome 不允许在默认 profile 上开调试端口」的限制
-- **不绑定任何 Agent** —— DSH、Claude Code、自研脚本都能连同一个桥
-- **API 对齐 Codex** —— 已有的 Codex 浏览器 agent 逻辑可低成本迁移
+- **用真实浏览器** —— 真实标签页、真实 Cookie、真实登录态。不用重新登录，不用过风控
+- **不用重启浏览器** —— 通过扩展内的 `chrome.debugger` 从**内部** attach
+- **不绑定任何 Agent** —— 协议中立，API 形状对齐 Codex 以便迁移
+
+## 为什么需要它
+
+现有的浏览器 agent 方案分三类，各自有一个硬伤：
+
+| 路线 | 代表 | 硬伤 |
+|---|---|---|
+| 独立浏览器自动化 | Playwright / Puppeteer | **没有用户的登录态**。要重新登录、过风控、扫验证码 |
+| 直连 CDP 端口 | `--remote-debugging-port` + Puppeteer | **CDP 端口无认证** —— 本机任意进程连上 `127.0.0.1:<port>` 就等于拿到浏览器完全控制权。且 Chrome 136+ 对默认 user-data-dir **静默失效该端口**，144+ 每次连接都要用户点批准 |
+| 浏览器扩展 | Codex 的 ChatGPT 扩展、Browser MCP | 方案本身对，但要么闭源、要么绑定单一 agent，**且现有的本地桥普遍没有鉴权** |
+
+**BUA 走扩展路线，并且把两个公认的缺口补上。**
+
+### 差异一：零本地端口
+
+扩展通过 `chrome.debugger` 从**内部** attach —— 天然拥有用户真实标签页、Cookie、登录态，**无需重启浏览器**，也**不需要在 `127.0.0.1` 上开任何 CDP 端口**。
+
+这意味着「本机进程连上调试端口即接管浏览器」这个风险面**根本不存在**。
+
+> 注：BUA 自己的桥仍然监听本地端口（扩展要连它），所以 token 鉴权是硬需求 —— 见 §安全。
+
+### 差异二：安全不靠 URL 白名单
+
+竞品调研发现，**URL 级域名白名单不是安全边界**，三方独立承认：
+
+> Chrome 155 官方博客：*"Because CDP operates beneath the web platform's origin model, **origin-based filtering cannot securely restrict it**"*
+
+BUA 因此把真正的闸门放在**扩展侧的动作级分级**：`read` 免审批 / `write` 按 origin 授权 / `destructive`（提交、支付、删除、发送、上传下载）**每次必审批**，且审批 UI 强制展示人类可读的目标描述 —— 因为**坐标无法让人判断风险，描述可以**。
+
+### 差异三：不抢用户进程
+
+调研中发现的行业反面教材：Browser MCP（7.2k★）开 `9009` 端口无任何鉴权，`killProcessOnPort(9009)` 会**强杀用户机器上占用该端口的任意进程**，新连接还会直接踢掉旧连接。
+
+BUA 明确**不做**这三件事（kill 端口占用进程 / 踢旧连接 / 无鉴权）。端口被占用就报错让用户换，多客户端各自独立会话。
 
 ## 状态
 
-🚧 **早期设计阶段（M0 完成）**。API 面已定型，实现未开始。
+🚧 **早期设计阶段（M0 完成）**。API 面已定型，`protocol` 包已实现并测试，扩展与桥未开始。
 
 已完成的可行性验证：
 - ✅ CDP 全链路实测通过（读 DOM / 点击 / 真实鼠标与键盘事件注入 / 截图）
-- ✅ 抠出 OpenAI Codex 浏览器扩展的完整 API 面作为对齐基准（22 接口 / 152 声明 / 67 类型，共 219 条）
-- ✅ 竞品与上架政策调研
+- ✅ 抠出 OpenAI Codex 浏览器扩展的完整 API 面作为对齐基准（22 接口 / 152 声明 / 67 类型，共 219 条，逐条核对一致）
+- ✅ 竞品调研（Playwright MCP / chrome-devtools-mcp / Stagehand / Browser MCP / open-browser-use / WebMCP）
+- ✅ 上架政策调研 —— **结论：`chrome.debugger` 是 Google 官方明文允许的远程执行例外，能过审**
+
 
 ## 文档
 

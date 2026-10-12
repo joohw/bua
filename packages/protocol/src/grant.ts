@@ -3,6 +3,30 @@
  *
  * 一个能读所有标签页并代用户点击的组件，权限等级等同于「遥控浏览器」。
  * 因此授权是**默认拒绝**的，且可限定域名与时限。
+ *
+ * ⚠️ **重要：本模块的 origin 白名单不是安全边界。**
+ *
+ * 三方独立来源都承认 URL 级白名单不可靠：
+ *
+ * - Playwright MCP 官方注释：`--allowed-origins` *"does not serve as a security
+ *   boundary and does not affect redirects"*
+ * - chrome-devtools-mcp 的 `--blockedUrlPattern` 拒绝含 regexp group 的 pattern，
+ *   理由是「在重定向和子资源上无法强制执行」
+ * - Chrome 155 官方博客：*"Because CDP operates beneath the web platform's origin
+ *   model, origin-based filtering cannot securely restrict it"*
+ *
+ * 原因是**结构性的**：CDP 位于 Web 平台 origin 模型**之下**，一旦 attach 成功，
+ * 就能读到该 tab 的一切（含跨域 iframe），并对任意 origin 发起导航。
+ * 白名单只能约束**我们自己代码愿意检查的东西**。
+ *
+ * 因此本模块的定位是：
+ *
+ * - ✅ **用户体验工具**：让 agent 不乱逛，让用户能表达「只准用这几个站」
+ * - ✅ **纵深防御的一层**：提高误操作的门槛
+ * - ❌ **不是安全边界**。真正的闸门在扩展侧的**动作级**校验：
+ *   动作风险分级（read / write / destructive）+ 破坏性动作逐次人工确认。
+ *
+ * 参见 `research/01-competitors.md` §5.2 的 L1/L2/L3 分层建议。
  */
 
 /**
