@@ -14,6 +14,10 @@ out/
 *.pem
 packages/extension/release/
 
+# 演示预览的生成物（HTML 由 scripts/demo-overlay.mjs 生成；
+# 截图单独放 docs/images/ 作为静态说明，不在此忽略）
+packages/extension/dist-demo/
+
 # 运行时产物（桥的 token、blob、日志）
 .bua/
 *.log
