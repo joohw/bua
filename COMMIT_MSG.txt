@@ -1,0 +1,21 @@
+feat(protocol): 协议包 + monorepo 骨架
+
+packages/protocol 是全项目的方法名与类型唯一真源，扩展 / 桥 / SDK 三侧共享，
+避免方法名在三处各写一遍导致漂移。
+
+- methods.ts  100+ 方法名常量；MUTATING_METHODS 标记变更型操作（审计与确认的依据）；
+              METHOD_REQUIRED_GRANT 声明各方法最低授权层级
+- errors.ts   13 个错误码。每个码对应明确的 agent 应对动作（重试 / 换路 /
+              请求授权 / 停止），而不是只给人看的文案
+- grant.ts    授权模型：5 级强度、域名白名单、TTL。origin 比较用 URL.origin
+              归一化，防住后缀伪装 / 前缀伪装 / 内嵌凭据等绕过
+- shapes.ts   线上结构，浏览器类型取值与 Codex 完全一致（extension/cdp/iab/mcpapps）；
+              大对象走 BlobRef 落盘引用而非 base64 内联
+- rpc.ts      JSON-RPC 2.0 子集；刻意不支持批量请求（浏览器操作有强顺序依赖）
+
+测试：19 项全通过，含 4 类 origin 绕过尝试的回归用例。
+
+工程决定：
+- monorepo 用 pnpm workspace（本机 pnpm 10.33.4）
+- 测试用 node:test 纯 ESM，不经编译；包内测试文件是 .mjs，不写 TS 语法
+- tsconfig 开 strict + noUncheckedIndexedAccess + exactOptionalPropertyTypes

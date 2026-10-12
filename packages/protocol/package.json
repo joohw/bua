@@ -1,0 +1,27 @@
+{
+  "name": "@bua/protocol",
+  "version": "0.0.1",
+  "description": "BUA 桥协议的唯一真源：方法名、类型、错误码。扩展、桥、SDK 三侧共享。",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "node --test test/*.test.mjs"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.2"
+  }
+}
