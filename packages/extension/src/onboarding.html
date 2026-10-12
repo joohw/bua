@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BUA — 授权与风险告知</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #1e293b;
+      --line: #334155;
+      --text: #e2e8f0;
+      --dim: #94a3b8;
+      --accent: #3b82f6;
+      --warn: #f59e0b;
+      --danger: #ef4444;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 28px 22px 40px;
+      width: 420px;
+      background: var(--bg);
+      color: var(--text);
+      font: 14px/1.65 ui-sans-serif, -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
+    }
+    h1 { font-size: 17px; margin: 0 0 4px; letter-spacing: .01em; }
+    .sub { color: var(--dim); font-size: 12px; margin-bottom: 20px; }
+    section {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-bottom: 14px;
+    }
+    section h2 {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--dim);
+      margin: 0 0 10px;
+      font-weight: 600;
+    }
+    ul { margin: 0; padding-left: 18px; }
+    li { margin-bottom: 6px; }
+    li:last-child { margin-bottom: 0; }
+    strong { color: #fff; font-weight: 600; }
+    .danger { border-color: rgba(239,68,68,.5); }
+    .danger h2 { color: var(--danger); }
+    .warnbox {
+      background: rgba(245,158,11,.1);
+      border: 1px solid rgba(245,158,11,.4);
+      border-radius: 8px;
+      padding: 10px 12px;
+      color: #fde68a;
+      font-size: 13px;
+      margin-top: 10px;
+    }
+    label.field { display: block; margin-bottom: 12px; }
+    label.field span { display: block; color: var(--dim); font-size: 12px; margin-bottom: 5px; }
+    input[type=number] {
+      width: 100%;
+      padding: 8px 10px;
+      border-radius: 7px;
+      border: 1px solid var(--line);
+      background: #0b1220;
+      color: var(--text);
+      font: 13px/1 ui-monospace, monospace;
+    }
+    .consent {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 13px 15px;
+      margin-bottom: 14px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .consent input { margin-top: 3px; flex: none; width: 16px; height: 16px; accent-color: var(--accent); }
+    .consent span { font-size: 13px; }
+    button {
+      width: 100%;
+      padding: 11px;
+      border: 0;
+      border-radius: 9px;
+      background: var(--accent);
+      color: #fff;
+      font: 600 14px/1 inherit;
+      cursor: pointer;
+    }
+    button:disabled { background: #334155; color: #64748b; cursor: not-allowed; }
+    .status { margin-top: 14px; font-size: 12px; color: var(--dim); text-align: center; min-height: 18px; }
+    .status.ok { color: #4ade80; }
+    .status.err { color: #f87171; }
+    a { color: var(--accent); }
+  </style>
+</head>
+<body>
+  <h1>BUA — Browser Use Agent</h1>
+  <div class="sub">让任意 Agent 操作你的真实浏览器</div>
+
+  <section>
+    <h2>它做什么</h2>
+    <ul>
+      <li>读取你当前标签页的内容（DOM、无障碍树）</li>
+      <li>截图</li>
+      <li>代你点击、输入、滚动、导航</li>
+      <li>在你已有的登录态下操作 —— 不需要重新登录</li>
+    </ul>
+  </section>
+
+  <section class="danger">
+    <h2>⚠ 风险告知 —— 请务必读完</h2>
+    <ul>
+      <li><strong>BUA 不校验调用方身份。</strong>任何能访问本机 <code>127.0.0.1</code> 的程序都可以连接 BUA 桥，并操作你的浏览器。</li>
+      <li>它能读到你的<strong>全部标签页内容</strong>，包括已登录的邮箱、网盘、后台管理系统。</li>
+      <li>它发起的操作<strong>无法撤销</strong> —— 提交表单、支付、删除、发送消息一旦发生就收不回来。</li>
+      <li>本机上的恶意软件本来就拥有你的用户权限；BUA 没有给它新的能力上限，但<strong>降低了门槛</strong> —— 从「解析 Chrome 配置格式」降到「发一条 WebSocket 消息」。</li>
+    </ul>
+    <div class="warnbox">
+      这是刻意的设计取舍：为了「让<strong>任意</strong> Agent 都能用浏览器」，我们没有引入配对凭据。
+      如果你需要隔离，请勿启用，或只在专用机器/专用 profile 上使用。
+    </div>
+  </section>
+
+  <section>
+    <h2>Chrome 的调试横幅</h2>
+    <ul>
+      <li>Agent 操作期间，Chrome 顶部会常驻一条「正在调试此浏览器」横幅。这是 Chrome 的行为，<strong>无法隐藏</strong>。</li>
+      <li><strong>关闭那条横幅会立即终止本次操作会话。</strong></li>
+      <li>BUA 会另外给页面加一圈<strong>蓝色边缘泛光</strong>表示「正在被操作」；降级或出错时变成琥珀色。</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>连接设置</h2>
+    <label class="field">
+      <span>桥端口（由 <code>bua-server</code> 启动时打印）</span>
+      <input id="port" type="number" min="1" max="65535" value="17432">
+    </label>
+    <label class="field">
+      <span>浏览器版本</span>
+      <input id="chromeVersion" type="text" readonly>
+    </label>
+  </section>
+
+  <label class="consent" for="agree">
+    <input id="agree" type="checkbox">
+    <span>我已阅读并理解上述风险。<strong>我知道任何本机程序都能通过 BUA 操作我的浏览器</strong>，并自愿启用。</span>
+  </label>
+
+  <button id="enable" disabled>启用 BUA</button>
+  <div class="status" id="status"></div>
+
+  <script src="onboarding.js"></script>
+</body>
+</html>

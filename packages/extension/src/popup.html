@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <title>BUA 状态</title>
+  <style>
+    :root {
+      --bg: #0f172a; --panel: #1e293b; --line: #334155;
+      --text: #e2e8f0; --dim: #94a3b8;
+      --ok: #4ade80; --warn: #f59e0b; --err: #f87171;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; width: 380px;
+      background: var(--bg); color: var(--text);
+      font: 13px/1.55 ui-sans-serif, -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
+    }
+    header { padding: 12px 14px 10px; border-bottom: 1px solid var(--line); }
+    .row { display: flex; align-items: center; gap: 8px; }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--dim); flex: none; }
+    .dot.on { background: var(--ok); }
+    .dot.off { background: var(--err); }
+    h1 { font-size: 13px; margin: 0; font-weight: 600; }
+    .meta { color: var(--dim); font-size: 11px; margin-top: 5px; font-family: ui-monospace, monospace; }
+    .caps { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+    .cap {
+      font: 500 10px/1 ui-monospace, monospace;
+      padding: 3px 6px; border-radius: 5px;
+      background: #0b1220; border: 1px solid var(--line); color: var(--dim);
+    }
+    .cap.off { color: #64748b; text-decoration: line-through; }
+    .cap.on { color: var(--ok); border-color: rgba(74,222,128,.35); }
+    .warnline {
+      margin-top: 8px; padding: 7px 9px; border-radius: 7px;
+      background: rgba(245,158,11,.12); border: 1px solid rgba(245,158,11,.4);
+      color: #fde68a; font-size: 11px;
+    }
+    main { max-height: 320px; overflow-y: auto; }
+    .empty { padding: 26px 14px; text-align: center; color: var(--dim); font-size: 12px; }
+    ul { list-style: none; margin: 0; padding: 0; }
+    li {
+      padding: 8px 14px; border-bottom: 1px solid rgba(51,65,85,.55);
+      display: flex; gap: 9px; align-items: flex-start;
+    }
+    li:last-child { border-bottom: 0; }
+    .time { color: var(--dim); font: 10px/1.6 ui-monospace, monospace; flex: none; }
+    .body { min-width: 0; flex: 1; }
+    .m { font: 500 11px/1.5 ui-monospace, monospace; word-break: break-all; }
+    .desc { color: var(--dim); font-size: 11px; margin-top: 2px; word-break: break-word; }
+    .badge {
+      flex: none; font: 600 9px/1 ui-sans-serif, sans-serif;
+      padding: 3px 5px; border-radius: 4px; text-transform: uppercase; letter-spacing: .04em;
+    }
+    .badge.read { background: rgba(148,163,184,.18); color: var(--dim); }
+    .badge.write { background: rgba(59,130,246,.2); color: #93c5fd; }
+    .badge.destructive { background: rgba(239,68,68,.2); color: #fca5a5; }
+    .fail { color: var(--err); }
+    footer { padding: 9px 14px; border-top: 1px solid var(--line); display: flex; gap: 8px; }
+    button {
+      flex: 1; padding: 7px; border-radius: 7px; border: 1px solid var(--line);
+      background: #0b1220; color: var(--text); font: 500 12px/1 inherit; cursor: pointer;
+    }
+    button:hover { border-color: #475569; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="row">
+      <span class="dot" id="dot"></span>
+      <h1 id="conn">正在查询…</h1>
+    </div>
+    <div class="meta" id="meta"></div>
+    <div class="caps" id="caps"></div>
+    <div class="warnline" id="warn" style="display:none"></div>
+  </header>
+
+  <main>
+    <div class="empty" id="empty">还没有操作记录</div>
+    <ul id="log"></ul>
+  </main>
+
+  <footer>
+    <button id="openOnboarding">设置</button>
+    <button id="clear">清空流水</button>
+  </footer>
+
+  <script src="popup.js"></script>
+</body>
+</html>
