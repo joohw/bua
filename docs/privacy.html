@@ -202,55 +202,22 @@
     <li><strong>不将用户数据用于判定信用状况或放贷用途</strong></li>
   </ul>
 
-  <h2><span class="num">8</span>Chrome Web Store 用户数据政策合规声明</h2>
-  <div class="callout ok">
-    <p>
-      The use of information received from Google APIs will adhere to the Chrome Web Store
-      User Data Policy, including the Limited Use requirements.
-    </p>
-  </div>
-
-  <h3>关于远程代码申报的说明</h3>
-  <p>
-    本扩展在商店的 Privacy 面板中<strong>如实申报了「使用远程代码」</strong>。这里解释清楚它指的是什么，
-    以免与隐私问题混淆：
-  </p>
-  <ul>
-    <li>
-      <strong>扩展包内没有任何远程代码。</strong>没有远端 <code>&lt;script&gt;</code>、
-      没有 <code>eval()</code>、没有 <code>new Function()</code>、没有远端 <code>import</code>。
-    </li>
-    <li>
-      申报的原因是：扩展使用 <code>chrome.debugger</code> API 来执行本机程序下发的浏览器操作指令。
-      Chrome 官方在 Manifest V3 要求中把 <strong>Debugger API 与 User Scripts API 列为允许远程执行的
-      两个例外</strong>，并要求使用者必须申报。
-    </li>
-    <li>
-      <strong>这与隐私无关</strong>：所有指令都来自本机，扩展不接收任何来自网络的内容，
-      也不向外发送任何内容。
-    </li>
-  </ul>
-  <p>
-    官方依据：<a href="https://developer.chrome.com/docs/webstore/program-policies/mv3-requirements">Additional
-    Requirements for Manifest V3</a>。
-  </p>
-
-  <h2><span class="num">9</span>儿童隐私</h2>
+  <h2><span class="num">8</span>儿童隐私</h2>
   <p>本扩展不面向 13 岁以下儿童，也不会有意收集儿童的任何信息。</p>
 
-  <h2><span class="num">10</span>政策变更</h2>
+  <h2><span class="num">9</span>政策变更</h2>
   <p>
     若本政策有实质变更，我们会更新本文档顶部的日期，并在扩展的更新说明中告知。
     由于本扩展不收集任何数据，预期不会出现需要用户重新同意的变更。
   </p>
 
-  <h2><span class="num">11</span>联系方式</h2>
+  <h2><span class="num">10</span>联系方式</h2>
   <ul>
     <li>问题与反馈：<a href="https://github.com/joohw/bua">github.com/joohw/bua</a></li>
     <li>源码（MIT 许可，欢迎审计）：<a href="https://github.com/joohw/bua">github.com/joohw/bua</a></li>
   </ul>
 
-  <h2><span class="num">12</span>如何自行验证本政策</h2>
+  <h2><span class="num">11</span>如何自行验证本政策</h2>
   <p>我们鼓励你不信任任何隐私声明，而是自己验证：</p>
   <ol>
     <li>打开 <code>chrome://extensions</code>，找到 BUA，点击「详情」</li>
