@@ -119,6 +119,26 @@ const cdp = await tab.capabilities.get("cdp");
 await cdp.send("Network.enable");
 ```
 
+## 边缘泛光
+
+扩展不做侧边栏。当某个标签处于 agent 控制下时，页面四周会亮起一圈**边缘泛光** —— 一个不占页面面积、不拦截点击的氛围信号。
+
+| 状态 | 外观 |
+|---|---|
+| `active` | 蓝色脉动 + 底部「BUA 正在操作」 |
+| `degraded` | **琥珀色** + 警示行（例如企业策略拒绝 CDP，已降级） |
+| `paused` | 中性灰，不脉动 |
+
+![active 状态：蓝色泛光](docs/images/edge-glow-active.png)
+
+![degraded 状态：琥珀泛光 + 警示行](docs/images/edge-glow-degraded.png)
+
+**为什么需要它**：Chrome 的调试横幅是 Chrome 的，无法隐藏，而且**用户一关就终止会话**。泛光是 BUA 自己的，能在横幅之外独立表达状态 —— 尤其是「已降级，CDP 不可用」这种横幅不会告诉你的事。
+
+实现要点：注入用 `closed` Shadow DOM，页面 CSS 影响不到它、它也影响不到页面；`pointer-events: none` 保证不挡任何点击；泛光由三层 inset 加一层外溢 box-shadow 构成，让光晕溢出视口边缘；用 `Page.addScriptToEvaluateOnNewDocument` 注册，因此**导航后自动恢复**。
+
+完整操作流水不在页面上，而在工具栏弹窗里按需查看。
+
 ## 安全模型：本机即信任
 
 > **⚠️ BUA 不做鉴权。任何能访问本机回环地址的进程都能驱动你的浏览器。**
