@@ -6,8 +6,20 @@
 |---|---|
 | [listing.md](listing.md) | 商店列表文案（名称、简介、详细描述、分类） |
 | [justifications.md](justifications.md) | Dashboard 逐项填写内容：权限理由、远程代码申报、单用途说明 |
-| [privacy-policy.md](privacy-policy.md) | 隐私政策（需托管在可公开访问的 URL） |
+| [privacy-policy.md](privacy-policy.md) | 隐私政策（markdown 源） |
 | [submission-checklist.md](submission-checklist.md) | 人工提交步骤清单 |
+
+## 隐私政策已托管 ✅
+
+Dashboard 要求一个**可公开访问的 URL**（不接受文件上传）。已经做好并部署：
+
+```
+https://joohw.github.io/bua/privacy.html
+```
+
+- 自包含 HTML，审核员打开即完整渲染，**不依赖任何外部资源**
+- 源文件 [`docs/privacy.html`](../../../docs/privacy.html)，`docs/index.html` 是入口页
+- 改内容 → edit → commit → push → GitHub Pages 约 40 秒自动重建
 
 ## 自动化的部分
 

@@ -122,3 +122,15 @@ BUA 的职责边界很清楚：它只把浏览器操作能力提供给本机程�
 4. 切到 Network 标签 —— 你会看到**没有任何网络请求**
 5. 阅读源码：`packages/extension/src/background.ts` 中唯一的 socket 是
    `ws://127.0.0.1:<本地端口>`
+
+---
+
+## 附：关于远程代码申报
+
+本扩展在商店 Privacy 面板中**如实申报了「使用远程代码」**。这里解释清楚它指的是什么，以免与隐私问题混淆：
+
+- **扩展包内没有任何远程代码。** 没有远端 `<script>`、没有 `eval()`、没有 `new Function()`、没有远端 `import`。
+- 申报的原因是：扩展使用 `chrome.debugger` API 执行本机程序下发的浏览器操作指令。Chrome 官方在 Manifest V3 要求中把 **Debugger API 与 User Scripts API 列为允许远程执行的两个例外**，并要求使用者必须申报。
+- **这与隐私无关**：所有指令都来自本机，扩展不接收任何来自网络的内容，也不向外发送任何内容。
+
+官方依据：[Additional Requirements for Manifest V3](https://developer.chrome.com/docs/webstore/program-policies/mv3-requirements)

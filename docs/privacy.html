@@ -226,6 +226,31 @@
     </p>
   </div>
 
+  <h3>关于远程代码申报的说明</h3>
+  <p>
+    本扩展在商店的 Privacy 面板中<strong>如实申报了「使用远程代码」</strong>。这里解释清楚它指的是什么，
+    以免与隐私问题混淆：
+  </p>
+  <ul>
+    <li>
+      <strong>扩展包内没有任何远程代码。</strong>没有远端 <code>&lt;script&gt;</code>、
+      没有 <code>eval()</code>、没有 <code>new Function()</code>、没有远端 <code>import</code>。
+    </li>
+    <li>
+      申报的原因是：扩展使用 <code>chrome.debugger</code> API 来执行本机程序下发的浏览器操作指令。
+      Chrome 官方在 Manifest V3 要求中把 <strong>Debugger API 与 User Scripts API 列为允许远程执行的
+      两个例外</strong>，并要求使用者必须申报。
+    </li>
+    <li>
+      <strong>这与隐私无关</strong>：所有指令都来自本机，扩展不接收任何来自网络的内容，
+      也不向外发送任何内容。
+    </li>
+  </ul>
+  <p>
+    官方依据：<a href="https://developer.chrome.com/docs/webstore/program-policies/mv3-requirements">Additional
+    Requirements for Manifest V3</a>。
+  </p>
+
   <h2><span class="num">9</span>儿童隐私</h2>
   <p>本扩展不面向 13 岁以下儿童，也不会有意收集儿童的任何信息。</p>
 

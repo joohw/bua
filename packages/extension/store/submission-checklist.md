@@ -123,12 +123,18 @@ node ../server/dist/cli.js --port 17432
 
 ### 4.5 Privacy policy URL
 
-- [ ] 把 [privacy-policy.md](privacy-policy.md) 托管到可公开访问的 URL
+- [x] **已托管** —— 页面已做好并部署到 GitHub Pages：
 
-  最快的方式：把文件内容贴到 GitHub 仓库的一个公开页面，或用 GitHub Pages。
-  例如 `https://github.com/joohw/bua/blob/main/packages/extension/store/privacy-policy.md`
+  ```
+  https://joohw.github.io/bua/privacy.html
+  ```
 
-- [ ] 填入该 URL
+  直接把这一行填进 Dashboard 的 Privacy policy URL 字段。
+
+  页面是**自包含 HTML**（内联样式、无外部资源、含深色模式），审核员打开即完整渲染，
+  不依赖任何网络资源。源码在 [`docs/privacy.html`](../../../docs/privacy.html)。
+
+  若要改内容：编辑 `docs/privacy.html` → commit → push → Pages 约 40 秒后自动重建。
 
 > ⚠️ **三方一致性**：隐私政策文本、Dashboard 勾选、代码实际行为必须一致。
 > 官方明确三者不一致可能导致**整个发布者账号被封**，不只是这一个扩展下架。
