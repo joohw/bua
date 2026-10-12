@@ -27,6 +27,12 @@ export interface RpcSuccess<R = unknown> {
   result: R;
 }
 
+/**
+ * 错误响应。
+ *
+ * `id` 允许 `null` —— JSON-RPC 2.0 规定：解析失败或无法确定请求 id 时用 `null`。
+ * 这是它与其他帧类型的关键区别，所以单独声明而不是复用 `RpcRequest['id']`。
+ */
 export interface RpcError {
   jsonrpc: '2.0';
   id: number | string | null;
@@ -39,6 +45,15 @@ export interface RpcError {
 }
 
 export type RpcMessage<R = unknown> = RpcRequest | RpcSuccess<R> | RpcError | RpcNotification;
+
+/**
+ * 把未知来源的 id 收窄为合法的 JSON-RPC id。
+ * 非法值（对象、数组、boolean、undefined）一律返回 `null`。
+ */
+export function normalizeRpcId(raw: unknown): number | string | null {
+  if (typeof raw === 'string' || typeof raw === 'number') return raw;
+  return null;
+}
 
 /** JSON-RPC 标准错误码。 */
 export const RPC_ERROR_CODES = {

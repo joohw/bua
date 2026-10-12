@@ -1,0 +1,36 @@
+{
+  "name": "@bua/server",
+  "version": "0.0.1",
+  "description": "BUA 本地桥：WebSocket 路由 + Host 校验 + 审计点。不做鉴权（见 docs/design.md §4.0）。",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "bua-server": "./dist/cli.js"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "node --test --test-concurrency=1 --test-timeout=20000 test/*.test.mjs",
+    "start": "node dist/cli.js"
+  },
+  "dependencies": {
+    "@bua/protocol": "workspace:*",
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "@types/ws": "^8.5.13",
+    "typescript": "^5.7.2"
+  }
+}
