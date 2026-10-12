@@ -18,11 +18,40 @@ node scripts/pack.mjs          # 生成 zip + SHA256
 产出：
 
 ```
-packages/extension/release/bua-extension-v0.1.0.zip
+packages/extension/release/bua-extension-v0.1.0.zip          ← 上传这个
 packages/extension/release/bua-extension-v0.1.0.zip.sha256
 ```
 
-✅ 当前状态：自检 **10 项全过**，zip 已生成并验证可被标准工具解压。
+绝对路径：
+
+```
+D:\bua\packages\extension\release\bua-extension-v0.1.0.zip
+```
+
+也发布在 GitHub Release 上（含校验和，GitHub 侧独立计算过）：
+
+```
+https://github.com/joohw/bua/releases/download/dsh-v0.1.0/bua-extension-v0.1.0.zip
+```
+
+### ⚠️ 只上传 zip，不要用 crx
+
+Chrome Web Store 的 Developer Dashboard **只接受 `.zip`**。
+
+`.crx` 是 Chrome 本地打包时的签名产物（在 `chrome://extensions` 点「打包扩展程序」会生成），
+它是给**侧载**用的，**不是**商店提交格式。若拿 crx 去上传会直接报错。
+
+当前 zip：
+
+```
+SHA256  e2daee5a25a0ac01035f8cf358923b077162bc2c94f036d8e3156f92307bdcef
+大小    32.5 KB / 10 条目
+```
+
+打包是**可复现**的（条目排序 + 固定时间戳），所以同样源码重新打包会得到逐字节相同的 zip
+—— 这个哈希因此有核对意义。
+
+✅ 当前状态：自检 **10 项全过**，zip 已生成、已验证可被标准工具解压、哈希已核对。
 
 **上传前请重新跑一次 `preflight.mjs`** —— 它的每一项都对应一条官方政策，任何一项变红都不要提交。
 

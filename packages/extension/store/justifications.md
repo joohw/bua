@@ -162,7 +162,8 @@ GitHub Pages 或项目仓库的公开页面，然后填入该 URL。
 | Category | Developer Tools |
 | Language | 中文（简体）+ English |
 | Homepage URL | `https://github.com/joohw/bua` |
-| Support URL | `https://github.com/joohw/bua/issues`（若开启）或 Discussions |
+| Support URL | `https://github.com/joohw/bua/issues` ✅ Issues 已开启 |
+| Privacy policy URL | `https://joohw.github.io/bua/privacy.html` ✅ 已托管 |
 
 ---
 
