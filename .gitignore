@@ -1,0 +1,35 @@
+# 依赖
+node_modules/
+.pnpm-store/
+
+# 构建产物
+dist/
+build/
+out/
+*.tsbuildinfo
+
+# 扩展打包
+*.zip
+*.crx
+*.pem
+packages/extension/release/
+
+# 运行时产物（桥的 token、blob、日志）
+.bua/
+*.log
+
+# 编辑器 / 系统
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# 测试与覆盖率
+coverage/
+.nyc_output/
+
+# 环境变量（可能含凭据）
+.env
+.env.local
+.env.*.local

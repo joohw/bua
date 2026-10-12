@@ -1,0 +1,119 @@
+Chrome extensions enhance the user's browser experience. To do this extensions use [Chrome
+APIs](https://developer.chrome.com/docs/extensions/reference/api) that require certain permissions. Some permissions are less intrusive and don't
+display a warning. Other permissions trigger a warning that users have to allow. This page
+provides guidelines for working with permission warnings. Specific warnings are noted in the
+[Permissions](https://developer.chrome.com/docs/extensions/reference/permissions-list) under the permission to which
+they apply.
+![Example of permission warnings are displayed when the user adds a new extension](https://developer.chrome.com/static/docs/extensions/develop/concepts/permission-warnings/image/example-permission-warni-8d794fb2f9274.png) **Figure 1**: Permission warnings dialog displayed on installation.
+
+When a new permission that [triggers a warning](https://developer.chrome.com/docs/extensions/reference/permissions-list) is added, the extension
+will be disabled until the user accepts the new permission. See [Updating permissions](https://developer.chrome.com/docs/extensions/develop/concepts/permission-warnings#update_permissions) to learn how to test this behavior.
+![Example of an extension that is disabled until the user accepts the new permission.](https://developer.chrome.com/static/docs/extensions/develop/concepts/permission-warnings/image/example-an-extension-is-6772580db51de.gif) **Figure 2**: An extension that is disabled until the user accepts the new permission.
+
+Some permissions may not display warnings when paired
+with other permissions. For example, the `"tabs"` warning won't show if the extension also
+requests `"<all_urls>"`.
+
+## Best practices
+
+Permission warnings describe the capabilities an API grants, but some warnings are
+harder to understand than others. Users are more likely to install extensions that follow these
+guidelines:
+
+Request relevant permissions
+:   Extensions are required to fulfill a [single purpose](https://developer.chrome.com/docs/webstore/program-policies/quality-guidelines-faq) and
+    comply with the [Use of permissions](https://developer.chrome.com/docs/webstore/program-policies/permissions) policy. Ensure you only
+    request permissions that support the extension's main functionality.
+
+Use optional permissions
+:   Improve the onboarding experience by requesting permissions at runtime. This lets you provide more context
+    around a particular permission and lets users choose which features they want to enable. See
+    [Permissions API](https://developer.chrome.com/docs/extensions/reference/api/permissions#step-2-declare-optional-permissions-in-the-manifest) for implementation details.
+
+Use the "activeTab" permission
+:   This permission does ***not*** display a permission warning. It grants temporary host permission to
+    the site the user is on. For details, see [Understanding the activeTab
+    permission](https://developer.chrome.com/docs/extensions/develop/concepts/activeTab).
+
+## View warnings
+
+To view an extension's permission warnings, you have the following options:
+
+### Use the Extension Update Testing Tool
+
+**Before you begin**
+
+1. Install [Node.js](https://nodejs.org/) and NPM.
+2. Install [Chromium](https://download-chromium.appspot.com/).
+3. Clone the [extension-update-testing-tool](https://github.com/GoogleChromeLabs/extension-update-testing-tool) repository.
+4. Run `npm install` in the root of the repository.
+
+**Using the tool**
+
+1. Run `npm start`.
+2. Open the local server at http://localhost:8080 in Chromium.
+3. Drag an unpacked extension (folder or .zip file) to the page.
+4. Follow the instructions under "Install manually" to download and install the extension.
+
+### By manually packing the extension
+
+1. Navigate to `chrome://extensions`
+2. Enable developer mode
+3. Click **Pack Extension** . ![Pack extension](https://developer.chrome.com/static/docs/extensions/develop/concepts/permission-warnings/image/pack-extension-df1f870d645db.png) **Figure 3**: Developer mode enabled in the Extension management page
+4. Specify the path to the extension's folder in the extension root directory field. Ignore the **Private key** field for a first-time package.
+5. Click the **Pack Extension** button.
+
+   ![Specify Extension Path then Click Pack Extension](https://developer.chrome.com/static/docs/extensions/develop/concepts/permission-warnings/image/specify-extension-path-c-62570bae0e088.png) **Figure 4**: Specifying Extension Path
+6. Chrome will create two files, a `.crx` file and a `.pem` file. The `.pem` file contains the private key used to sign the extension. Make sure you remember which directory these files were saved.
+
+   ![Packaged Extension Files](https://developer.chrome.com/static/docs/extensions/develop/concepts/permission-warnings/image/packaged-extension-files-8ee46e251cdb1.png) **Figure 5**: Packaged Extension Files
+7. Keep the `.pem` file in a secret and secure place; it will be needed to [update](https://developer.chrome.com/docs/extensions/develop/concepts/permission-warnings#update_permissions) the extension.
+
+8. Install the `.crx` file by dropping it into the Extension's Management page.
+
+   ![Drop File to Install](https://developer.chrome.com/static/docs/extensions/develop/concepts/permission-warnings/image/drop-file-install-ffe6ededa6892.png) **Figure 6**: Drop file to install
+9. After dropping the `.crx` file the browser will ask if the extension can be added and display warnings.
+
+   ![Warning for New Tab Extension](https://developer.chrome.com/static/docs/extensions/develop/concepts/permission-warnings/image/warning-new-tab-extensio-6c873249727f4.png) **Figure 7**: Warning for New Tab extension
+
+## Update permissions
+
+When an extension adds a new permission that [triggers a warning](https://developer.chrome.com/docs/extensions/reference/permissions-list) it may
+temporarily disable it. The extension will be re-enabled only after the user agrees to accept the
+new permission.
+
+To check if your extension will be disabled when adding a new permission, you have the following options:
+
+### Update using the Extension Update Testing Tool
+
+These steps assume you followed the [Using the Extension Update Testing Tool](https://developer.chrome.com/docs/extensions/develop/concepts/permission-warnings#view-tool) instructions to start the server.
+
+**Using the tool**
+
+1. Add a new [permission with warning](https://developer.chrome.com/docs/extensions/develop/concepts/permission-warnings#view_warnings).
+2. Increase the extension [version number](https://developer.chrome.com/docs/extensions/reference/manifest/version).
+3. Drag the unpacked extension (folder or .zip file) to the page.
+4. Go to `chrome://extensions`.
+5. Click the **Update** button.
+
+### Update your extension manually
+
+1. Find the `.crx` file you just created in [View Warnings](https://developer.chrome.com/docs/extensions/develop/concepts/permission-warnings#view_warnings).
+2. Rename it or delete it.
+3. Open your `manifest.json` and add any [permission that triggers a warning](https://developer.chrome.com/docs/extensions/develop/concepts/permission-warnings#permissions_with_warnings).
+4. Go to `chrome://extensions`. **Do not remove the previously installed package**.
+5. Pack the extension again, but this time add the pem file in the second input. ![Pem file added when packing extension](https://developer.chrome.com/static/docs/extensions/develop/concepts/permission-warnings/image/pem-file-added-packing-e-8eeca829dd73.png) **Figure 8**: Packing extension dialog with pem file included.
+6. Drag the new packaged extension to the Extension Management page.
+7. You will see a dialog that prompts the user to accept the new permissions.
+
+   ![Extension has been disabled](https://developer.chrome.com/static/docs/extensions/develop/concepts/permission-warnings/image/extension-has-been-disabl-83cf9ee73533c.png)
+
+   <br />
+
+   <br />
+
+   **Figure 9**: Disabled extension warning
+
+   <br />
+
+   ![Agree to permissions](https://developer.chrome.com/static/docs/extensions/develop/concepts/permission-warnings/image/agree-permissions-cba597155d46c.png) **Figure 10**: Requesting new permission dialog

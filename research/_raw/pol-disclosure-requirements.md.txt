@@ -1,0 +1,11 @@
+[View single page version](https://developer.chrome.com/docs/webstore/program-policies/policies#disclosure_requirements)
+
+1. You must be transparent in how you handle user data (for example, information provided by a user or collected about a user or a user's use of the Product or Chrome browser), including by disclosing the collection, use, and sharing of the data.
+
+2. If your Product handles any user data, then prior to installation, it must:
+
+   1. Prominently disclose what user data will be collected and how it will be used.
+
+   2. Obtain the user's affirmative and informed consent for such use.
+
+3. If an extension introduces different user data practices after installation, the extension must prominently disclose data practice changes.

@@ -1,0 +1,79 @@
+Published: September 8, 2026, Last updated: September 16, 2026
+
+<br />
+
+Starting in Chrome 155, Chrome updates how enterprise policy restrictions apply to extensions using the [`chrome.debugger`](https://developer.chrome.com/docs/extensions/reference/api/debugger) API.
+
+This change only affects extensions running on managed browsers where an administrator has explicitly configured [`runtime_blocked_hosts`](https://support.google.com/chrome/a/answer/9867568?p=Configure_ExtensionSettings_policy), [`DisableScreenshots`](https://chromeenterprise.google/policies/#DisableScreenshots), or Data Loss Prevention (DLP) rules.
+
+If an extension runs on an unmanaged browser, or in an enterprise environment without these specific policy restrictions, [`chrome.debugger`](https://developer.chrome.com/docs/extensions/reference/api/debugger) continues to operate normally with no changes.
+
+## Timeline and rollout
+
+- **Chrome 155 Beta:** September 16, 2026
+- **Chrome 155 Stable Rollout:** October 6, 2026
+
+## Key changes in Chrome 155
+
+The following changes only affect enterprise managed browsers:
+
+- **Host restrictions:** If an enterprise policy ([`ExtensionSettings`](https://support.google.com/chrome/a/answer/9867568?p=Configure_ExtensionSettings_policy)) configures non-empty blocked hosts list ([`runtime_blocked_hosts`](https://support.google.com/chrome/a/answer/9867568?p=Configure_ExtensionSettings_policy)) for an extension, [`chrome.debugger.attach()`](https://developer.chrome.com/docs/extensions/reference/api/debugger#method-attach) is rejected on all targets with:
+
+  > `"Host access is restricted by policy."`
+
+  This is the case even if specific origins are included in `runtime_allowed_hosts`.
+- **Screenshot and DLP restrictions:** If screenshot capture is disabled by an enterprise policy ([`DisableScreenshots`](https://chromeenterprise.google/policies/#DisableScreenshots) or Data Loss Prevention (DLP) rules), [`chrome.debugger.attach()`](https://developer.chrome.com/docs/extensions/reference/api/debugger#method-attach) fails with:
+
+  > `"Screenshot capture is restricted by policy."`
+
+Personal profiles and unmanaged environments continue to have unrestricted [`chrome.debugger`](https://developer.chrome.com/docs/extensions/reference/api/debugger) access as before.
+
+The [`chrome.debugger`](https://developer.chrome.com/docs/extensions/reference/api/debugger) API grants direct Chrome DevTools Protocol (CDP) access for powerful capabilities, including arbitrary script evaluation and network interception. Because CDP operates beneath the web platform's origin model, origin-based filtering cannot securely restrict it so Chrome 155 resolves this with an *all-or-nothing* model, validating enterprise policies upfront on [`chrome.debugger.attach()`](https://developer.chrome.com/docs/extensions/reference/api/debugger#method-attach) call.
+
+## Recommended developer actions
+
+### Handle attach rejections gracefully
+
+Always handle attach rejections in your extension code to give clear feedback to enterprise users:
+
+    // Promise-based (Manifest V3)
+    try {
+      await chrome.debugger.attach({ tabId }, "1.3");
+    } catch (error) {
+      if (error.message.includes("Host access is restricted by policy")) {
+        console.warn("Debugger attach blocked: Extension has host restrictions configured by enterprise policy.");
+      } else if (error.message.includes("Screenshot capture is restricted by policy")) {
+        console.warn("Debugger attach blocked: Screenshots or DLP restrictions are enforced by enterprise policy.");
+      } else {
+        console.warn("Debugger attach failed:", error.message);
+      }
+    }
+
+    // Callback-based
+    chrome.debugger.attach({ tabId }, "1.3", () => {
+      if (chrome.runtime.lastError) {
+        console.warn("Debugger attach failed:", chrome.runtime.lastError.message);
+      }
+    });
+
+### Consider alternative high-level APIs
+
+If your extension does not strictly require direct CDP access, evaluate migrating to higher-level extension APIs that support granular host permissions and work alongside enterprise host allowlists and blocklists:
+
+- Use the [`chrome.scripting`](https://developer.chrome.com/docs/extensions/reference/api/scripting) API to execute scripts and insert styles into allowed pages.
+- Use the [`chrome.declarativeNetRequest`](https://developer.chrome.com/docs/extensions/reference/api/declarativeNetRequest) API to inspect, modify, or block network requests declaratively.
+- Use the [`chrome.cookies`](https://developer.chrome.com/docs/extensions/reference/api/cookies) API with standard host permissions.
+
+## Guidance for enterprise administrators
+
+Enterprise administrators managing extension policies should note that extensions requiring the debugger permission cannot operate with partial host restrictions (`runtime_blocked_hosts`). If an extension needs `chrome.debugger`, it must not have blocked hosts configured in [`ExtensionSettings`](https://support.google.com/chrome/a/answer/9867568?p=Configure_ExtensionSettings_policy).
+
+If screenshot capture is disabled using [`DisableScreenshots`](https://chromeenterprise.google/policies/#DisableScreenshots) or Data Loss Prevention (DLP) rules, [`chrome.debugger.attach()`](https://developer.chrome.com/docs/extensions/reference/api/debugger#method-attach) will fail.
+
+Organizations requiring host blocklists or screenshot restrictions should verify whether their internal or approved extensions can migrate to higher-level APIs such as `chrome.scripting` or `chrome.declarativeNetRequest`.
+
+If additional time is needed to migrate affected extensions, administrators can temporarily revert to the pre-Chrome 155 behavior by launching Chrome with the `--disable-features=ExtensionDebuggerStrictPolicyRestrictions` command-line flag. Note that this is a temporary workaround and the flag will be removed in Chrome 160.
+
+## Share feedback
+
+For more details, refer to the [`chrome.debugger` API documentation](https://developer.chrome.com/docs/extensions/reference/api/debugger). If you have questions or feedback, reach out on the [Chromium Extensions Google Group](https://groups.google.com/a/chromium.org/g/chromium-extensions).

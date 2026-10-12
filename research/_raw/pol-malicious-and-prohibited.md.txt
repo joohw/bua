@@ -1,0 +1,13 @@
+[View single page version](https://developer.chrome.com/docs/webstore/program-policies/policies#malicious_and_prohibited_products)
+
+1. Don't transmit viruses, worms, defects, Trojan horses, malware, or any other products of a destructive nature.
+
+2. We don't allow content that harms or interferes with the operation of the networks, servers, or other infrastructure of Google or any third-parties.
+
+3. Spyware, malicious scripts, and phishing scams are also prohibited in the Chrome Web Store.
+
+4. Do not facilitate unauthorized access to content on websites, such as circumventing paywalls or login restrictions.
+
+5. Do not encourage, facilitate, or enable the unauthorized access, download, or streaming of copyrighted content or media.
+
+6. We do not allow the mining of cryptocurrency.

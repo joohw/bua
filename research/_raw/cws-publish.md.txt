@@ -1,0 +1,86 @@
+After [registering](https://developer.chrome.com/docs/webstore/register) your developer account, [setting it up](https://developer.chrome.com/docs/webstore/set-up-account), and [preparing your extension](https://developer.chrome.com/docs/webstore/prepare) follow the steps in this article to publish your extension for the first time.
+
+## Upload your item
+
+Use the following steps to upload your item:
+
+1. Go to the [Chrome Developer Dashboard](https://chrome.google.com/webstore/devconsole).
+2. Sign in to the developer account.
+3. Click the **Add new item** button.
+4. Click **Choose file** \> your zip file \> **Upload**. If your item's manifest and ZIP file are valid, you can edit your item on the next page.
+
+> [!NOTE]
+> **Note:** The maximum supported file size for an extension package is 2GB. Zip files larger than 2GB will be rejected.
+
+Once you've uploaded your extension, you will see it as an item in the dashboard.
+![Screenshot of the Developer dashboard item listing page](https://developer.chrome.com/static/docs/webstore/publish/image/screenshot-the-developer-2fe78ffff11be.png) Developer dashboard item listing page
+
+### Item limits
+
+When you first create your publisher in the Chrome Web Store, you will be
+limited to a maximum of two published extensions. You can see your current limit
+in the Developer Dashboard.
+
+If you have reached the limit, you will be given the option to request an
+increase. In most cases, you will receive an immediate decision based on a
+number of criteria. If you are asked to submit a support case, you can expect to
+hear back from us within a few days.
+
+If your item doesn't qualify for an increase, this may be for reasons including:
+
+- Your currently published extensions need higher sustained engagement.
+- Your publisher account does not currently meet our tenure and activity requirements.
+
+You will be told the reasoning behind the decision made for your item if your
+request is denied.
+
+This limit does not apply to themes.
+
+## Fill out information about your item
+
+Now you can fill out additional listing details in the left-hand menu. Here is a quick summary of the information you will need to fill out on each of these tabs. The links provided include detailed instructions on how to fill out each section.
+
+- The Package tab displays details of your uploaded item. This page isn't editable when you first create an item.
+- The [Store Listing](https://developer.chrome.com/docs/webstore/cws-dashboard-listing) tab contains details of your listing and how it will be displayed in the Chrome Web Store.
+- The [Privacy](https://developer.chrome.com/docs/webstore/cws-dashboard-privacy) tab is where you declare your extension's single purpose and how your extension is handling user data.
+- The [Distribution](https://developer.chrome.com/docs/webstore/cws-dashboard-distribution) tab lets declare if your extension is a paid item, which countries will list your item and the set of users that will see it.
+- The [Test instructions](https://developer.chrome.com/docs/webstore/cws-dashboard-test-instructions) tab lets you provide instructions and credentials for testing your item, only if needed.
+
+## Submit your item
+
+After [filling out the information](https://developer.chrome.com/docs/webstore/publish#info) about your item, you are ready to submit your item. When you click the **Submit for Review** button the following dialog appears, letting you confirm that you want to submit the item for review.
+![Screenshot of the Chrome Web Store confirm submission dialog](https://developer.chrome.com/static/docs/webstore/publish/image/screenshot-the-chrome-we-a71875bd5198b.png) Screenshot of the Chrome Web Store confirm submission dialog
+
+### Deferred publishing option
+
+The confirmation dialog shown above also lets you control the timing of your item's publishing. If
+you uncheck the checkbox, your item will **not** be published immediately after its review is
+complete. Instead, you'll be able to manually publish it at a time of your choosing once the review
+is complete.
+
+If you submit your item to publish automatically after review, you can still choose deferred publishing by selecting the **Defer publish** action located in the item's menu.
+![Screenshot showing the 'more' menu's defer publish action](https://developer.chrome.com/static/docs/webstore/publish/image/screenshot-showing-more-2f4e2939c23d2.png) Deferred publishing action in the items menu
+
+If you discovered an error or bug after submitting an update, you may want to
+use [cancel review](https://developer.chrome.com/docs/webstore/cancel-review) instead so you can immediately upload an
+updated package and then submit the item.
+
+> [!IMPORTANT]
+> **Key point:** Once the review is complete, you will have up to **30 days** to publish. After that period expires, the staged submission will revert to a draft which will have to be submitted again for review.
+
+You can check when your staged submission will expire under the status of your item.
+![Chrome Web Store staged item status](https://developer.chrome.com/static/docs/webstore/publish/image/chrome-web-store-staged-i-a17c1c8134135.png) Chrome Web Store staged item status
+
+## The review process
+
+After you submit the item for review, it will undergo a review process. The time for this review depends on the nature of your item. See [Understanding the review process](https://developer.chrome.com/docs/webstore/review-process) for more details.
+
+There are important emails like take down or rejection notifications that are enabled by default. To receive an email notification when your item is published or staged, you can enable notifications on the **Account page**.
+
+![Screenshot of enable
+staged and reviewed items](https://developer.chrome.com/static/docs/webstore/publish/image/screenshot-enable-staged-588c4d00db8a6.png)
+
+## Additional resources
+
+- [Update your Chrome Web Store Item](https://developer.chrome.com/docs/webstore/update).
+- Understand the [Chrome Web Store Review Process](https://developer.chrome.com/docs/webstore/review-process).

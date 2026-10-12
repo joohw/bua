@@ -1,0 +1,1962 @@
+<!DOCTYPE html>
+
+<html data-locale="zh_cn" lang="zh">
+<head>
+<meta charset="utf-8"/>
+<meta name="hide_page_heading" value="true">
+<meta name="hide_ratings_widget" value="true"/>
+<meta name="full_width" value="true"/>
+<meta name="page_type" value="marketing"/>
+<meta content="gwHFvn8KvnGBckW4HT6zBS68-ToiJWaWRzxZapEjYAw" name="google-site-verification"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<link crossorigin="" href="https://www.google-analytics.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link crossorigin="" href="https://www.gstatic.com" rel="preconnect"/>
+<link crossorigin="" href="https://versionhistory.appspot.com" rel="preconnect"/>
+<link crossorigin="" href="https://www.googletagmanager.com" rel="preconnect"/>
+<title>Chrome 企业版政策列表和管理功能 | 文档</title>
+<meta content="供企业和单位用于管理 Chrome 浏览器和 Chrome 操作系统的 Chrome 企业版政策。" name="description"/>
+<meta content="Chrome 企业版政策列表和管理功能 | 文档" property="og:title"/>
+<meta content="供企业和单位用于管理 Chrome 浏览器和 Chrome 操作系统的 Chrome 企业版政策。" property="og:description"/>
+<meta content="website" property="og:type"/>
+<meta content="summary" name="twitter:card"/>
+<meta content="@google" name="twitter:site"/>
+<meta content="Chrome 企业版政策列表和管理功能 | 文档" name="twitter:title"/>
+<meta content="供企业和单位用于管理 Chrome 浏览器和 Chrome 操作系统的 Chrome 企业版政策。" name="twitter:description"/>
+<meta content="https://storage.googleapis.com/chrome-enterprise/img/global/social/chrome-enterprise-fb.png" name="twitter:image"/>
+<meta content="https://chromeenterprise.google/intl/zh_cn/policies/" property="og:url"/>
+<meta content="https://storage.googleapis.com/chrome-enterprise/img/global/social/chrome-enterprise-fb.png" property="og:image"/>
+<link href="https://chromeenterprise.google/intl/zh_cn/policies/" rel="canonical"/>
+<link href="https://chromeenterprise.google/policies/" hreflang="x-default" rel="alternate"/>
+<link href="https://chromeenterprise.google/policies/" hreflang="en-US" rel="alternate"/>
+<link href="https://chromeenterprise.google/intl/en_au/policies/" hreflang="en-AU" rel="alternate"/>
+<link href="https://chromeenterprise.google/intl/en_ca/policies/" hreflang="en-CA" rel="alternate"/>
+<link href="https://chromeenterprise.google/intl/en_uk/policies/" hreflang="en-GB" rel="alternate"/>
+<link href="https://chromeenterprise.google/intl/de_de/policies/" hreflang="de-DE" rel="alternate"/>
+<link href="https://chromeenterprise.google/intl/es-419_ALL/policies/" hreflang="es-MX" rel="alternate"/>
+<link href="https://chromeenterprise.google/intl/es_es/policies/" hreflang="es-ES" rel="alternate"/>
+<link href="https://chromeenterprise.google/intl/fr_fr/policies/" hreflang="fr-FR" rel="alternate"/>
+<link href="https://chromeenterprise.google/intl/ja_jp/policies/" hreflang="ja-JP" rel="alternate"/>
+<link href="https://chromeenterprise.google/intl/nl_nl/policies/" hreflang="nl-NL" rel="alternate"/>
+<link href="https://chromeenterprise.google/intl/pt_br/policies/" hreflang="pt-BR" rel="alternate"/>
+<link href="https://chromeenterprise.google/intl/zh_cn/policies/" hreflang="zh-CN" rel="alternate"/>
+<script type="application/ld+json" nonce="fsCY9NNSS7RorExIYdunfw">{"@context" : "https://schema.org","@graph": [{"@id" : "https://chromeenterprise.google/intl/zh_cn/policies/","@type" : "WebPage","name" : "Chrome \u4f01\u4e1a\u7248\u653f\u7b56\u5217\u8868\u548c\u7ba1\u7406\u529f\u80fd | \u6587\u6863","url" : "https://chromeenterprise.google/intl/zh_cn/policies/","publisher": {"@type": "Organization","name": "Google Chrome Enterprise","logo": {"@type": "ImageObject","url": "https://storage.googleapis.com/chrome-enterprise/img/global/logos/chrome-logo.png","height": 118,"width": 118},"parentOrganization": {"@type": "Organization","name": "Google LLC"}},"description": "\u4f9b\u4f01\u4e1a\u548c\u5355\u4f4d\u7528\u4e8e\u7ba1\u7406 Chrome \u6d4f\u89c8\u5668\u548c Chrome \u64cd\u4f5c\u7cfb\u7edf\u7684 Chrome \u4f01\u4e1a\u7248\u653f\u7b56\u3002","sameAs": ["https://blog.google/topics/connected-workspaces/"]},{"@type": "BreadcrumbList","itemListElement": [{"@type": "ListItem","position": 1,"name": "Homepage","item": "https://chromeenterprise.google/"},{"@type": "ListItem","position": 2,"name": "Policies","item": "https://chromeenterprise.google/intl/zh_cn/policies/"}]}]}</script>
+<style>html{opacity:0;visibility:hidden}.ce-header__bar.ce-header__bar--desktop{transform:translate3d(-100%,0,0)}@media only screen and (min-width:1024px){.ce-header__bar.ce-header__bar--desktop{transform:translateZ(0)}}.ce-cookie-banner{bottom:0;left:0;opacity:0;position:fixed;transform:translateY(100%)}@page{size:a4;margin:0}[data-dynamic-text][data-dynamic-text-condition]{color:transparent}.sr-only{border:0;clip:rect(0,0,0,0);height:1px;margin:-1px;overflow:hidden;padding:0;position:absolute;white-space:nowrap;width:1px}</style>
+<link href="//chromeenterprise.google/static/images/fav/favicon.ico" rel="shortcut icon"/>
+<link as="style" href="/static/policies/common.min.css?cache=17d21b4" rel="preload" nonce="fsCY9NNSS7RorExIYdunfw"/>
+<link as="style" href="/static/policies/policies.min.css?cache=8e1ddce" rel="preload" nonce="fsCY9NNSS7RorExIYdunfw"/>
+<link href="/static/policies/common.min.css?cache=17d21b4" id="js-css" rel="stylesheet" nonce="fsCY9NNSS7RorExIYdunfw"/>
+<link href="/static/policies/policies.min.css?cache=8e1ddce" id="js-css2" rel="stylesheet" nonce="fsCY9NNSS7RorExIYdunfw"/>
+<link href="https://www.gstatic.com/glue/cookienotificationbar/cookienotificationbar.min.css" rel="stylesheet" nonce="fsCY9NNSS7RorExIYdunfw"/>
+<noscript>
+<link href="/static/policies/common.min.css?cache=17d21b4" rel="stylesheet" nonce="fsCY9NNSS7RorExIYdunfw"/>
+<link href="/static/policies/policies.min.css?cache=8e1ddce" rel="stylesheet" nonce="fsCY9NNSS7RorExIYdunfw"/>
+</noscript>
+</meta></head>
+<body class="glue-body">
+<noscript><iframe height="0" src="https://www.googletagmanager.com/ns.html?id=GTM-PWWWZ2F" style="display:none;
+               visibility:hidden" width="0"></iframe></noscript>
+<script data-gtm="GTM-PWWWZ2F" defer="" src="/static/js/cookie-notification.min.js?cache=b3bb7cf" nonce="fsCY9NNSS7RorExIYdunfw"></script>
+<script data-glue-cookie-notification-bar-category="2A" data-glue-cookie-notification-bar-language="zh" data-glue-cookie-notification-bar-site-id="chromeenterprise.google" defer="" src="https://www.gstatic.com/glue/cookienotificationbar/cookienotificationbar.min.js" nonce="fsCY9NNSS7RorExIYdunfw"></script>
+<header class="ce-header glue-header" data-ce-component="DefaultHeader" data-ga-config='{"elementIsVisible": {"event": "module_impression", "module_name": "main nav", "section_header": "chrome enterprise"}}' data-ga-context='{"module_name": "main nav", "section_header": "chrome enterprise"}' id="ce-header">
+<div class="ce-header__bar ce-header__bar--mobile glue-header__bar glue-header__bar--mobile">
+<div class="glue-header__tier">
+<div class="glue-header__container">
+<div class="glue-header__lock-up">
+<div class="glue-header__hamburger glue-header__hamburger--first-tier">
+<div class="glue-header__hamburger-wrapper">
+<button aria-controls="header-drawer" aria-expanded="false" aria-label="Open the navigation drawer" class="glue-header__drawer-toggle-btn" data-ga-action="nav burger click" data-ga-category="navigation" data-ga-config='{"click": {"event": "mobile_nav_open", "module_name": ""}}' data-ga-label="open" type="button">
+<svg class="glue-icon--24px" viewbox="0 0 24 24">
+<path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"></path>
+</svg>
+</button>
+</div>
+</div><div class="glue-header__logo">
+<a class="glue-header__logo-link" data-ga-action="logo click" data-ga-category="navigation" data-ga-config='{"click": {"event": "nav_click", "module_name": "home logo", "link_text": "chrome enterprise", "link_url": true, "link_type": true}}' data-ga-label="" href="https://chromeenterprise.google/intl/zh_cn/" title="Google">
+<div class="glue-header__logo-container">
+<div class="glue-header__logo-container">
+<img alt="chrome" height="40" src="//chromeenterprise.google/static/images/chrome-logo.svg" width="40"/>
+</div>
+</div>
+<p class="glue-header__logo--product">chrome enterprise</p>
+</a>
+</div>
+<a aria-label="转至内容" class="glue-header__skip-content" href="#page-content">
+<p class="glue-header__skip-content-text">转至内容</p>
+</a>
+</div>
+</div>
+</div>
+</div>
+<div class="ce-header__bar ce-header__bar--desktop glue-header__bar glue-header__bar--desktop glue-header__drawer" id="header-drawer">
+<a class="ce-header__logo has-utm-params" data-ga-action="logo click" data-ga-category="navigation" data-ga-config='{"click": {"event": "nav_click", "module_name": "home logo", "link_text": "chrome enterprise", "link_url": true, "link_type": true}}' data-ga-label="" href="https://chromeenterprise.google/intl/zh_cn/" title="Google">
+<img alt="chrome" class="ce-header__logo--image" height="40" src="//chromeenterprise.google/static/images/chrome-logo.svg" width="40"/>
+<p class="ce-header__logo--title">chrome enterprise</p>
+</a>
+<nav aria-label="Chrome Enterprise" class="ce-header__nav glue-header__link-bar">
+<ul aria-label="Chrome Enterprise" class="ce-header__list ce-header__list-l1" role="menubar"><li class="ce-header__list-item ce-header__list-item-l1" role="menuitem">
+<a aria-haspopup="true" class="ce-header__link ce-header__link-l1 has-children" data-ga-action="menu item click" data-ga-category="navigation" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "优势", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="优势" href="#">
+<svg class="ce-header__arrow" viewbox="0 0 12 7">
+<path d="M6 6.308L.968 1.283 2.033.218 6 4.193 9.968.218l1.065 1.065L6 6.308z"></path>
+</svg>优势                </a>
+<ul aria-label="优势" class="ce-header__list ce-header__list-l2" role="menubar"><li class="ce-header__list-item ce-header__list-item-l2" role="menuitem">
+<a aria-haspopup="false" class="ce-header__link ce-header__link-l2 has-utm-params" data-ga-action="menu item click" data-ga-category="navigation" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "安全性", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="安全性" href="https://chromeenterprise.google/intl/zh-cn/solutions/secure-browsing/">
+<svg class="ce-header__arrow" viewbox="0 0 12 7">
+<path d="M6 6.308L.968 1.283 2.033.218 6 4.193 9.968.218l1.065 1.065L6 6.308z"></path>
+</svg>安全性                        </a>
+</li><li class="ce-header__list-item ce-header__list-item-l2" role="menuitem">
+<a aria-haspopup="false" class="ce-header__link ce-header__link-l2 " data-ga-action="menu item click" data-ga-category="navigation" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "助力云端工作者", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="助力云端工作者" href="https://chromeos.google/intl/zh-cn/business-solutions/use-case/modern-worker/" rel="noreferrer" target="_blank">
+<svg class="ce-header__arrow" viewbox="0 0 12 7">
+<path d="M6 6.308L.968 1.283 2.033.218 6 4.193 9.968.218l1.065 1.065L6 6.308z"></path>
+</svg>助力云端工作者                        </a>
+</li><li class="ce-header__list-item ce-header__list-item-l2" role="menuitem">
+<a aria-haspopup="false" class="ce-header__link ce-header__link-l2 has-utm-params" data-ga-action="menu item click" data-ga-category="navigation" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "明智投资", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="明智投资" href="https://chromeos.google/intl/zh-cn/" rel="noreferrer" target="_blank">
+<svg class="ce-header__arrow" viewbox="0 0 12 7">
+<path d="M6 6.308L.968 1.283 2.033.218 6 4.193 9.968.218l1.065 1.065L6 6.308z"></path>
+</svg>明智投资                        </a>
+</li><li class="ce-header__list-item ce-header__list-item-l2" role="menuitem">
+<a aria-haspopup="false" class="ce-header__link ce-header__link-l2 has-utm-params" data-ga-action="menu item click" data-ga-category="navigation" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "助力混合办公", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="助力混合办公" href="https://chromeenterprise.google/intl/zh-cn/solutions/hybrid-work/">
+<svg class="ce-header__arrow" viewbox="0 0 12 7">
+<path d="M6 6.308L.968 1.283 2.033.218 6 4.193 9.968.218l1.065 1.065L6 6.308z"></path>
+</svg>助力混合办公                        </a>
+</li><li class="ce-header__list-item ce-header__list-item-l2" role="menuitem">
+<a aria-haspopup="false" class="ce-header__link ce-header__link-l2 has-utm-params" data-ga-action="menu item click" data-ga-category="navigation" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "Chrome Enterprise Recommended", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="Chrome Enterprise Recommended" href="https://chromeos.google/intl/zh-cn/resources/recommended/" rel="noreferrer" target="_blank">
+<svg class="ce-header__arrow" viewbox="0 0 12 7">
+<path d="M6 6.308L.968 1.283 2.033.218 6 4.193 9.968.218l1.065 1.065L6 6.308z"></path>
+</svg>Chrome Enterprise Recommended                        </a>
+</li></ul>
+</li><li class="ce-header__list-item ce-header__list-item-l1" role="menuitem">
+<a aria-haspopup="true" class="ce-header__link ce-header__link-l1 has-children" data-ga-action="menu item click" data-ga-category="navigation" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "产品", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="产品" href="#">
+<svg class="ce-header__arrow" viewbox="0 0 12 7">
+<path d="M6 6.308L.968 1.283 2.033.218 6 4.193 9.968.218l1.065 1.065L6 6.308z"></path>
+</svg>产品                </a>
+<ul aria-label="产品" class="ce-header__list ce-header__list-l2" role="menubar"><li class="ce-header__list-item ce-header__list-item-l2" role="menuitem">
+<a aria-haspopup="true" class="ce-header__link ce-header__link-l2 has-children " data-ga-action="menu item click" data-ga-category="navigation" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "Chrome 浏览器", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="Chrome 浏览器" href="#">
+<svg class="ce-header__arrow" viewbox="0 0 12 7">
+<path d="M6 6.308L.968 1.283 2.033.218 6 4.193 9.968.218l1.065 1.065L6 6.308z"></path>
+</svg>Chrome 浏览器                        </a>
+<ul aria-label="Chrome 浏览器" class="ce-header__list ce-header__list-l3" role="menubar"> <li class="ce-header__list-item ce-header__list-item-l3" role="menuitem">
+<a aria-haspopup="false" class="ce-header__link ce-header__link-l3 has-utm-params" data-ga-action="menu item click" data-ga-category="navigation" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "概述", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="概述" href="https://chromeenterprise.google/intl/zh-cn/products/chrome-enterprise/">
+<svg class="ce-header__arrow" viewbox="0 0 12 7">
+<path d="M6 6.308L.968 1.283 2.033.218 6 4.193 9.968.218l1.065 1.065L6 6.308z"></path>
+</svg>概述                                  </a>
+</li>
+<li class="ce-header__list-item ce-header__list-item-l3" role="menuitem">
+<a aria-haspopup="false" class="ce-header__link ce-header__link-l3 has-utm-params" data-ga-action="menu item click" data-ga-category="navigation" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "下载", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="下载" href="https://chromeenterprise.google/intl/zh-cn/download/">
+<svg class="ce-header__arrow" viewbox="0 0 12 7">
+<path d="M6 6.308L.968 1.283 2.033.218 6 4.193 9.968.218l1.065 1.065L6 6.308z"></path>
+</svg>下载                                  </a>
+</li>
+<li class="ce-header__list-item ce-header__list-item-l3" role="menuitem">
+<a aria-haspopup="false" class="ce-header__link ce-header__link-l3 has-utm-params" data-ga-action="menu item click" data-ga-category="navigation" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "安全性", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="安全性" href="https://chromeenterprise.google/intl/zh-cn/solutions/secure-browsing/">
+<svg class="ce-header__arrow" viewbox="0 0 12 7">
+<path d="M6 6.308L.968 1.283 2.033.218 6 4.193 9.968.218l1.065 1.065L6 6.308z"></path>
+</svg>安全性                                  </a>
+</li>
+<li class="ce-header__list-item ce-header__list-item-l3" role="menuitem">
+<a aria-haspopup="false" class="ce-header__link ce-header__link-l3 has-utm-params" data-ga-action="menu item click" data-ga-category="navigation" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "管理", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="管理" href="https://chromeenterprise.google/intl/zh-cn/products/cloud-management/">
+<svg class="ce-header__arrow" viewbox="0 0 12 7">
+<path d="M6 6.308L.968 1.283 2.033.218 6 4.193 9.968.218l1.065 1.065L6 6.308z"></path>
+</svg>管理                                  </a>
+</li>
+<li class="ce-header__list-item ce-header__list-item-l3" role="menuitem">
+<a aria-haspopup="false" class="ce-header__link ce-header__link-l3 has-utm-params" data-ga-action="menu item click" data-ga-category="navigation" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "企业版支持方案", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="企业版支持方案" href="https://chromeenterprise.google/intl/zh-cn/products/support/">
+<svg class="ce-header__arrow" viewbox="0 0 12 7">
+<path d="M6 6.308L.968 1.283 2.033.218 6 4.193 9.968.218l1.065 1.065L6 6.308z"></path>
+</svg>企业版支持方案                                  </a>
+</li>
+</ul>
+</li><li class="ce-header__list-item ce-header__list-item-l2" role="menuitem">
+<a aria-haspopup="true" class="ce-header__link ce-header__link-l2 has-children " data-ga-action="menu item click" data-ga-category="navigation" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "ChromeOS", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="ChromeOS" href="#">
+<svg class="ce-header__arrow" viewbox="0 0 12 7">
+<path d="M6 6.308L.968 1.283 2.033.218 6 4.193 9.968.218l1.065 1.065L6 6.308z"></path>
+</svg>ChromeOS                        </a>
+<ul aria-label="ChromeOS" class="ce-header__list ce-header__list-l3" role="menubar"> <li class="ce-header__list-item ce-header__list-item-l3" role="menuitem">
+<a aria-haspopup="false" class="ce-header__link ce-header__link-l3 has-utm-params" data-ga-action="menu item click" data-ga-category="navigation" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "概述", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="概述" href="https://chromeos.google/intl/zh-cn/" rel="noreferrer" target="_blank">
+<svg class="ce-header__arrow" viewbox="0 0 12 7">
+<path d="M6 6.308L.968 1.283 2.033.218 6 4.193 9.968.218l1.065 1.065L6 6.308z"></path>
+</svg>概述                                  </a>
+</li>
+<li class="ce-header__list-item ce-header__list-item-l3" role="menuitem">
+<a aria-haspopup="false" class="ce-header__link ce-header__link-l3 " data-ga-action="menu item click" data-ga-category="navigation" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "安全性", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="安全性" href="https://chromeos.google/intl/zh-cn/" rel="noreferrer" target="_blank">
+<svg class="ce-header__arrow" viewbox="0 0 12 7">
+<path d="M6 6.308L.968 1.283 2.033.218 6 4.193 9.968.218l1.065 1.065L6 6.308z"></path>
+</svg>安全性                                  </a>
+</li>
+<li class="ce-header__list-item ce-header__list-item-l3" role="menuitem">
+<a aria-haspopup="false" class="ce-header__link ce-header__link-l3 has-utm-params" data-ga-action="menu item click" data-ga-category="navigation" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "ChromeOS Flex", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="ChromeOS Flex" href="https://chromeos.google/intl/zh-cn/products/chromeos-flex/" rel="noreferrer" target="_blank">
+<svg class="ce-header__arrow" viewbox="0 0 12 7">
+<path d="M6 6.308L.968 1.283 2.033.218 6 4.193 9.968.218l1.065 1.065L6 6.308z"></path>
+</svg>ChromeOS Flex                                  </a>
+</li>
+<li class="ce-header__list-item ce-header__list-item-l3" role="menuitem">
+<a aria-haspopup="false" class="ce-header__link ce-header__link-l3 has-utm-params" data-ga-action="menu item click" data-ga-category="navigation" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "Chrome Enterprise Upgrade", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="Chrome Enterprise Upgrade" href="https://chromeos.google/intl/zh-cn/products/device-management/" rel="noreferrer" target="_blank">
+<svg class="ce-header__arrow" viewbox="0 0 12 7">
+<path d="M6 6.308L.968 1.283 2.033.218 6 4.193 9.968.218l1.065 1.065L6 6.308z"></path>
+</svg>Chrome Enterprise Upgrade                                  </a>
+</li>
+<li class="ce-header__list-item ce-header__list-item-l3" role="menuitem">
+<a aria-haspopup="false" class="ce-header__link ce-header__link-l3 has-utm-params" data-ga-action="menu item click" data-ga-category="navigation" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "可持续", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="可持续" href="https://chromeenterprise.google/intl/zh-cn/os/sustainability/">
+<svg class="ce-header__arrow" viewbox="0 0 12 7">
+<path d="M6 6.308L.968 1.283 2.033.218 6 4.193 9.968.218l1.065 1.065L6 6.308z"></path>
+</svg>可持续                                  </a>
+</li>
+<li class="ce-header__list-item ce-header__list-item-l3" role="menuitem">
+<a aria-haspopup="true" class="ce-header__link ce-header__link-l3 has-children" data-ga-action="menu item click" data-ga-category="navigation" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "解决方案", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="解决方案" href="#">
+<svg class="ce-header__arrow" viewbox="0 0 12 7">
+<path d="M6 6.308L.968 1.283 2.033.218 6 4.193 9.968.218l1.065 1.065L6 6.308z"></path>
+</svg>解决方案                                  </a>
+<ul aria-label="解决方案" class="ce-header__list ce-header__list-l4" role="menubar"> <li class="ce-header__list-item ce-header__list-item-l4" role="menuitem">
+<a class="ce-header__link ce-header__link-l4 has-utm-params" data-ga-action="menu item click" data-ga-category="navigation" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "自助服务终端和数字标牌", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="自助服务终端和数字标牌" href="https://chromeos.google/intl/zh-cn/business-solutions/use-case/kiosks/" rel="noreferrer" target="_blank">自助服务终端和数字标牌                                            </a>
+</li>
+<li class="ce-header__list-item ce-header__list-item-l4" role="menuitem">
+<a class="ce-header__link ce-header__link-l4 has-utm-params" data-ga-action="menu item click" data-ga-category="navigation" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "联络中心", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="联络中心" href="https://chromeos.google/intl/zh-cn/business-solutions/use-case/contact-center/" rel="noreferrer" target="_blank">联络中心                                            </a>
+</li>
+<li class="ce-header__list-item ce-header__list-item-l4" role="menuitem">
+<a class="ce-header__link ce-header__link-l4 " data-ga-action="menu item click" data-ga-category="navigation" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "虚拟化", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="虚拟化" href="https://chromeos.google/intl/zh-cn/business-solutions/use-case/shared-devices/" rel="noreferrer" target="_blank">虚拟化                                            </a>
+</li>
+<li class="ce-header__list-item ce-header__list-item-l4" role="menuitem">
+<a class="ce-header__link ce-header__link-l4 has-utm-params" data-ga-action="menu item click" data-ga-category="navigation" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "中小型企业", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="中小型企业" href="https://chromeos.google/intl/zh-cn/business-solutions/use-case/frontline/" rel="noreferrer" target="_blank">中小型企业                                            </a>
+</li>
+<li class="ce-header__list-item ce-header__list-item-l4" role="menuitem">
+<a class="ce-header__link ce-header__link-l4 " data-ga-action="menu item click" data-ga-category="navigation" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "零售", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="零售" href="https://chromeos.google/intl/zh-cn/business-solutions/industry/retail/" rel="noreferrer" target="_blank">零售                                            </a>
+</li>
+<li class="ce-header__list-item ce-header__list-item-l4" role="menuitem">
+<a class="ce-header__link ce-header__link-l4 has-utm-params" data-ga-action="menu item click" data-ga-category="navigation" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "医疗保健", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="医疗保健" href="https://chromeos.google/intl/zh-cn/business-solutions/industry/healthcare/" rel="noreferrer" target="_blank">医疗保健                                            </a>
+</li>
+<li class="ce-header__list-item ce-header__list-item-l4" role="menuitem">
+<a class="ce-header__link ce-header__link-l4 has-utm-params" data-ga-action="menu item click" data-ga-category="navigation" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "一线员工", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="一线员工" href="https://chromeos.google/intl/zh-cn/business-solutions/use-case/frontline/" rel="noreferrer" target="_blank">一线员工                                            </a>
+</li>
+</ul>
+</li>
+</ul>
+</li><li class="ce-header__list-item ce-header__list-item-l2" role="menuitem">
+<a aria-haspopup="true" class="ce-header__link ce-header__link-l2 has-children " data-ga-action="menu item click" data-ga-category="navigation" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "ChromeOS 设备", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="ChromeOS 设备" href="#">
+<svg class="ce-header__arrow" viewbox="0 0 12 7">
+<path d="M6 6.308L.968 1.283 2.033.218 6 4.193 9.968.218l1.065 1.065L6 6.308z"></path>
+</svg>ChromeOS 设备                        </a>
+<ul aria-label="ChromeOS 设备" class="ce-header__list ce-header__list-l3" role="menubar"> <li class="ce-header__list-item ce-header__list-item-l3" role="menuitem">
+<a aria-haspopup="false" class="ce-header__link ce-header__link-l3 has-utm-params" data-ga-action="menu item click" data-ga-category="navigation" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "概述", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="概述" href="https://chromeos.google/intl/zh-cn/products/devices/" rel="noreferrer" target="_blank">
+<svg class="ce-header__arrow" viewbox="0 0 12 7">
+<path d="M6 6.308L.968 1.283 2.033.218 6 4.193 9.968.218l1.065 1.065L6 6.308z"></path>
+</svg>概述                                  </a>
+</li>
+<li class="ce-header__list-item ce-header__list-item-l3" role="menuitem">
+<a aria-haspopup="false" class="ce-header__link ce-header__link-l3 has-utm-params" data-ga-action="menu item click" data-ga-category="navigation" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "设备", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="设备" href="https://chromeos.google/intl/zh-cn/products/devices/" rel="noreferrer" target="_blank">
+<svg class="ce-header__arrow" viewbox="0 0 12 7">
+<path d="M6 6.308L.968 1.283 2.033.218 6 4.193 9.968.218l1.065 1.065L6 6.308z"></path>
+</svg>设备                                  </a>
+</li>
+<li class="ce-header__list-item ce-header__list-item-l3" role="menuitem">
+<a aria-haspopup="false" class="ce-header__link ce-header__link-l3 has-utm-params" data-ga-action="menu item click" data-ga-category="navigation" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "如何购买", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="如何购买" href="https://chromeos.google/intl/zh-cn/products/devices/" rel="noreferrer" target="_blank">
+<svg class="ce-header__arrow" viewbox="0 0 12 7">
+<path d="M6 6.308L.968 1.283 2.033.218 6 4.193 9.968.218l1.065 1.065L6 6.308z"></path>
+</svg>如何购买                                  </a>
+</li>
+</ul>
+</li></ul>
+</li><li class="ce-header__list-item ce-header__list-item-l1" role="menuitem">
+<a aria-haspopup="true" class="ce-header__link ce-header__link-l1 has-children" data-ga-action="menu item click" data-ga-category="navigation" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "资源", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="资源" href="#">
+<svg class="ce-header__arrow" viewbox="0 0 12 7">
+<path d="M6 6.308L.968 1.283 2.033.218 6 4.193 9.968.218l1.065 1.065L6 6.308z"></path>
+</svg>资源                </a>
+<ul aria-label="资源" class="ce-header__list ce-header__list-l2" role="menubar"><li class="ce-header__list-item ce-header__list-item-l2" role="menuitem">
+<a aria-haspopup="false" class="ce-header__link ce-header__link-l2 " data-ga-action="menu item click" data-ga-category="navigation" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "成为合作伙伴", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="成为合作伙伴" href="https://chromeenterprise.google/intl/zh-cn/partner-program/">
+<svg class="ce-header__arrow" viewbox="0 0 12 7">
+<path d="M6 6.308L.968 1.283 2.033.218 6 4.193 9.968.218l1.065 1.065L6 6.308z"></path>
+</svg>成为合作伙伴                        </a>
+</li><li class="ce-header__list-item ce-header__list-item-l2" role="menuitem">
+<a aria-haspopup="false" class="ce-header__link ce-header__link-l2 has-utm-params" data-ga-action="menu item click" data-ga-category="navigation" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "指南", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="指南" href="https://chromeenterprise.google/intl/zh-cn/partner-program/">
+<svg class="ce-header__arrow" viewbox="0 0 12 7">
+<path d="M6 6.308L.968 1.283 2.033.218 6 4.193 9.968.218l1.065 1.065L6 6.308z"></path>
+</svg>指南                        </a>
+</li><li class="ce-header__list-item ce-header__list-item-l2" role="menuitem">
+<a aria-haspopup="false" class="ce-header__link ce-header__link-l2 " data-ga-action="menu item click" data-ga-category="navigation" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "客户案例", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="客户案例" href="https://chromeenterprise.google/intl/zh-cn/resources/customer-stories/">
+<svg class="ce-header__arrow" viewbox="0 0 12 7">
+<path d="M6 6.308L.968 1.283 2.033.218 6 4.193 9.968.218l1.065 1.065L6 6.308z"></path>
+</svg>客户案例                        </a>
+</li><li class="ce-header__list-item ce-header__list-item-l2" role="menuitem">
+<a aria-haspopup="false" class="ce-header__link ce-header__link-l2 has-utm-params" data-ga-action="menu item click" data-ga-category="navigation" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "活动", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="活动" href="https://chromeenterprise.google/intl/zh-cn/resources/events/">
+<svg class="ce-header__arrow" viewbox="0 0 12 7">
+<path d="M6 6.308L.968 1.283 2.033.218 6 4.193 9.968.218l1.065 1.065L6 6.308z"></path>
+</svg>活动                        </a>
+</li><li class="ce-header__list-item ce-header__list-item-l2" role="menuitem">
+<a aria-haspopup="false" class="ce-header__link ce-header__link-l2 has-utm-params" data-ga-action="menu item click" data-ga-category="navigation" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "常见问题解答", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="常见问题解答" href="https://chromeenterprise.google/intl/zh-cn/resources/faq/">
+<svg class="ce-header__arrow" viewbox="0 0 12 7">
+<path d="M6 6.308L.968 1.283 2.033.218 6 4.193 9.968.218l1.065 1.065L6 6.308z"></path>
+</svg>常见问题解答                        </a>
+</li><li class="ce-header__list-item ce-header__list-item-l2" role="menuitem">
+<a aria-haspopup="false" class="ce-header__link ce-header__link-l2 " data-ga-action="menu item click" data-ga-category="navigation" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "博客", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="博客" href="https://cloud.google.com/blog/products/chrome-enterprise/" rel="noreferrer" target="_blank">
+<svg class="ce-header__arrow" viewbox="0 0 12 7">
+<path d="M6 6.308L.968 1.283 2.033.218 6 4.193 9.968.218l1.065 1.065L6 6.308z"></path>
+</svg>博客                        </a>
+</li><li class="ce-header__list-item ce-header__list-item-l2" role="menuitem">
+<a aria-haspopup="false" class="ce-header__link ce-header__link-l2 " data-ga-action="menu item click" data-ga-category="navigation" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "政策列表", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="政策列表" href="https://chromeenterprise.google/intl/zh-cn/policies/">
+<svg class="ce-header__arrow" viewbox="0 0 12 7">
+<path d="M6 6.308L.968 1.283 2.033.218 6 4.193 9.968.218l1.065 1.065L6 6.308z"></path>
+</svg>政策列表                        </a>
+</li><li class="ce-header__list-item ce-header__list-item-l2" role="menuitem">
+<a aria-haspopup="false" class="ce-header__link ce-header__link-l2 " data-ga-action="menu item click" data-ga-category="navigation" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "支持", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="支持" href="https://support.google.com/chrome/a#topic=7679105" rel="noreferrer" target="_blank">
+<svg class="ce-header__arrow" viewbox="0 0 12 7">
+<path d="M6 6.308L.968 1.283 2.033.218 6 4.193 9.968.218l1.065 1.065L6 6.308z"></path>
+</svg>支持                        </a>
+</li><li class="ce-header__list-item ce-header__list-item-l2" role="menuitem">
+<a aria-haspopup="false" class="ce-header__link ce-header__link-l2 " data-ga-action="menu item click" data-ga-category="navigation" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "无障碍功能", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="无障碍功能" href="https://chromeenterprise.google/intl/zh-cn/accessibility/">
+<svg class="ce-header__arrow" viewbox="0 0 12 7">
+<path d="M6 6.308L.968 1.283 2.033.218 6 4.193 9.968.218l1.065 1.065L6 6.308z"></path>
+</svg>无障碍功能                        </a>
+</li><li class="ce-header__list-item ce-header__list-item-l2" role="menuitem">
+<a aria-haspopup="false" class="ce-header__link ce-header__link-l2 " data-ga-action="menu item click" data-ga-category="navigation" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "寻找合作伙伴", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="寻找合作伙伴" href="https://cloud.google.com/find-a-partner/?products=Chrome" rel="noreferrer" target="_blank">
+<svg class="ce-header__arrow" viewbox="0 0 12 7">
+<path d="M6 6.308L.968 1.283 2.033.218 6 4.193 9.968.218l1.065 1.065L6 6.308z"></path>
+</svg>寻找合作伙伴                        </a>
+</li><li class="ce-header__list-item ce-header__list-item-l2" role="menuitem">
+<a aria-haspopup="false" class="ce-header__link ce-header__link-l2 has-utm-params" data-ga-action="menu item click" data-ga-category="navigation" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "条款", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="条款" href="https://chromeenterprise.google/intl/zh-cn/resources/terms/">
+<svg class="ce-header__arrow" viewbox="0 0 12 7">
+<path d="M6 6.308L.968 1.283 2.033.218 6 4.193 9.968.218l1.065 1.065L6 6.308z"></path>
+</svg>条款                        </a>
+</li></ul>
+</li></ul>
+</nav> <div class="ce-header__ctas glue-header__container glue-header__container--cta">
+<div class="glue-header__cta">
+<a class="glue-button ce-link-button glue-button--medium-emphasis has-utm-params" data-ga-action="cta click" data-ga-category="navigation" data-ga-config='{"click": {"event": "cta_click", "link_text": "与销售团队联系", "link_type": "internal", "link_url": "https://chromeenterprise.google/intl/zh-cn/contact/"}}' data-ga-extra='{"linkUrl": true}' data-ga-label="与销售团队联系" href="https://chromeenterprise.google/intl/zh-cn/contact/" role="button">与销售团队联系</a>
+<a class="glue-button ce-link-button glue-button--high-emphasis has-utm-params" data-ga-action="cta click" data-ga-category="navigation" data-ga-config='{"click": {"event": "cta_click", "link_text": "下载 Chrome 浏览器", "link_type": "internal", "link_url": "https://chromeenterprise.google/intl/zh-cn/download/"}}' data-ga-extra='{"linkUrl": true}' data-ga-label="下载 Chrome 浏览器" href="https://chromeenterprise.google/intl/zh-cn/download/" role="button">下载 Chrome 浏览器</a>
+</div>
+</div>
+</div>
+<div class="glue-header__drawer-backdrop" data-ga-action="nav burger click" data-ga-category="navigation" data-ga-config='{"click": {"event": "mobile_nav_close", "module_name": ""}}' data-ga-label="close" data-ga-noclick="true"></div>
+</header>
+<main class="ce-main">
+<section data-ga-config='{"elementIsVisible": {"event": "module_impression", "module_name": "policies", "section_header": ""}}' data-ga-context='{"module_name": "policies"}' id="policies">
+<div class="glue-page" data-custom-policy="" data-messages="/static/policies/json/messages/messages-zh-CN.json" data-policies-data="https://chromeenterprise.google/intl/zh_cn/static/json/policy_templates_zh-CN.json" id="policies-app"></div>
+</section>
+</main>
+<div class="ce-template" id="enterprisenews">
+<template data-ce-template="">
+<section class="ce-newsletter-form__container ce-section ce-section--bg-gray-50" data-ce-component="NewsletterForm" data-ga-config='{"elementIsVisible": {"event": "module_impression", "module_name": "enterprisenews", "section_header": "订阅 Chrome 企业版简报，及时了解最新资讯"}}' data-ga-context='{"module_name": "enterprisenews", "section_header": "订阅 Chrome 企业版简报，及时了解最新资讯"}'>
+<div class="glue-page ce-newsletter-form">
+<div class="glue-grid ce-newsletter-form__form ce-section--bd-bottom-gray-200 ce-spacer-6-padding-top ce-spacer-6-padding-bottom">
+<div class="glue-grid__col glue-grid__col--span-0-sm glue-grid__col--span-1-md glue-grid__col--span-0-lg"></div>
+<div class="glue-grid__col glue-grid__col--span-4-sm glue-grid__col--span-10-md ce-grid-col__pos-1-lg glue-grid__col--span-6-lg">
+<div class="ce-newsletter-form__header">
+<p class="ce-eyebrow glue-eyebrow">企业版资讯</p>
+<h3 class="ce-heading ce-newsletter-form__header-heading glue-headline glue-headline--headline-3">
+                  订阅 Chrome 企业版简报，及时了解最新资讯
+                </h3>
+</div>
+</div>
+<div class="glue-grid__col glue-grid__col--span-4-sm glue-grid__col--span-10-md ce-grid-col__pos-7-lg glue-grid__col--span-6-lg">
+<form class="ce-form" data-backend-type="MarketoAjaxService" data-ce-component="Form" data-ga-action="form - chrome ent newsletter" data-ga-category="page body" data-ga-config='{"formBaseChange": {"event": "form_newsletter", "form_name": "form - chrome ent newsletter", "onComplete": {"form_country": "{formElementValue:#CountryCode}", "form_industry": "{formElementValue:#Industry}", "form_signup": "{formElementValue:#Chrome_Opt_In__c}", "page_referrer": true}}}' data-ga-extra='{"formCountry": "{formElementValue:#CountryCode}", "formIndustry": "{formElementValue:#Industry}", "pageReferrer": "{pageReferrer}"}' data-ga-label="success" data-ga-noclick="True" data-method="POST" data-ret-url="https://chromeenterprise.google/intl/zh-cn/contact/thank-you/" data-serializer="formUrlencoded" data-url="https://us-central1-gweb-cloudx-marketo.cloudfunctions.net/marketo2_prod_submit_form_service">
+<div class="ce-form__field-container ce-right-aligned ce-form__required-text ce-newsletter-form__disclaimer ce-spacer-1-padding-bottom">
+<p class="ce-small-text glue-small-text">*必填</p>
+</div>
+<div class="ce-form__field-container ce-newsletter-form__form-container">
+<div class="glue-grid">
+<div class="glue-grid__col glue-grid__col--span-4-sm glue-grid__col--span-5-md glue-grid__col--span-3-lg">
+<div class="ce-text-field glue-form__element" data-field-error-class="mdc-text-field--invalid" data-form-field="TextField" data-validations='[{"type": "required", "on_blur": true, "error": "请输入名字。"}]'>
+<label class="ce-text-field__label" for="FirstName" id="ce-textfield-FirstName-label">
+                              名字
+                            </label>
+<div class="mdc-text-field mdc-text-field--outlined glue-text-field mdc-text-field--no-label glue-text-field--required">
+<input class="mdc-text-field__input" data-field-element="" id="FirstName" name="FirstName" required="" type="text" value=""/>
+<span class="mdc-notched-outline">
+<span class="mdc-notched-outline__leading"></span>
+<span class="mdc-notched-outline__trailing"></span>
+</span>
+</div>
+<div class="mdc-text-field-helper-line">
+<p class="mdc-text-field-helper-text mdc-text-field-helper-text--validation-msg" data-field-error="" data-validation-type="required">
+                                请输入名字。
+                              </p>
+</div>
+</div>
+</div>
+<div class="glue-grid__col ce-grid-col__pos-6-lg glue-grid__col--span-4-sm glue-grid__col--span-5-md glue-grid__col--span-3-lg">
+<div class="ce-text-field glue-form__element" data-field-error-class="mdc-text-field--invalid" data-form-field="TextField" data-validations='[{"type": "required", "on_blur": true, "error": "请输入姓氏。"}]'>
+<label class="ce-text-field__label" for="LastName" id="ce-textfield-LastName-label">
+                              姓氏
+                            </label>
+<div class="mdc-text-field mdc-text-field--outlined glue-text-field mdc-text-field--no-label glue-text-field--required">
+<input class="mdc-text-field__input" data-field-element="" id="LastName" name="LastName" required="" type="text" value=""/>
+<span class="mdc-notched-outline">
+<span class="mdc-notched-outline__leading"></span>
+<span class="mdc-notched-outline__trailing"></span>
+</span>
+</div>
+<div class="mdc-text-field-helper-line">
+<p class="mdc-text-field-helper-text mdc-text-field-helper-text--validation-msg" data-field-error="" data-validation-type="required">
+                                请输入姓氏。
+                              </p>
+</div>
+</div>
+</div>
+<div class="glue-grid__col ce-grid-row-2 glue-grid__col--span-4-sm glue-grid__col--span-5-md glue-grid__col--span-3-lg">
+<div class="ce-text-field glue-form__element" data-field-error-class="mdc-text-field--invalid" data-form-field="TextField" data-validations='[{"type": "isEmail", "on_blur": true, "error": "请输入有效的电子邮件地址。"}]'>
+<label class="ce-text-field__label" for="Email" id="ce-textfield-Email-label">
+                              电子邮件地址
+                            </label>
+<div class="mdc-text-field mdc-text-field--outlined glue-text-field mdc-text-field--no-label glue-text-field--required">
+<input class="mdc-text-field__input" data-field-element="" id="Email" name="Email" required="" type="email" value=""/>
+<span class="mdc-notched-outline">
+<span class="mdc-notched-outline__leading"></span>
+<span class="mdc-notched-outline__trailing"></span>
+</span>
+</div>
+<div class="mdc-text-field-helper-line">
+<p class="mdc-text-field-helper-text mdc-text-field-helper-text--validation-msg" data-field-error="" data-validation-type="isEmail">
+                                请输入有效的电子邮件地址。
+                              </p>
+</div>
+</div>
+</div>
+<div class="glue-grid__col ce-grid-row-2 ce-grid-col__pos-6-lg glue-grid__col--span-4-sm glue-grid__col--span-5-md glue-grid__col--span-3-lg">
+<div class="ce-text-field glue-form__element" data-field-error-class="mdc-text-field--invalid" data-form-field="TextField" data-validations='[{"type": "required", "on_blur": true, "error": "请输入公司名称。"}]'>
+<label class="ce-text-field__label" for="Company" id="ce-textfield-Company-label">
+                              公司
+                            </label>
+<div class="mdc-text-field mdc-text-field--outlined glue-text-field mdc-text-field--no-label glue-text-field--required">
+<input class="mdc-text-field__input" data-field-element="" id="Company" name="Company" required="" type="text" value=""/>
+<span class="mdc-notched-outline">
+<span class="mdc-notched-outline__leading"></span>
+<span class="mdc-notched-outline__trailing"></span>
+</span>
+</div>
+<div class="mdc-text-field-helper-line">
+<p class="mdc-text-field-helper-text mdc-text-field-helper-text--validation-msg" data-field-error="" data-validation-type="required">
+                                请输入公司名称。
+                              </p>
+</div>
+</div>
+</div>
+<div class="glue-grid__col ce-grid-row-3 glue-grid__col--span-4-sm glue-grid__col--span-5-md glue-grid__col--span-3-lg">
+<div class="ce-text-field glue-form__element" data-field-error-class="mdc-text-field--invalid" data-form-field="TextField" data-validations='[{"type": "required", "on_blur": true, "error": "请输入职位。"}]'>
+<label class="ce-text-field__label" for="Title" id="ce-textfield-Title-label">
+                              称谓
+                            </label>
+<div class="mdc-text-field mdc-text-field--outlined glue-text-field mdc-text-field--no-label glue-text-field--required">
+<input class="mdc-text-field__input" data-field-element="" id="Title" name="Title" required="" type="text" value=""/>
+<span class="mdc-notched-outline">
+<span class="mdc-notched-outline__leading"></span>
+<span class="mdc-notched-outline__trailing"></span>
+</span>
+</div>
+<div class="mdc-text-field-helper-line">
+<p class="mdc-text-field-helper-text mdc-text-field-helper-text--validation-msg" data-field-error="" data-validation-type="required">
+                                请输入职位。
+                              </p>
+</div>
+</div>
+</div>
+<div class="glue-grid__col ce-grid-row-3 ce-grid-col__pos-6-lg glue-grid__col--span-4-sm glue-grid__col--span-5-md glue-grid__col--span-3-lg">
+<div class="ce-select-field glue-form__element" data-form-field="SelectField" data-validations='[{"type": "required", "on_blur": true, "error": "这是必填字段。我们会根据您的行业，将您的申请交由适当的团队处理。"}]'>
+<label class="ce-select-field__label" data-ga-config='{"dropdownOpenClose": {"selected_option": true, "link_text": true, "module_name": "Industry", "section_header": true}}' for="Industry" id="label-Industry">
+                              行业 *
+                            </label>
+<div class="mdc-select mdc-select--outlined glue-select mdc-select--required mdc-select--no-label" data-ga-config='{"dropdownOpenClose": {"selected_option": true, "link_text": true, "module_name": "Industry", "section_header": true}}'>
+<input class="ce-mdc-select-ref" data-field-element="" id="Industry" name="Industry" type="hidden" value=""/>
+<div aria-controls="listbox-Industry" aria-describedby="label-helper-txt-Industry" aria-expanded="false" aria-labelledby="label-Industry selectedtext-Industry" aria-required="true" class="mdc-select__anchor" required="true" role="combobox">
+<span class="mdc-select__selected-text" id="selectedtext-Industry">Stable</span>
+<span class="mdc-select__dropdown-icon">
+<svg class="mdc-select__dropdown-icon-graphic" viewbox="7 10 10 5">
+<polygon class="mdc-select__dropdown-icon-inactive" fill-rule="evenodd" points="7 10 12 15 17 10" stroke="none"></polygon>
+<polygon class="mdc-select__dropdown-icon-active" fill-rule="evenodd" points="7 15 12 10 17 15" stroke="none"></polygon>
+</svg>
+</span>
+<span class="mdc-notched-outline">
+<span class="mdc-notched-outline__leading"></span>
+<span class="mdc-notched-outline__trailing"></span>
+</span>
+</div>
+<div class="mdc-select__menu mdc-menu mdc-menu-surface" id="listbox-Industry" role="listbox">
+<ul class="mdc-list">
+<li aria-selected="False" class="mdc-list-item" data-value="Agriculture" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">农业</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="Education" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">教育</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="Energy &amp; Utilities" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">能源与公用事业</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="Financial Services" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">金融服务</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="Government" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">政府</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="Healthcare &amp; Life Sciences" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">医疗保健与生命科学</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="Industrial Goods &amp; Manufacturing" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">工业用品与制造</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="Media &amp; Entertainment" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">媒体与娱乐</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="Non-profit" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">公益</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="Business &amp; Professional Services" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">专业服务与商业服务</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="Retail &amp; Wholesale" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">零售与批发</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="Software &amp; Internet" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">软件与互联网</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="Other" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">其他</span>
+</li>
+</ul>
+</div>
+</div>
+<p class="mdc-select-helper-text mdc-select-helper-text--validation-msg glue-select-helper-text" data-field-error="" data-validation-type="required" id="label-helper-txt-Industry">这是必填字段。我们会根据您的行业，将您的申请交由适当的团队处理。</p>
+</div>
+</div>
+<div class="glue-grid__col ce-grid-row-4 glue-grid__col--span-4-sm glue-grid__col--span-5-md glue-grid__col--span-3-lg">
+<div class="ce-select-field glue-form__element" data-form-field="SelectField" data-validations='[{"type": "required", "on_blur": true, "error": "请选择国家/地区。"}]'>
+<label class="ce-select-field__label" data-ga-config='{"dropdownOpenClose": {"selected_option": true, "link_text": true, "module_name": "CountryCode", "section_header": true}}' for="CountryCode" id="label-CountryCode">
+                              国家/地区 *
+                            </label>
+<div class="mdc-select mdc-select--outlined glue-select mdc-select--required mdc-select--no-label" data-ga-config='{"dropdownOpenClose": {"selected_option": true, "link_text": true, "module_name": "CountryCode", "section_header": true}}'>
+<input class="ce-mdc-select-ref" data-field-element="" id="CountryCode" name="CountryCode" type="hidden" value=""/>
+<div aria-controls="listbox-CountryCode" aria-describedby="label-helper-txt-CountryCode" aria-expanded="false" aria-labelledby="label-CountryCode selectedtext-CountryCode" aria-required="true" class="mdc-select__anchor" required="true" role="combobox">
+<span class="mdc-select__selected-text" id="selectedtext-CountryCode">Stable</span>
+<span class="mdc-select__dropdown-icon">
+<svg class="mdc-select__dropdown-icon-graphic" viewbox="7 10 10 5">
+<polygon class="mdc-select__dropdown-icon-inactive" fill-rule="evenodd" points="7 10 12 15 17 10" stroke="none"></polygon>
+<polygon class="mdc-select__dropdown-icon-active" fill-rule="evenodd" points="7 15 12 10 17 15" stroke="none"></polygon>
+</svg>
+</span>
+<span class="mdc-notched-outline">
+<span class="mdc-notched-outline__leading"></span>
+<span class="mdc-notched-outline__trailing"></span>
+</span>
+</div>
+<div class="mdc-select__menu mdc-menu mdc-menu-surface" id="listbox-CountryCode" role="listbox">
+<ul class="mdc-list">
+<li aria-selected="False" class="mdc-list-item" data-value="AF" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">阿富汗</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="AL" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">阿尔巴尼亚</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="DZ" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">阿尔及利亚</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="AS" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">美属萨摩亚</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="AD" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">安道尔</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="AO" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">安哥拉</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="AI" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">安圭拉</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="AQ" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">南极洲</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="AG" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">安提瓜和巴布达</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="AR" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">阿根廷</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="AM" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">亚美尼亚</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="AW" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">阿鲁巴</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="SH" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">阿森松岛</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="AU" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">澳大利亚</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="AT" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">奥地利</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="AZ" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">阿塞拜疆</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="BS" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">巴哈马</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="BH" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">巴林</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="BD" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">孟加拉</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="BB" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">巴巴多斯</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="BY" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">白俄罗斯</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="BE" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">比利时</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="BZ" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">伯利兹</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="BJ" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">贝宁</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="BM" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">百慕大</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="BT" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">不丹</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="BO" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">玻利维亚</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="BA" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">波斯尼亚和黑塞哥维那</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="BW" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">博茨瓦纳</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="BV" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">布韦岛</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="BR" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">巴西</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="IO" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">英属印度洋领地</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="VG" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">英属维尔京群岛</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="BN" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">文莱</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="BG" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">保加利亚</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="BF" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">布基纳法索</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="BI" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">布隆迪</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="KH" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">柬埔寨</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="CM" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">喀麦隆</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="CA" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">加拿大</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="CV" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">佛得角</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="KY" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">开曼群岛</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="CF" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">中非共和国</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="TD" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">乍得</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="CL" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">智利</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="CN" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">中国大陆</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="CX" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">圣诞岛</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="CC" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">科科斯（基林）群岛</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="CO" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">哥伦比亚</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="KM" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">科摩罗</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="CD" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">刚果民主共和国</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="CG" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">刚果共和国</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="CK" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">库克群岛</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="CR" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">哥斯达黎加</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="CI" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">科特迪瓦</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="HR" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">克罗地亚</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="CW" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">库拉索</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="CY" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">塞浦路斯</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="CZ" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">捷克</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="DK" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">丹麦</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="DJ" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">吉布提</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="DM" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">多米尼克</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="DO" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">多米尼加共和国</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="EC" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">厄瓜多尔</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="EG" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">埃及</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="SV" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">萨尔瓦多</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="GQ" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">赤道几内亚</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="ER" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">厄立特里亚</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="EE" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">爱沙尼亚</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="ET" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">埃塞俄比亚</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="FK" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">福克兰群岛（马尔维纳斯群岛）</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="FO" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">法罗群岛</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="FJ" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">斐济</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="FI" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">芬兰</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="FR" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">法国</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="GF" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">法属圭亚那</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="PF" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">法属波利尼西亚</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="TF" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">法属南部领地</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="GA" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">加蓬</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="GM" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">冈比亚</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="GE" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">格鲁吉亚</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="DE" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">德国</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="GH" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">加纳</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="GI" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">直布罗陀</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="GR" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">希腊</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="GL" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">格陵兰</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="GD" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">格林纳达</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="GP" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">瓜德罗普</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="GU" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">关岛</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="GT" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">危地马拉</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="GN" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">几内亚</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="GW" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">几内亚比绍</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="GY" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">圭亚那</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="HT" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">海地</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="HM" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">赫德岛和麦克唐纳群岛</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="HN" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">洪都拉斯</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="HK" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">中国香港</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="HU" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">匈牙利</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="IS" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">冰岛</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="IN" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">印度</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="ID" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">印度尼西亚</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="IQ" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">伊拉克</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="IE" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">爱尔兰</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="IL" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">以色列</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="IT" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">意大利</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="JM" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">牙买加</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="JP" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">日本</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="JO" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">约旦</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="KZ" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">哈萨克斯坦</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="KE" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">肯尼亚</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="KI" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">基里巴斯</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="KW" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">科威特</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="KG" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">吉尔吉斯斯坦</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="LA" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">老挝</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="LV" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">拉脱维亚</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="LB" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">黎巴嫩</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="LS" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">莱索托</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="LR" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">利比里亚</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="LY" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">利比亚</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="LI" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">列支敦士登</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="LT" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">立陶宛</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="LU" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">卢森堡</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="MO" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">中国澳门</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="MK" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">马其顿（前南斯拉夫马其顿共和国）</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="MG" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">马达加斯加</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="MW" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">马拉维</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="MY" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">马来西亚</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="MV" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">马尔代夫</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="ML" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">马里</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="MT" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">马耳他</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="MH" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">马绍尔群岛</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="MQ" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">马提尼克</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="MR" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">毛里塔尼亚</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="MU" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">毛里求斯</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="YT" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">马约特岛</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="MX" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">墨西哥</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="FM" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">密克罗尼西亚</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="MD" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">摩尔多瓦</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="MC" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">摩纳哥</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="MN" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">蒙古</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="ME" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">黑山</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="MS" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">蒙特塞拉特</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="MA" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">摩洛哥</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="MZ" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">莫桑比克</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="MM" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">缅甸</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="NA" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">纳米比亚</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="NR" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">瑙鲁</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="NP" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">尼泊尔</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="NL" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">荷兰</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="AN" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">荷属安的列斯</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="NC" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">新喀里多尼亚</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="NZ" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">新西兰</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="NI" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">尼加拉瓜</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="NE" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">尼日尔</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="NG" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">尼日利亚</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="NU" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">纽埃</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="NF" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">诺福克岛</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="MP" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">北马里亚纳群岛</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="NO" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">挪威</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="OM" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">阿曼</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="PK" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">巴基斯坦</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="PW" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">帕劳</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="PS" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">巴勒斯坦</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="PA" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">巴拿马</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="PG" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">巴布亚新几内亚</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="PY" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">巴拉圭</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="PE" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">秘鲁</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="PH" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">菲律宾</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="PN" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">皮特凯恩群岛</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="PL" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">波兰</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="PT" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">葡萄牙</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="PR" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">波多黎各</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="QA" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">卡塔尔</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="RE" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">留尼汪岛</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="RO" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">罗马尼亚</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="RU" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">俄罗斯</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="RW" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">卢旺达</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="BL" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">圣巴泰勒米</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="SH" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">圣赫勒拿</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="KN" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">圣基茨和尼维斯</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="LC" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">圣卢西亚</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="MF" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">圣马丁岛</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="PM" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">圣皮埃尔和密克隆</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="VC" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">圣文森特和格林纳丁斯</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="WS" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">萨摩亚</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="SM" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">圣马力诺</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="ST" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">圣多美和普林西比</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="SA" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">沙特阿拉伯</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="SN" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">塞内加尔</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="RS" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">塞尔维亚</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="SC" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">塞舌尔</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="SL" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">塞拉利昂</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="SG" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">新加坡</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="SX" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">荷属圣马丁岛</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="SK" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">斯洛伐克</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="SI" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">斯洛文尼亚</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="SB" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">所罗门群岛</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="SO" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">索马里</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="ZA" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">南非</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="GS" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">南乔治亚和南桑德威奇群岛</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="KR" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">韩国</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="SS" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">南苏丹</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="ES" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">西班牙</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="LK" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">斯里兰卡</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="SD" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">苏丹</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="SR" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">苏里南</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="SJ" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">斯瓦尔巴和扬马延</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="SZ" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">斯威士兰</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="SE" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">瑞典</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="CH" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">瑞士</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="TW" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">中国台湾</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="TJ" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">塔吉克斯坦</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="TZ" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">坦桑尼亚</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="TH" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">泰国</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="TL" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">东帝汶</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="TG" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">多哥</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="TK" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">托克劳</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="TO" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">汤加</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="TT" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">特立尼达和多巴哥</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="TN" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">突尼斯</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="TR" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">土耳其</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="TM" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">土库曼斯坦</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="TC" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">特克斯和凯科斯群岛</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="TV" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">图瓦卢</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="UM" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">美国本土外岛屿</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="VI" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">美属维尔京群岛</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="UG" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">乌干达</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="UA" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">乌克兰</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="AE" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">阿拉伯联合酋长国</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="GB" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">英国</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="US" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">美国</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="UY" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">乌拉圭</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="UZ" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">乌兹别克斯坦</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="VU" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">瓦努阿图</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="VA" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">梵蒂冈</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="VE" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">委内瑞拉</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="VN" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">越南</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="WF" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">瓦利斯和福图纳</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="EH" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">西撒哈拉</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="YE" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">也门</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="ZM" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">赞比亚</span>
+</li>
+<li aria-selected="False" class="mdc-list-item" data-value="ZW" role="option">
+<span class="mdc-list-item__ripple"></span>
+<span class="mdc-list-item__text" role="button">津巴布韦</span>
+</li>
+</ul>
+</div>
+</div>
+<p class="mdc-select-helper-text mdc-select-helper-text--validation-msg glue-select-helper-text" data-field-error="" data-validation-type="required" id="label-helper-txt-CountryCode">请选择国家/地区。</p>
+</div>
+</div>
+</div>
+</div>
+<div class="ce-form__field-container">
+<input data-field-element="" data-form-field="HiddenField" id="formid" name="formid" type="hidden" value="83787"/>
+</div>
+<div class="ce-form__field-container">
+<input data-field-element="" data-form-field="HiddenField" id="subId" name="subId" type="hidden" value="95"/>
+</div>
+<div class="ce-form__field-container">
+<input data-field-element="" data-form-field="HiddenField" id="Lead_Source_Description__c" name="Lead_Source_Description__c" type="hidden" value="Content Marketing:Browser News and Updates"/>
+</div>
+<div class="ce-form__field-container">
+<input data-field-element="" data-form-field="HiddenField" id="Product_Family__c" name="Product_Family__c" type="hidden" value="Chrome Enterprise"/>
+</div>
+<div class="ce-form__field-container">
+<input data-field-element="" data-form-field="HiddenField" id="LeadSource" name="LeadSource" type="hidden" value="Content Marketing"/>
+</div>
+<div class="ce-form__field-container">
+<input data-field-element="" data-form-field="HiddenField" id="Utm_Campaign__c" name="Utm_Campaign__c" type="hidden" value="{query_param:utm_campaign}"/>
+</div>
+<div class="ce-form__field-container">
+<input data-field-element="" data-form-field="HiddenField" id="Chrm_Campaign__c" name="Chrm_Campaign__c" type="hidden" value="global-chrm-operational-oi-cecb-newsletter-opt-in"/>
+</div>
+<div class="ce-form__field-container">
+<input data-field-element="" data-form-field="HiddenField" id="Utm_Content__c" name="Utm_Content__c" type="hidden" value="{query_param:utm_content}"/>
+</div>
+<div class="ce-form__field-container">
+<input data-field-element="" data-form-field="HiddenField" id="Utm_Term__c" name="Utm_Term__c" type="hidden" value="{query_param:utm_term}"/>
+</div>
+<div class="ce-form__field-container">
+<input data-field-element="" data-form-field="HiddenField" id="Utm_Medium__c" name="Utm_Medium__c" type="hidden" value="{query_param:utm_medium}"/>
+</div>
+<div class="ce-form__field-container">
+<input data-field-element="" data-form-field="HiddenField" id="Utm_Source__c" name="Utm_Source__c" type="hidden" value="{query_param:utm_source}"/>
+</div>
+<div class="ce-form__field-container">
+<input data-field-element="" data-form-field="HiddenField" id="Chrm_Source__c" name="Chrm_Source__c" type="hidden" value="Content Marketing"/>
+</div>
+<div class="ce-form__field-container">
+<input data-field-element="" data-form-field="HiddenField" id="Facet_Referrer_Url__c" name="Facet_Referrer_Url__c" type="hidden" value="{current_url}"/>
+</div>
+<div class="ce-form__field-container">
+<input data-field-element="" data-form-field="HiddenField" id="rsvp" name="rsvp" type="hidden" value="True"/>
+</div>
+<div class="ce-form__field-container">
+<input data-field-element="" data-form-field="HiddenField" id="munchkinId" name="munchkinId" type="hidden" value="808-GJW-314"/>
+</div>
+<div class="ce-form__field-container ce-newsletter-form__opt-in-check">
+<div class="mdc-touch-target-wrapper">
+<div class="mdc-form-field ce-form-field__checkbox">
+<div class="mdc-checkbox mdc-checkbox--touch glue-checkbox" data-false-value="No" data-form-field="SingleCheckboxField" data-true-value="Yes" data-validations='[{"type": "equalsTo", "value": "Yes", "on_blur": true, "error": "This is required."}]'>
+<input class="mdc-checkbox__native-control" data-field-element="" id="Chrome_Opt_In__c" name="Chrome_Opt_In__c" type="checkbox"/>
+<div class="mdc-checkbox__background">
+<svg aria-hidden="true" class="mdc-checkbox__checkmark" viewbox="0 0 24 24">
+<path class="mdc-checkbox__checkmark-path" d="M1.73,12.91 8.1,19.28 22.79,4.59" fill="none"></path>
+</svg>
+<div class="mdc-checkbox__mixedmark"></div>
+</div>
+<div class="mdc-checkbox__ripple"></div>
+</div>
+<label class="ce-checkbox__label" for="Chrome_Opt_In__c">是的，我要订阅 Chrome 企业版电子邮件，以便及时了解最新资讯、产品动态、活动信息等。我可以随时退订。</label>
+<div class="ce-checkbox__error">
+<p data-field-error="" data-validation-type="equalsTo">这是必填项。</p>
+</div>
+</div>
+</div>
+</div>
+<div class="ce-form__field-container ce-newsletter-form__disclaimer">
+<p class="ce-small-text glue-small-text">提交此表单即表示：我同意分享自己的个人信息，并认可我提供的信息将受 <a href="https://policies.google.com/privacy" rel="noreferrer" target="_blank">Google 隐私权政策None</a>的约束。</p>
+</div>
+<div class="ce-form__field-container ce-newsletter-form__submit">
+<button class="glue-button ce-button glue-button--medium-emphasis ce-newsletter-form__submit-cta" data-form-submit="" tabindex="">
+                    提交
+                  </button>
+</div>
+<div class="ce-form__error"></div>
+</form>
+</div>
+</div>
+</div>
+<div class="ce-newsletter-form__ty ce-hidden ce-section ce-section--bg-gray-50">
+<div class="ce-newsletter-form__ty-wrapper glue-grid glue-page">
+<div class="glue-grid__col--span-0-sm glue-grid__col--span-0-md glue-grid__col--span-1-lg"></div>
+<div class="ce-newsletter-form__ty-left glue-grid__col--span-4-sm glue-grid__col--span-12-md glue-grid__col--span-5-lg">
+<div class="ce-newsletter-form__ty-left-content ce-newsletter-form__ty-content" data-transition="drag-fadein" data-transition-delay="300" data-transition-delay-from-load="1600" data-transition-duration="800">
+<div class="ce-copy-block ce-newsletter-form__ty-headline">
+<h3 class="ce-heading glue-headline glue-headline--headline-1">感谢您与我们联系！</h3>
+<p class="ce-paragraph glue-headline--headline-5 glue-headline">我们已收到您的申请。</p>
+</div>
+</div>
+<div class="ce-newsletter-form__ty-left-bg ce-section ce-section--bg-gray-100">
+<div class="ce-image__wrapper" data-ce-component="LazyImagesComponent" data-is-lazy="">
+<img alt="" class="ce-image ce-newsletter-form__bg-shape ce-newsletter-form__bg-shape--1" data-c-lazy-image="" data-src="https://storage.googleapis.com/chrome-enterprise/img/global/shapes/blue_ellipse_circle_square.svg" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGP6zwAAAgcBApocMXEAAAAASUVORK5CYII="/>
+</div>
+</div>
+</div>
+<div class="ce-newsletter-form__ty-right ce-grid-col__pos-7 glue-grid__col--span-4-sm glue-grid__col--span-12-md glue-grid__col--span-5-lg">
+<div class="ce-newsletter-form__ty-right-content ce-newsletter-form__ty-content" data-transition="drag-fadein" data-transition-delay="300" data-transition-delay-from-load="1600" data-transition-duration="800">
+<h5 class="ce-heading glue-headline glue-headline--headline-5">以下是一些您可能感兴趣的主题：</h5>
+<div class="ce-callout ce-contact-form-section__icon">
+<div class="ce-callout__card-list">
+<div class="ce-callout__card">
+<div class="ce-image__wrapper" data-ce-component="LazyImagesComponent" data-is-lazy="">
+<img alt="" class="ce-image" data-c-lazy-image="" data-src="https://storage.googleapis.com/chrome-enterprise/img/global/icons/ce-linkedln.svg" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGP6zwAAAgcBApocMXEAAAAASUVORK5CYII="/>
+</div>
+<h5 class="ce-heading ce-callout__card-heading ce-spacer-3-padding-top glue-headline glue-headline--headline-5">
+                          与我们联系
+                        </h5>
+<p class="ce-paragraph ce-spacer-1-padding-top ce-spacer-3-margin-bottom">在 LinkedIn 上关注 Chrome 企业版，随时了解我们的最新资讯。</p>
+<a class="glue-button ce-link-button glue-button--low-emphasis glue-button--icon-right" data-ga-action="cta click" data-ga-category="page body" data-ga-extra='{"linkUrl": true, "pageSection": "Newsletter", "scrollPosition": true}' data-ga-label="Newsletter - Follow us" href="https://www.linkedin.com/showcase/chrome-enterprise/" rel="noreferrer" role="button" target="_blank">
+                          关注我们
+                          <svg class="ce-icon--rotate-320" viewbox="0 0 24 24">
+<path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8-8-8z"></path>
+</svg>
+</a>
+</div>
+<div class="ce-callout__card">
+<div class="ce-image__wrapper" data-ce-component="LazyImagesComponent" data-is-lazy="">
+<img alt="" class="ce-image" data-c-lazy-image="" data-src="https://storage.googleapis.com/chrome-enterprise/img/global/icons/device_management_icon.svg" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGP6zwAAAgcBApocMXEAAAAASUVORK5CYII="/>
+</div>
+<h5 class="ce-heading ce-callout__card-heading ce-spacer-3-padding-top glue-headline glue-headline--headline-5">
+                          试用 Chrome 企业版升级
+                        </h5>
+<p class="ce-paragraph ce-spacer-1-padding-top ce-spacer-3-margin-bottom">免费试用 30 天，轻松安全地管理贵组织的 ChromeOS 设备。</p>
+<a class="glue-button ce-link-button glue-button--low-emphasis glue-button--icon-right" data-ga-action="cta click" data-ga-category="page body" data-ga-extra='{"linkUrl": true, "pageSection": "Newsletter", "scrollPosition": true}' data-ga-label="Newsletter - Sign up" href="https://chromeos.google/intl/zh-cn/products/device-management/" rel="noreferrer" role="button" target="_blank">
+                          注册
+                          <svg class="ce-icon--rotate-320" viewbox="0 0 24 24">
+<path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8-8-8z"></path>
+</svg>
+</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</template>
+</div>
+<div class="ce-social-footer ">
+<div class="glue-page">
+<div class="ce-social-container" data-ga-context='{"module_name": "social"}'>
+<div class="ce-social-wrapper">
+<section class="glue-social glue-social--static glue-mod-mt-std" data-ce-component="SocialPanelsComponent">
+<div class="glue-social__group ce-socialbar-group" id="follow-us">
+<p class="glue-social__title glue-social__title--inline">关注我们</p>
+<ul class="glue-social__list glue-no-bullet">
+<li class="glue-social__item">
+<a aria-describedby="sr-only-text-social-footer-icon" aria-label="在 LinkedIn 上关注我们" class="glue-social__link" data-ga-action="follow" data-ga-category="social" data-ga-config='{"click": {"event": "cta_click", "link_text": "在 LinkedIn 上关注我们", "link_type": "external", "link_url": "https://www.linkedin.com/showcase/chrome-enterprise/"}}' data-ga-extra='{"linkUrl": true}' data-ga-label="LinkedIn" href="https://www.linkedin.com/showcase/chrome-enterprise/" rel="noreferrer" target="_blank">
+<svg alt="" aria-hidden="true" class="glue-icon glue-icon--social glue-icon--24px ce-social-icon--color-post-linkedin" role="img">
+<use xlink:href="/static/glue-icons.svg#linkedin"></use>
+</svg>
+<span class="sr-only" id="sr-only-text-social-footer-icon">()</span>
+</a>
+</li>
+</ul>
+</div>
+</section>
+</div>
+</div>
+</div>
+</div>
+<footer class="glue-footer" data-ce-component="DefaultFooter" data-ga-config='{"elementIsVisible": {"event": "module_impression", "module_name": "footer", "section_header": ""}}' data-ga-context='{"module_name": "footer"}'>
+<nav class="glue-footer__site-links">
+<div class="glue-footer__site-links-grid ce-default-footer__links glue-footer__site-links-grid--5-col"><div class="glue-footer__site-links-column" data-ga-context='{"section_header": "Chrome 企业版"}' id="column-1">
+<div class="glue-footer__site-links-header">
+<h3 class="glue-footer__site-links-header-text">Chrome 企业版</h3>
+<svg alt="" aria-hidden="true" class="glue-icon glue-icon--footer glue-expansion-panel__button-arrow" role="img">
+<use xlink:href="/static/glue-icons.svg#expand-more"></use>
+</svg>
+</div>
+<ul class="glue-footer__site-links-list glue-no-bullet" id="column-1-content"> <li class="glue-footer__site-links-list-item">
+<a class="glue-footer__link has-utm-params" data-ga-action="menu item click - Chrome 企业版" data-ga-category="footer" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "安全性", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="安全性" href="https://chromeenterprise.google/intl/zh-cn/solutions/secure-browsing/">
+安全性                      </a>
+</li>
+<li class="glue-footer__site-links-list-item">
+<a class="glue-footer__link " data-ga-action="menu item click - Chrome 企业版" data-ga-category="footer" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "助力云端工作者", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="助力云端工作者" href="https://chromeos.google/intl/zh-cn/business-solutions/use-case/modern-worker/" rel="noreferrer" target="_blank">
+助力云端工作者                      </a>
+</li>
+<li class="glue-footer__site-links-list-item">
+<a class="glue-footer__link has-utm-params" data-ga-action="menu item click - Chrome 企业版" data-ga-category="footer" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "明智投资", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="明智投资" href="https://chromeos.google/intl/zh-cn/" rel="noreferrer" target="_blank">
+明智投资                      </a>
+</li>
+<li class="glue-footer__site-links-list-item">
+<a class="glue-footer__link has-utm-params" data-ga-action="menu item click - Chrome 企业版" data-ga-category="footer" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "联系销售团队", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="联系销售团队" href="https://chromeenterprise.google/intl/zh-cn/contact/">
+联系销售团队                      </a>
+</li>
+<li class="glue-footer__site-links-list-item">
+<a class="glue-footer__link has-utm-params" data-ga-action="menu item click - Chrome 企业版" data-ga-category="footer" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "助力混合办公", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="助力混合办公" href="https://chromeenterprise.google/intl/zh-cn/solutions/hybrid-work/">
+助力混合办公                      </a>
+</li>
+<li class="glue-footer__site-links-list-item">
+<a class="glue-footer__link has-utm-params" data-ga-action="menu item click - Chrome 企业版" data-ga-category="footer" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "Chrome Enterprise Recommended", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="Chrome Enterprise Recommended" href="https://chromeos.google/intl/zh-cn/resources/recommended/" rel="noreferrer" target="_blank">
+Chrome Enterprise Recommended                      </a>
+</li>
+</ul>
+</div><div class="glue-footer__site-links-column" data-ga-context='{"section_header": "Chrome 浏览器"}' id="column-2">
+<div class="glue-footer__site-links-header">
+<h3 class="glue-footer__site-links-header-text">Chrome 浏览器</h3>
+<svg alt="" aria-hidden="true" class="glue-icon glue-icon--footer glue-expansion-panel__button-arrow" role="img">
+<use xlink:href="/static/glue-icons.svg#expand-more"></use>
+</svg>
+</div>
+<ul class="glue-footer__site-links-list glue-no-bullet" id="column-2-content"> <li class="glue-footer__site-links-list-item">
+<a class="glue-footer__link has-utm-params" data-ga-action="menu item click - Chrome 浏览器" data-ga-category="footer" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "概述", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="概述" href="https://chromeenterprise.google/intl/zh-cn/products/chrome-enterprise/">
+概述                      </a>
+</li>
+<li class="glue-footer__site-links-list-item">
+<a class="glue-footer__link has-utm-params" data-ga-action="menu item click - Chrome 浏览器" data-ga-category="footer" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "下载", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="下载" href="https://chromeenterprise.google/intl/zh-cn/download/">
+下载                      </a>
+</li>
+<li class="glue-footer__site-links-list-item">
+<a class="glue-footer__link has-utm-params" data-ga-action="menu item click - Chrome 浏览器" data-ga-category="footer" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "安全性", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="安全性" href="https://chromeenterprise.google/intl/zh-cn/solutions/secure-browsing/">
+安全性                      </a>
+</li>
+<li class="glue-footer__site-links-list-item">
+<a class="glue-footer__link has-utm-params" data-ga-action="menu item click - Chrome 浏览器" data-ga-category="footer" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "管理", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="管理" href="https://chromeenterprise.google/intl/zh-cn/products/cloud-management/">
+管理                      </a>
+</li>
+<li class="glue-footer__site-links-list-item">
+<a class="glue-footer__link has-utm-params" data-ga-action="menu item click - Chrome 浏览器" data-ga-category="footer" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "企业版支持方案", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="企业版支持方案" href="https://chromeenterprise.google/intl/zh-cn/products/support/">
+企业版支持方案                      </a>
+</li>
+</ul>
+</div><div class="glue-footer__site-links-column" data-ga-context='{"section_header": "ChromeOS"}' id="column-3">
+<div class="glue-footer__site-links-header">
+<h3 class="glue-footer__site-links-header-text">ChromeOS</h3>
+<svg alt="" aria-hidden="true" class="glue-icon glue-icon--footer glue-expansion-panel__button-arrow" role="img">
+<use xlink:href="/static/glue-icons.svg#expand-more"></use>
+</svg>
+</div>
+<ul class="glue-footer__site-links-list glue-no-bullet" id="column-3-content"> <li class="glue-footer__site-links-list-item">
+<a class="glue-footer__link has-utm-params" data-ga-action="menu item click - ChromeOS" data-ga-category="footer" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "概述", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="概述" href="https://chromeos.google/intl/zh-cn/" rel="noreferrer" target="_blank">
+概述                      </a>
+</li>
+<li class="glue-footer__site-links-list-item">
+<a class="glue-footer__link has-utm-params" data-ga-action="menu item click - ChromeOS" data-ga-category="footer" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "安全性", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="安全性" href="https://chromeos.google/intl/zh-cn/" rel="noreferrer" target="_blank">
+安全性                      </a>
+</li>
+<li class="glue-footer__site-links-list-item">
+<a class="glue-footer__link has-utm-params" data-ga-action="menu item click - ChromeOS" data-ga-category="footer" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "ChromeOS Flex", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="ChromeOS Flex" href="https://chromeos.google/intl/zh-cn/products/chromeos-flex/" rel="noreferrer" target="_blank">
+ChromeOS Flex                      </a>
+</li>
+<li class="glue-footer__site-links-list-item">
+<a class="glue-footer__link has-utm-params" data-ga-action="menu item click - ChromeOS" data-ga-category="footer" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "联络中心", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="联络中心" href="https://chromeos.google/intl/zh-cn/business-solutions/use-case/contact-center/" rel="noreferrer" target="_blank">
+联络中心                      </a>
+</li>
+<li class="glue-footer__site-links-list-item">
+<a class="glue-footer__link has-utm-params" data-ga-action="menu item click - ChromeOS" data-ga-category="footer" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="" href="https://chromeos.google/intl/zh-cn/products/device-management/" rel="noreferrer" target="_blank">
+Chrome Enterprise Upgrade                      </a>
+</li>
+<li class="glue-footer__site-links-list-item">
+<a class="glue-footer__link has-utm-params" data-ga-action="menu item click - ChromeOS" data-ga-category="footer" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "中小型企业", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="中小型企业" href="https://chromeos.google/intl/zh-cn/business-solutions/use-case/frontline/" rel="noreferrer" target="_blank">
+中小型企业                      </a>
+</li>
+<li class="glue-footer__site-links-list-item">
+<a class="glue-footer__link " data-ga-action="menu item click - ChromeOS" data-ga-category="footer" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "可持续", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="可持续" href="https://chromeenterprise.google/intl/zh-cn/os/sustainability/">
+可持续                      </a>
+</li>
+<li class="glue-footer__site-links-list-item">
+<a class="glue-footer__link " data-ga-action="menu item click - ChromeOS" data-ga-category="footer" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "零售", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="零售" href="https://chromeos.google/intl/zh-cn/business-solutions/industry/retail/" rel="noreferrer" target="_blank">
+零售                      </a>
+</li>
+<li class="glue-footer__site-links-list-item">
+<a class="glue-footer__link has-utm-params" data-ga-action="menu item click - ChromeOS" data-ga-category="footer" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "医疗保健", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="医疗保健" href="https://chromeos.google/intl/zh-cn/business-solutions/industry/healthcare/" rel="noreferrer" target="_blank">
+医疗保健                      </a>
+</li>
+<li class="glue-footer__site-links-list-item">
+<a class="glue-footer__link has-utm-params" data-ga-action="menu item click - ChromeOS" data-ga-category="footer" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "一线员工", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="一线员工" href="https://chromeos.google/intl/zh-cn/business-solutions/use-case/frontline/" rel="noreferrer" target="_blank">
+一线员工                      </a>
+</li>
+<li class="glue-footer__site-links-list-item">
+<a class="glue-footer__link has-utm-params" data-ga-action="menu item click - ChromeOS" data-ga-category="footer" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "自助服务终端和数字标牌", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="自助服务终端和数字标牌" href="https://chromeos.google/intl/zh-cn/business-solutions/use-case/kiosks/" rel="noreferrer" target="_blank">
+自助服务终端和数字标牌                      </a>
+</li>
+<li class="glue-footer__site-links-list-item">
+<a class="glue-footer__link " data-ga-action="menu item click - ChromeOS" data-ga-category="footer" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "虚拟化", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="虚拟化" href="https://chromeos.google/intl/zh-cn/business-solutions/use-case/shared-devices/" rel="noreferrer" target="_blank">
+虚拟化                      </a>
+</li>
+</ul>
+</div><div class="glue-footer__site-links-column" data-ga-context='{"section_header": "ChromeOS 设备"}' id="column-4">
+<div class="glue-footer__site-links-header">
+<h3 class="glue-footer__site-links-header-text">ChromeOS 设备</h3>
+<svg alt="" aria-hidden="true" class="glue-icon glue-icon--footer glue-expansion-panel__button-arrow" role="img">
+<use xlink:href="/static/glue-icons.svg#expand-more"></use>
+</svg>
+</div>
+<ul class="glue-footer__site-links-list glue-no-bullet" id="column-4-content"> <li class="glue-footer__site-links-list-item">
+<a class="glue-footer__link has-utm-params" data-ga-action="menu item click - ChromeOS 设备" data-ga-category="footer" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "概述", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="概述" href="https://chromeos.google/intl/zh-cn/products/devices/" rel="noreferrer" target="_blank">
+概述                      </a>
+</li>
+<li class="glue-footer__site-links-list-item">
+<a class="glue-footer__link has-utm-params" data-ga-action="menu item click - ChromeOS 设备" data-ga-category="footer" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "设备", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="设备" href="https://chromeos.google/intl/zh-cn/products/devices/" rel="noreferrer" target="_blank">
+设备                      </a>
+</li>
+<li class="glue-footer__site-links-list-item">
+<a class="glue-footer__link has-utm-params" data-ga-action="menu item click - ChromeOS 设备" data-ga-category="footer" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "如何购买", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="如何购买" href="https://chromeos.google/intl/zh-cn/products/devices/" rel="noreferrer" target="_blank">
+如何购买                      </a>
+</li>
+</ul>
+</div><div class="glue-footer__site-links-column" data-ga-context='{"section_header": "资源"}' id="column-5">
+<div class="glue-footer__site-links-header">
+<h3 class="glue-footer__site-links-header-text">资源</h3>
+<svg alt="" aria-hidden="true" class="glue-icon glue-icon--footer glue-expansion-panel__button-arrow" role="img">
+<use xlink:href="/static/glue-icons.svg#expand-more"></use>
+</svg>
+</div>
+<ul class="glue-footer__site-links-list glue-no-bullet" id="column-5-content"> <li class="glue-footer__site-links-list-item">
+<a class="glue-footer__link " data-ga-action="menu item click - 资源" data-ga-category="footer" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "成为合作伙伴", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="成为合作伙伴" href="https://chromeenterprise.google/intl/zh-cn/partner-program/">
+成为合作伙伴                      </a>
+</li>
+<li class="glue-footer__site-links-list-item">
+<a class="glue-footer__link has-utm-params" data-ga-action="menu item click - 资源" data-ga-category="footer" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "指南", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="指南" href="https://chromeenterprise.google/intl/zh-cn/resources/content-hub/">
+指南                      </a>
+</li>
+<li class="glue-footer__site-links-list-item">
+<a class="glue-footer__link " data-ga-action="menu item click - 资源" data-ga-category="footer" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "客户案例", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="客户案例" href="https://chromeenterprise.google/intl/zh-cn/resources/customer-stories/">
+客户案例                      </a>
+</li>
+<li class="glue-footer__site-links-list-item">
+<a class="glue-footer__link has-utm-params" data-ga-action="menu item click - 资源" data-ga-category="footer" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "活动", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="活动" href="https://chromeenterprise.google/intl/zh-cn/resources/events/">
+活动                      </a>
+</li>
+<li class="glue-footer__site-links-list-item">
+<a class="glue-footer__link has-utm-params" data-ga-action="menu item click - 资源" data-ga-category="footer" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "常见问题解答", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="常见问题解答" href="https://chromeenterprise.google/intl/zh-cn/resources/faq/">
+常见问题解答                      </a>
+</li>
+<li class="glue-footer__site-links-list-item">
+<a class="glue-footer__link " data-ga-action="menu item click - 资源" data-ga-category="footer" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "博客", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="博客" href="https://cloud.google.com/blog/products/chrome-enterprise" rel="noreferrer" target="_blank">
+博客                      </a>
+</li>
+<li class="glue-footer__site-links-list-item">
+<a class="glue-footer__link " data-ga-action="menu item click - 资源" data-ga-category="footer" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "政策列表", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="政策列表" href="https://chromeenterprise.google/intl/zh-cn/policies/">
+政策列表                      </a>
+</li>
+<li class="glue-footer__site-links-list-item">
+<a class="glue-footer__link " data-ga-action="menu item click - 资源" data-ga-category="footer" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "支持", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="支持" href="https://support.google.com/chrome/a#topic=7679105" rel="noreferrer" target="_blank">
+支持                      </a>
+</li>
+<li class="glue-footer__site-links-list-item">
+<a class="glue-footer__link " data-ga-action="menu item click - 资源" data-ga-category="footer" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "无障碍功能", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="无障碍功能" href="https://chromeenterprise.googles/intl/zh-cn/accessibility">
+无障碍功能                      </a>
+</li>
+<li class="glue-footer__site-links-list-item">
+<a class="glue-footer__link " data-ga-action="menu item click - 资源" data-ga-category="footer" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "寻找合作伙伴", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="寻找合作伙伴" href="https://cloud.google.com/find-a-partner/?products=Chrome" rel="noreferrer" target="_blank">
+寻找合作伙伴                      </a>
+</li>
+<li class="glue-footer__site-links-list-item">
+<a class="glue-footer__link has-utm-params" data-ga-action="menu item click - 资源" data-ga-category="footer" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "条款", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="条款" href="https://chromeenterprise.google/intl/zh-cn/resources/terms/">
+条款                      </a>
+</li>
+</ul>
+</div></div>
+</nav>
+<section class="glue-footer__global">
+<div class="glue-footer__logo">
+<a aria-describedby="sr-only-text-google-footer-icon" aria-label="Google" data-ga-action="logo click" data-ga-category="footer" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "https://chromeenterprise.google/intl/zh_cn/", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="https://chromeenterprise.google/intl/zh_cn/" href="https://www.google.com" rel="noreferrer" target="_blank" title="Google">
+<svg alt="" aria-hidden="true" class="glue-footer__logo-img" role="img">
+<use xlink:href="/static/glue-icons.svg#google-solid-logo"></use>
+</svg>
+<span class="sr-only" id="sr-only-text-google-footer-icon">()</span>
+</a>
+</div>
+<ul class="glue-footer__global-links glue-no-bullet"><li class="glue-footer__global-links-list-item">
+<a class="glue-footer__link " data-ga-action="menu item click" data-ga-category="footer" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "About Google", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="关于 Google" href="https://about.google/" rel="noreferrer" target="_blank">关于 Google              </a>
+</li><li class="glue-footer__global-links-list-item">
+<a class="glue-footer__link " data-ga-action="menu item click" data-ga-category="footer" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "About Google", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="Google 产品" href="https://about.google/products/" rel="noreferrer" target="_blank">Google 产品              </a>
+</li><li class="glue-footer__global-links-list-item">
+<a class="glue-footer__link " data-ga-action="menu item click" data-ga-category="footer" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "About Google", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="政策" href="https://policies.google.com" rel="noreferrer" target="_blank">政策              </a>
+</li><li class="glue-footer__global-links-list-item">
+<a class="glue-footer__link " data-ga-action="menu item click" data-ga-category="footer" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "About Google", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="隐私权" href="https://policies.google.com/privacy" rel="noreferrer" target="_blank">隐私权              </a>
+</li><li class="glue-footer__global-links-list-item">
+<a class="glue-footer__link " data-ga-action="menu item click" data-ga-category="footer" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "About Google", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="条款" href="https://policies.google.com/terms" rel="noreferrer" target="_blank">条款              </a>
+</li><li aria-hidden="true" class="glue-footer__global-links-list-item">
+<button aria-hidden="true" class="glue-footer__link glue-cookie-notification-bar-control" data-ga-action="menu item click" data-ga-category="footer" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "About Google", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="Cookies management controls">
+                &gt;Cookies management controls</button>
+</li></ul>
+<ul class="glue-footer__global-links glue-footer__global-links--extra glue-no-bullet">
+<li class="glue-footer__global-links-list-item glue-footer__global-links-list-item--extra">
+<a class="glue-footer__link" data-ga-action="menu item click" data-ga-category="footer" data-ga-config='{"click": {"event": "nav_click", "module_name": "", "link_text": "help", "link_url": true, "link_type": true}}' data-ga-extra='{"linkUrl": true}' data-ga-label="help" href="https://support.google.com/?hl=en" rel="noreferrer" target="_blank">
+<svg alt="" aria-hidden="true" class="glue-icon glue-icon--24px glue-icon--footer-help" role="img">
+<use xlink:href="/static/glue-icons.svg#help"></use>
+</svg>
+            帮助
+          </a>
+</li>
+<li class="glue-footer__global-links-list-item glue-footer__global-links-list-item--extra">
+<label class="glue-mod-visually-hidden" for="lang-selector">更改语言</label>
+<select class="glue-form__dropdown glue-footer__lang-dropdown" data-ga-config='{"selectChange": {"event": "country_dropdown_click", "module_name": "", "section_header": true}}' id="lang-selector" name="lang-selector">
+<option value="/intl/de_de/policies/">
+                  Deutsch (Deutschland)
+                </option>
+<option value="/intl/en_au/policies/">
+                  English (Australia)
+                </option>
+<option value="/intl/en_ca/policies/">
+                  English (Canada)
+                </option>
+<option value="/intl/en_uk/policies/">
+                  English (United Kingdom)
+                </option>
+<option value="/intl/en_us/policies/">
+                  English
+                </option>
+<option value="/intl/es-419_ALL/policies/">
+                  Español (Latinoamérica)
+                </option>
+<option value="/intl/es_es/policies/">
+                  Español (España)
+                </option>
+<option value="/intl/fr_fr/policies/">
+                  Français (France)
+                </option>
+<option value="/intl/ja_jp/policies/">
+                  日本語 (日本)
+                </option>
+<option value="/intl/nl_nl/policies/">
+                  Nederlands (Nederland)
+                </option>
+<option value="/intl/pt_br/policies/">
+                  Português (Brazil)
+                </option>
+<option selected="" value="/intl/zh_cn/policies/">
+                  简体中文
+                </option>
+</select>
+</li>
+</ul>
+</section>
+</footer>
+<script src="https://www.gstatic.com/external_hosted/intersectionobserver_polyfill/intersection-observer.min.js" nonce="fsCY9NNSS7RorExIYdunfw"></script>
+<script src="https://www.gstatic.com/glue/polyfill.min.js" nonce="fsCY9NNSS7RorExIYdunfw"></script>
+<script defer="" src="/static/policies/policies.min.js?cache=bb33b2c" nonce="fsCY9NNSS7RorExIYdunfw"></script>
+<link href="//fonts.googleapis.com/css?family=Roboto:100,300,400,500,700|Google+Sans:400,500|Roboto+Mono:wght@300;400;700|Product+Sans:400&amp;lang=en&amp;display=swap" rel="stylesheet" nonce="fsCY9NNSS7RorExIYdunfw">
+</link></body>
+</html>
