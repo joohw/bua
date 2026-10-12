@@ -44,6 +44,7 @@ void (function main(): void {
   const logList = $<HTMLUListElement>('log');
   const clearBtn = $<HTMLButtonElement>('clear');
   const settingsBtn = $<HTMLButtonElement>('openOnboarding');
+  const reconnectBtn = $<HTMLButtonElement>('reconnect');
 
   /** 能力的中文名。未列出的键直接显示原名。 */
   const CAP_LABELS: Record<string, string> = {

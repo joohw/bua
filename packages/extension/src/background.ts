@@ -309,6 +309,7 @@ async function connect(): Promise<void> {
   ws = socket;
 
   socket.addEventListener('open', () => {
+    retryDelayMs = 2_000; // 连上了，重置退避
     send({
       jsonrpc: '2.0',
       id: 0,
@@ -348,12 +349,29 @@ async function connect(): Promise<void> {
   });
 }
 
+/**
+ * 重连退避。
+ *
+ * 为什么必须有这个：扩展原先只在 service worker 启动时连一次桥。如果那一刻
+ * 桥还没起来（很常见 —— 用户先装扩展、后启动桥），连接就永久失败，除非用户
+ * 去引导页重新保存一次配置。用户的体感就是「一直提示未能连接」。
+ *
+ * 退避策略：起始 2 秒，每次失败翻倍，上限 30 秒。连上后重置。
+ */
+let retryDelayMs = 2_000;
+const RETRY_MAX_MS = 30_000;
+
 function scheduleReconnect(): void {
   if (reconnectTimer !== null) return;
-  reconnectTimer = setTimeout(() => {
-    reconnectTimer = null;
-    void connect();
-  }, 3000);
+  // 未同意时不重试 —— 用户还没授权，不该反复尝试建连
+  void isConsentGiven().then((accepted) => {
+    if (!accepted) return;
+    reconnectTimer = setTimeout(() => {
+      reconnectTimer = null;
+      void connect();
+    }, retryDelayMs);
+    retryDelayMs = Math.min(RETRY_MAX_MS, retryDelayMs * 2);
+  });
 }
 
 /* ─────────────────────── 方法分发 ─────────────────────── */
@@ -753,6 +771,21 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
       void refreshAllOverlays();
     }
     return false;
+  }
+  if (type === 'bua:reconnect') {
+    // 用户手动重试。重置退避，立刻连一次，然后把最新状态回给弹窗。
+    retryDelayMs = 2_000;
+    ws?.close();
+    ws = null;
+    void connect().then(async () => {
+      // 给握手一点时间，否则弹窗拿到的仍是「未连接」
+      await new Promise((r) => setTimeout(r, 350));
+      sendResponse({
+        connected: ws !== null && ws.readyState === WebSocket.OPEN,
+        port: await getPort(),
+      });
+    });
+    return true; // 异步响应
   }
   return false;
 });

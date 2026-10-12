@@ -342,8 +342,22 @@ export class Tab {
   async reload(): Promise<void> {
     await this.#conn.call(M.tabReload, { tabId: this.id });
   }
-  async close(): Promise<void> {
-    await this.#conn.call(M.tabClose, { tabId: this.id });
+
+  /**
+   * 关闭标签。
+   *
+   * 桥把 `tab.close` 归为 write 类（会改变浏览器状态），因此要求
+   * `targetDescription`。但「关闭这个标签」的意图是自明的 —— 让调用方为了关一个
+   * 标签去编一句描述纯属摩擦。所以这里**由 SDK 显式提供一个说明性描述**，
+   * 而不是把它变成调用方的负担。
+   *
+   * 若调用方有更具体的意图要记录（例如「关闭登录页，因为已完成」），可传入覆盖。
+   */
+  async close(intent?: Intent): Promise<void> {
+    await this.#conn.call(M.tabClose, {
+      tabId: this.id,
+      targetDescription: intent?.targetDescription ?? `关闭标签页 #${this.id}`,
+    });
   }
 
   /* 观察 */
