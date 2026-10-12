@@ -255,6 +255,39 @@ test('destroy 后 set 会重新建立（不抛错）', () => {
   assert.ok(findHost(sandbox.__body), '应重新挂载');
 });
 
+/* ─────────────────────── 自初始化竞态（真实 bug 的回归） ─────────────────────── */
+
+test('readyState=loading 时：先 set(active) 再触发 DOMContentLoaded，状态不被 idle 覆盖', () => {
+  // 这是真实场景：页面内联脚本在解析阶段调 set(active)，
+  // 随后 DOMContentLoaded 才触发。早期实现会在这里把 active 覆盖成 idle。
+  const sandbox = makeSandbox({ readyState: 'loading' });
+  const api = inject(sandbox);
+  api.set({ state: 'active' });
+
+  assert.equal(sandbox.__listeners.length, 1, '应已注册 DOMContentLoaded');
+  sandbox.__listeners[0].fn(); // 触发 DOMContentLoaded
+
+  assert.equal(badgeLabel(findHost(sandbox.__body)).textContent, 'BUA 正在操作', '不应被覆盖为待机');
+  const glow = findByClass(findHost(sandbox.__body).shadowRoot, 'glow');
+  assert.match(glow.style.boxShadow, /59,130,246/, '泛光应保持 active 蓝');
+});
+
+test('readyState=loading 且无人 set 时，DOMContentLoaded 建立 idle 外观', () => {
+  const sandbox = makeSandbox({ readyState: 'loading' });
+  inject(sandbox);
+  sandbox.__listeners[0].fn();
+  assert.equal(badgeLabel(findHost(sandbox.__body)).textContent, 'BUA 待机');
+});
+
+test('readyState=complete 且先 set(degraded)：自初始化不覆盖', () => {
+  const sandbox = makeSandbox({ readyState: 'complete' });
+  const api = inject(sandbox);
+  api.set({ state: 'degraded', warnings: ['⚠ 降级'] });
+  // 再注入一次不应改变状态（幂等 + 不覆盖）
+  inject(sandbox);
+  assert.equal(badgeLabel(findHost(sandbox.__body)).textContent, 'BUA 降级模式');
+});
+
 /* ─────────────────────── 页面安全契约 ─────────────────────── */
 
 test('宿主元素 pointer-events:none，不拦截页面点击', () => {

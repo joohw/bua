@@ -84,13 +84,17 @@ function overlayMain(globalKey: string): void {
     ':host{all:initial;position:fixed;inset:0;z-index:2147483647;pointer-events:none;display:block;contain:strict}',
     '.glow{position:absolute;inset:0;pointer-events:none;border-radius:2px;transition:box-shadow 320ms ease;animation:buaPulse 2.8s ease-in-out infinite}',
     '@keyframes buaPulse{0%,100%{opacity:1}50%{opacity:.62}}',
-    '.badge{position:absolute;top:0;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:7px;',
-    'padding:4px 12px 5px;border-radius:0 0 9px 9px;color:#fff;white-space:nowrap;pointer-events:none;',
+    // 徽标放**底部居中**而不是顶部：顶部是页面导航、通知条、聊天组件的密集区，
+    // 放那里会遮挡内容；底部居中在各类站点上冲突面最小，也是同类工具（浏览器
+    // 远程协助、录屏指示）的惯例位置。
+    '.badge{position:absolute;bottom:0;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:7px;',
+    'padding:5px 14px 6px;border-radius:9px 9px 0 0;color:#fff;white-space:nowrap;pointer-events:none;',
     'font:600 11px/1.35 ui-sans-serif,-apple-system,"Segoe UI",Roboto,sans-serif;letter-spacing:.02em;',
-    'box-shadow:0 2px 10px rgba(0,0,0,.35);transition:background 320ms ease}',
+    'box-shadow:0 -2px 10px rgba(0,0,0,.35);transition:background 320ms ease}',
     '.dot{width:6px;height:6px;border-radius:50%;background:#fff;animation:buaBlink 1.6s ease-in-out infinite}',
     '@keyframes buaBlink{0%,100%{opacity:1}50%{opacity:.3}}',
-    '.warn{position:absolute;top:30px;left:50%;transform:translateX(-50%);max-width:min(560px,calc(100vw - 32px));',
+    // 警示行叠在徽标上方
+    '.warn{position:absolute;bottom:26px;left:50%;transform:translateX(-50%);max-width:min(560px,calc(100vw - 32px));',
     'display:none;flex-direction:column;gap:3px;padding:8px 12px;border-radius:9px;',
     'background:rgba(15,23,42,.95);border:1px solid rgba(251,191,36,.45);color:#fde68a;',
     'font:400 11px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;box-shadow:0 6px 22px rgba(0,0,0,.45)}',
@@ -103,6 +107,16 @@ function overlayMain(globalKey: string): void {
   let badge: HTMLElement | null = null;
   let badgeText: HTMLElement | null = null;
   let warnBox: HTMLElement | null = null;
+
+  /**
+   * 是否已经有调用方显式设过状态。
+   *
+   * 这个标志修掉一个真实竞态：`document.readyState === 'loading'` 时我们会注册
+   * DOMContentLoaded 回调去建立默认的 idle 外观；但页面里的业务脚本在**解析阶段**
+   * 往往已经调过 `set(active)`。若此时 DOMContentLoaded 再无条件 `apply(idle)`，
+   * 就会把已经设好的状态覆盖回去 —— 表现是「明明在操作，徽标却显示待机」。
+   */
+  let hasExplicitState = false;
 
   function build(): void {
     if (host !== null) return;
@@ -135,6 +149,7 @@ function overlayMain(globalKey: string): void {
   }
 
   function apply(options: { state: StateName; label?: string; warnings?: string[] }): void {
+    hasExplicitState = true;
     build();
     if (glow === null || badge === null || badgeText === null || warnBox === null) return;
 
@@ -183,8 +198,17 @@ function overlayMain(globalKey: string): void {
   bag[globalKey] = { set: apply, destroy };
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => apply({ state: 'idle' }), { once: true });
+    // 推迟建立，但**不覆盖**调用方已设过的状态
+    document.addEventListener(
+      'DOMContentLoaded',
+      () => {
+        if (!hasExplicitState) apply({ state: 'idle' });
+      },
+      { once: true },
+    );
   } else {
-    apply({ state: 'idle' });
+    // 已就绪时也只有在无人设过状态的情况下才自初始化，
+    // 否则晚注入的场景会把业务代码已经设好的状态覆盖掉
+    if (!hasExplicitState) apply({ state: 'idle' });
   }
 }

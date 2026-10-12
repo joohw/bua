@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>泛光：degraded（琥珀 + 警示）</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 15px/1.7 ui-sans-serif, -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
+         color: #0f172a; background: #fff; }
+  .site { display: flex; justify-content: space-between; align-items: center;
+          padding: 14px 32px; border-bottom: 1px solid #e2e8f0; }
+  .brand { font-weight: 700; letter-spacing: .01em; }
+  nav a { margin-left: 18px; color: #475569; text-decoration: none; font-size: 14px; }
+  main { max-width: 720px; margin: 0 auto; padding: 36px 32px 80px; }
+  h1 { font-size: 26px; margin: 0 0 18px; }
+  p { color: #334155; }
+  form { margin: 28px 0; padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px; }
+  label { display: block; margin-bottom: 14px; font-size: 13px; color: #475569; }
+  input { display: block; width: 100%; margin-top: 6px; padding: 9px 11px;
+          border: 1px solid #cbd5e1; border-radius: 8px; font: inherit; }
+  button { padding: 10px 20px; border: 0; border-radius: 9px; background: #2563eb;
+           color: #fff; font: 600 14px/1 inherit; cursor: pointer; }
+  .note { margin-top: 34px; font-size: 13px; color: #94a3b8; }
+
+  .fake-debug-banner {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 2147483646;
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 16px;
+    background: #fef3c7; border-bottom: 1px solid #fcd34d; color: #78350f;
+    font: 500 13px/1.4 ui-sans-serif, -apple-system, "Segoe UI", sans-serif;
+    /* 注意：真实 Chrome 横幅会把页面往下推，这里仅作视觉模拟 */
+    pointer-events: none;
+  }
+  .fake-debug-banner .ico { font-size: 15px; }
+  .fake-debug-banner .x { margin-left: auto; opacity: .6; }
+</style>
+</head>
+<body>
+<script>
+// ?nobanner 时去掉模拟横幅，用于单独检查徽标与警示行的渲染
+if (!location.search.includes('nobanner')) {
+  document.write("\n  <div class=\"fake-debug-banner\">\n    <span class=\"ico\">ⓘ</span>\n    <span>BUA — Browser Use Agent 已开始调试此浏览器</span>\n    <span class=\"x\">✕</span>\n  </div>");
+}
+</script>
+
+  <header class="site">
+    <div class="brand">示例站点</div>
+    <nav><a href="#">首页</a><a href="#">文档</a><a href="#">定价</a></nav>
+  </header>
+  <main>
+    <h1>泛光：degraded（琥珀 + 警示）</h1>
+    <p>这个状态出现在 Chrome 155+ 的受管浏览器上：管理员配置了 runtime_blocked_hosts、</p>
+<p>DisableScreenshots 或 DLP 规则时，chrome.debugger.attach() 会在所有目标上失败，</p>
+<p>且无法用 runtime_allowed_hosts 绕过。此时扩展降级到 chrome.scripting 并在能力里如实声明。</p>
+    <form onsubmit="return false">
+      <label>收货地址 <input type="text" value="北京市朝阳区示例路 1 号"></label>
+      <label>联系电话 <input type="tel" value="138****0000"></label>
+      <button type="submit">提交订单</button>
+    </form>
+    <p class="note">下方是模拟的 Chrome 调试横幅，用于判断泛光与它叠在一起时的观感。</p>
+  </main>
+<script>
+(function overlayMain(globalKey        )       {
+                                                             
+
+                        
+                                                                                  
+                    
+   
+
+  // 幂等：重复注入不应产生两层光晕
+  const bag = globalThis                                                     ;
+  if (bag[globalKey] !== undefined) return;
+
+  const HOST_ID = 'bua-edge-glow-host';
+
+  const COLORS                                                                  = {
+    active: { solid: 'rgba(59,130,246,0.95)', mid: 'rgba(96,165,250,0.55)', soft: 'rgba(37,99,235,0.30)' },
+    paused: { solid: 'rgba(148,163,184,0.78)', mid: 'rgba(148,163,184,0.36)', soft: 'rgba(100,116,139,0.18)' },
+    degraded: { solid: 'rgba(245,158,11,0.95)', mid: 'rgba(251,191,36,0.55)', soft: 'rgba(217,119,6,0.30)' },
+    idle: { solid: 'rgba(148,163,184,0.45)', mid: 'rgba(148,163,184,0.22)', soft: 'rgba(100,116,139,0.12)' },
+  };
+
+  const LABELS                            = {
+    active: 'BUA 正在操作',
+    paused: 'BUA 已暂停',
+    degraded: 'BUA 降级模式',
+    idle: 'BUA 待机',
+  };
+
+  const STYLES = [
+    ':host{all:initial;position:fixed;inset:0;z-index:2147483647;pointer-events:none;display:block;contain:strict}',
+    '.glow{position:absolute;inset:0;pointer-events:none;border-radius:2px;transition:box-shadow 320ms ease;animation:buaPulse 2.8s ease-in-out infinite}',
+    '@keyframes buaPulse{0%,100%{opacity:1}50%{opacity:.62}}',
+    // 徽标放**底部居中**而不是顶部：顶部是页面导航、通知条、聊天组件的密集区，
+    // 放那里会遮挡内容；底部居中在各类站点上冲突面最小，也是同类工具（浏览器
+    // 远程协助、录屏指示）的惯例位置。
+    '.badge{position:absolute;bottom:0;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:7px;',
+    'padding:5px 14px 6px;border-radius:9px 9px 0 0;color:#fff;white-space:nowrap;pointer-events:none;',
+    'font:600 11px/1.35 ui-sans-serif,-apple-system,"Segoe UI",Roboto,sans-serif;letter-spacing:.02em;',
+    'box-shadow:0 -2px 10px rgba(0,0,0,.35);transition:background 320ms ease}',
+    '.dot{width:6px;height:6px;border-radius:50%;background:#fff;animation:buaBlink 1.6s ease-in-out infinite}',
+    '@keyframes buaBlink{0%,100%{opacity:1}50%{opacity:.3}}',
+    // 警示行叠在徽标上方
+    '.warn{position:absolute;bottom:26px;left:50%;transform:translateX(-50%);max-width:min(560px,calc(100vw - 32px));',
+    'display:none;flex-direction:column;gap:3px;padding:8px 12px;border-radius:9px;',
+    'background:rgba(15,23,42,.95);border:1px solid rgba(251,191,36,.45);color:#fde68a;',
+    'font:400 11px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;box-shadow:0 6px 22px rgba(0,0,0,.45)}',
+    '.warn span{display:block}',
+    '@media (prefers-reduced-motion:reduce){.glow,.dot{animation:none !important}}',
+  ].join('');
+
+  let host                     = null;
+  let glow                     = null;
+  let badge                     = null;
+  let badgeText                     = null;
+  let warnBox                     = null;
+
+  /**
+   * 是否已经有调用方显式设过状态。
+   *
+   * 这个标志修掉一个真实竞态：`document.readyState === 'loading'` 时我们会注册
+   * DOMContentLoaded 回调去建立默认的 idle 外观；但页面里的业务脚本在**解析阶段**
+   * 往往已经调过 `set(active)`。若此时 DOMContentLoaded 再无条件 `apply(idle)`，
+   * 就会把已经设好的状态覆盖回去 —— 表现是「明明在操作，徽标却显示待机」。
+   */
+  let hasExplicitState = false;
+
+  function build()       {
+    if (host !== null) return;
+    const parent = document.body ?? document.documentElement;
+    if (parent === null || parent === undefined) return;
+
+    host = document.createElement('div');
+    host.id = HOST_ID;
+    host.setAttribute('style', 'all:initial;pointer-events:none');
+    const shadow = host.attachShadow({ mode: 'closed' });
+
+    const style = document.createElement('style');
+    style.textContent = STYLES;
+
+    glow = document.createElement('div');
+    glow.className = 'glow';
+
+    badge = document.createElement('div');
+    badge.className = 'badge';
+    const dot = document.createElement('span');
+    dot.className = 'dot';
+    badgeText = document.createElement('span');
+    badge.append(dot, badgeText);
+
+    warnBox = document.createElement('div');
+    warnBox.className = 'warn';
+
+    shadow.append(style, glow, badge, warnBox);
+    parent.appendChild(host);
+  }
+
+  function apply(options                                                           )       {
+    hasExplicitState = true;
+    build();
+    if (glow === null || badge === null || badgeText === null || warnBox === null) return;
+
+    const key            =
+      options.state === 'active' ||
+      options.state === 'paused' ||
+      options.state === 'degraded' ||
+      options.state === 'idle'
+        ? options.state
+        : 'idle';
+    const c = COLORS[key];
+
+    glow.style.boxShadow = [
+      'inset 0 0 6px 1px ' + c.solid,
+      'inset 0 0 22px 4px ' + c.mid,
+      'inset 0 0 60px 14px ' + c.soft,
+      '0 0 30px 3px ' + c.soft,
+    ].join(',');
+
+    badge.style.background = c.solid;
+    badgeText.textContent = options.label !== undefined ? options.label : LABELS[key];
+
+    const warnings = options.warnings !== undefined ? options.warnings : [];
+    warnBox.textContent = '';
+    if (warnings.length === 0) {
+      warnBox.style.display = 'none';
+    } else {
+      warnBox.style.display = 'flex';
+      for (const line of warnings) {
+        const span = document.createElement('span');
+        span.textContent = line;
+        warnBox.appendChild(span);
+      }
+    }
+  }
+
+  function destroy()       {
+    if (host !== null) host.remove();
+    host = null;
+    glow = null;
+    badge = null;
+    badgeText = null;
+    warnBox = null;
+  }
+
+  bag[globalKey] = { set: apply, destroy };
+
+  if (document.readyState === 'loading') {
+    // 推迟建立，但**不覆盖**调用方已设过的状态
+    document.addEventListener(
+      'DOMContentLoaded',
+      () => {
+        if (!hasExplicitState) apply({ state: 'idle' });
+      },
+      { once: true },
+    );
+  } else {
+    // 已就绪时也只有在无人设过状态的情况下才自初始化，
+    // 否则晚注入的场景会把业务代码已经设好的状态覆盖掉
+    if (!hasExplicitState) apply({ state: 'idle' });
+  }
+})("__BUA_OVERLAY__");
+globalThis.__BUA_OVERLAY__.set({"state":"degraded","warnings":["⚠ 企业策略拒绝了 CDP，已降级到 chrome.scripting 模式","真实输入事件、截图与跨 iframe 一致控制不可用"]});
+</script>
+</body>
+</html>
