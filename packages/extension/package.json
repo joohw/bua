@@ -10,7 +10,10 @@
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "node --test --test-concurrency=1 --test-timeout=20000 test/*.test.mjs",
     "test:e2e": "node --test --test-concurrency=1 --test-timeout=180000 test/e2e-real.test.mjs",
-    "demo": "node scripts/demo-overlay.mjs"
+    "demo": "node scripts/demo-overlay.mjs",
+    "preflight": "node scripts/preflight.mjs",
+    "pack": "node scripts/pack.mjs",
+    "release": "node scripts/build.mjs && node scripts/preflight.mjs && node scripts/pack.mjs"
   },
   "devDependencies": {
     "@bua/protocol": "workspace:*",
