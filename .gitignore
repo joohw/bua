@@ -33,3 +33,7 @@ coverage/
 .env
 .env.local
 .env.*.local
+
+# 临时文件
+COMMIT_MSG.txt
+*.tmp
