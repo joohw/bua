@@ -1,0 +1,90 @@
+In the Distribution tab you can choose who will see it on the Chrome Web Store.
+
+![The Chrome Web Store distribution page options for visibility and regions.](https://developer.chrome.com/static/docs/webstore/cws-dashboard-distribution/image/screenshot-the-chrome-we-25686d43720a5.png)
+
+## Set the visibility
+
+Use the **Visibility** settings to configure who can see your item in the Chrome Web Store:
+
+- **Public**---This option lists your item on the Chrome Web Store for all users to see and install.
+- **Unlisted**---This option does not create a listing on the Chrome Web Store, but does allows anyone to install your item if they know its Chrome Web Store URL.
+- **Private**---This option limits installation of your item to specified users only. This is typically used for testing before public launch of an item.
+
+> [!IMPORTANT]
+> **Key point:** All visibility settings have the same policy requirements and will go through the same [review process](https://developer.chrome.com/docs/webstore/review-process).
+
+### Private visibility: Trusted testers
+
+Private allows your trusted testers to install the item. You designate trusted testers by listing
+them in your account settings in the developer dashboard. Each email should be associated with a
+Google Account which will be able to view and install your item on the Chrome Web Store.
+
+> [!NOTE]
+> **Note:** The trusted testers list is associated with your *account* , and not an individual item. To create multiple trusted tester accounts, you must use separate accounts. However, you can also [add groups](https://developer.chrome.com/docs/webstore/cws-dashboard-distribution#private-visibility-google-groups) to your private listing, on a per-item basis.
+
+The following screenshot shows some trusted tester accounts listed in a Chrome Web Store developer
+account page:
+
+![Screenshot showing trusted tester accounts listed in a Chrome Web Store developer account page](https://developer.chrome.com/static/docs/webstore/cws-dashboard-distribution/image/screenshot-showing-truste-edf3aaaf14a15.png)
+
+### Private visibility: Google Groups
+
+In addition to your trusted tester accounts, you can also include any Google Groups that you own or
+manage:
+
+![Screenshot showing groups added to private visibility](https://developer.chrome.com/static/docs/webstore/cws-dashboard-distribution/image/screenshot-showing-groups-7655e1040ced1.png)
+
+Any members of the specified groups, along with your trusted testers, will be able to install the
+item.
+
+### Private visibility: domain publishing
+
+> [!NOTE]
+> **Note:** This feature is only available for Google Workspace domains where it has been enable by the domain administrator.
+
+If domain publishing is enabled for your organization, an additional option appears in the
+distribution page of the developer dashboard:
+
+![Screenshot showing
+the domain publishing option in the developer dashboard](https://developer.chrome.com/static/docs/webstore/cws-dashboard-distribution/image/screenshot-showing-domai-db71f9924c92.png)
+
+See [Enterprise publishing options](https://developer.chrome.com/docs/webstore/cws-enterprise) for an overview of this and other
+enterprise extension topics, along with links to other enterprise extension documentation.
+
+## Set the geographic distribution
+
+The **Distribution** setting lets you specify which geographic areas people will be able to view and install your item from. You can either:
+
+- Select **All regions** to display your item to the entire world.
+- Select individual countries to publish to---this is useful for items with a regional focus or relevance.
+
+Once your item is published, it will be immediately visible to the region(s) you select including in the store's search results.
+
+### Publish to specific regions
+
+To publish to specific regions, clear **All regions** and select the
+specific regions you would like your item to be available in.
+
+### Publish to all regions with exclusions
+
+To publish to all regions with exclusions, make sure **All regions** is
+selected. Then, manually clear regions you would like to exclude.
+
+## Publish a test version
+
+You can publish a "BETA" or "TESTING" version to the Chrome Web Store in parallel with a
+production version. It can be listed private, unlisted or public. After addressing issues and bugs based on user
+feedback, you can publish a revised version of your extension to the rest of your users.
+
+Before you submit a testing
+version to the Chrome Web Store, follow these steps:
+
+1. Add the label "DEVELOPMENT BUILD" or "BETA" at the end of the name of your extension.
+2. Declare the purpose of your extension in the description: "THIS EXTENSION IS FOR BETA TESTING".
+
+> [!WARNING]
+> **Warning:** Make sure to add these labels. If you don't, then both extensions may be taken down. For more information, see [Repetitive Content Spam Policy](https://developer.chrome.com/docs/webstore/program-policies/spam-faq#repetitive-content).
+
+## You are ready to submit this item!
+
+After filling out the [Listing](https://developer.chrome.com/docs/webstore/cws-dashboard-listing) tab and the [Privacy](https://developer.chrome.com/docs/webstore/cws-dashboard-privacy) tab, you can now [publish your item](https://developer.chrome.com/docs/webstore/publish#publish-item).

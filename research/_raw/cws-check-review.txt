@@ -1,0 +1,51 @@
+After [publishing](https://developer.chrome.com/docs/webstore/publish) your extension for the first time or [uploading](https://developer.chrome.com/docs/webstore/update) a new version, your item will go
+through a [review process](https://developer.chrome.com/docs/webstore/review-process). This page describes the how to check the status of your item .
+
+## The lifecycle of a Chrome Web Store item
+
+All Chrome Web Store items go through an automated [review process](https://developer.chrome.com/docs/webstore/review-process). In some instances, a manual review
+is required, especially when sensitive permissions are requested. For this reason, review times
+and/or approval times can take longer. Since a Chrome Web Store item goes through several stages,
+it's important to keep track of your item's status. See the lifecycle diagram below:
+
+![Diagram of the lifecycle of a Chrome Web Store item](https://developer.chrome.com/static/docs/webstore/check-review/image/diagram-the-lifecycle-a-0368e1efd65e9.png)
+
+## Check your item's status
+
+The review status of your item appears in the [developer dashboard](https://chrome.google.com/webstore/devconsole) next to each item. The
+status can be Published, Pending, Rejected, or Taken Down.
+
+![Developer dashboard
+status types](https://developer.chrome.com/static/docs/webstore/check-review/image/developer-dashboard-statu-5f65521c5dfa5.png)
+
+To stay informed of your item's status, you can:
+
+- **Enable email notifications**. There are mandatory emails like take down or rejection
+  notifications that are enabled by default. To receive notification when your item is published or
+  staged, you can enable email notifications on the Account page.
+
+  ![How to enable
+  email notifications](https://developer.chrome.com/static/docs/webstore/check-review/image/how-enable-email-not-f901e6245fa11.png)
+- **Check your publisher email** . After enabling email notifications check your inbox often. To
+  ensure that CWS emails don't get flagged as Spam, add **chromewebstore-noreply@google.com** to
+  your contacts so that you receive all communications in a timely manner.
+
+> [!NOTE]
+> **Note:** The "pending review" status of your item means that it is now in the queue awaiting to be reviewed. Your item will not be visible in the store until it has been reviewed and approved.
+
+## Follow-up on rejections and takedowns
+
+If your extension has been determined to violate one or more terms or policies, you will receive an
+email notification that contains the violation description and instructions on how to rectify it.
+
+If you did not receive an email within a week, check the status of your item (described above). If your item has
+been rejected, you can see the details on the **Status tab** of your item.
+
+![The Chrome Web Store
+Status Tab](https://developer.chrome.com/static/docs/webstore/check-review/image/the-chrome-web-store-stat-99631194ee152.png)
+
+If you have been informed about a violation and you do not rectify it, your item will be taken down. See
+[Violation enforcement](https://developer.chrome.com/docs/webstore/review-process#enforcement) for more details.
+
+> [!NOTE]
+> **Note:** To request further clarification on the reasons for the takedown or to appeal the decision, contact [Chrome Web Store Developer Support](https://support.google.com/chrome_webstore/contact/dev_account_transfer). For more examples and instructions on how you can remedy the problem check the [Troubleshooting guide](https://developer.chrome.com/docs/webstore/troubleshooting).
