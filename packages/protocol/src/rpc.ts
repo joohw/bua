@@ -53,14 +53,12 @@ export const RPC_ERROR_CODES = {
 
 /** WebSocket 关闭码。 */
 export const WS_CLOSE_CODES = {
-  /** 鉴权失败。**不回错误体**，避免泄露「token 错」与「服务不存在」的区别。 */
-  UNAUTHORIZED: 4001,
   /** 协议版本不匹配。 */
   PROTOCOL_VERSION: 4002,
   /** 心跳超时。 */
   HEARTBEAT_TIMEOUT: 4003,
-  /** 另一实例接管（同一 token 被重复使用）。 */
-  SUPERSEDED: 4004,
+  /** `Host` 头校验失败（防 DNS rebinding）。 */
+  BAD_HOST: 4004,
   NORMAL: 1000,
 } as const;
 

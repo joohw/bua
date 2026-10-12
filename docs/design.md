@@ -7,7 +7,7 @@ BUA 是一个 Chrome MV3 扩展 + 本地桥 + 精简 SDK，把「控制浏览器
 ```
 ┌──────────────┐      MCP / HTTP / SDK      ┌──────────────┐    WebSocket     ┌──────────────┐
 │  任意 Agent   │ ─────────────────────────▶ │  bua-server  │ ◀──────────────▶ │  BUA 扩展     │
-│ (DSH/Codex/  │                            │  (本地桥)     │   token 鉴权      │  (MV3)       │
+│ (DSH/Codex/  │                            │  (本地桥)     │  127.0.0.1     │  (MV3)       │
 │  Claude/自研) │ ◀───────────────────────── │              │                  │              │
 └──────────────┘        工具调用结果          └──────────────┘                  └──────┬───────┘
                                                                                        │ chrome.*
@@ -150,7 +150,7 @@ BUA 计划提供的能力 id（对齐 Codex 已有的 + 我们的增补）：
 packages/
 ├── protocol/        # 唯一真源：类型、方法名、schema。其他包都依赖它
 ├── extension/       # Chrome MV3 扩展（控制节点）
-├── server/          # 本地桥：ws 服务端 + token + 会话路由
+├── server/          # 本地桥：ws 服务端 + Host 校验 + 会话路由
 ├── sdk/             # agent 侧 SDK：注入式 API，对齐 Codex 形状
 ├── mcp/             # MCP 适配器（可选）
 └── cli/             # bua 命令行（启动桥、装扩展、配对）
@@ -167,9 +167,9 @@ packages/
 | 安装成本 | 注册表 + host manifest | 无 |
 | 跨平台 | 每平台各写一套 | 一套 |
 | 任意 agent 复用 | 难（绑定宿主） | 易（连同一个 ws） |
-| 安全 | OS 层隔离 | **需要自己做 token 鉴权** |
+| 安全 | OS 层隔离（文件系统权限） | **无隔离 —— 本机任何进程都能连** |
 
-代价就是最后一行 —— 因此 token 是硬需求，不是可选项。详见 §4。
+最后一行是本设计**刻意接受**的代价 —— 见 §4.0。选 WebSocket 的理由是它免去 native host 注册表与安装器（§5.3）。
 
 ### 3.3 传输协议
 
@@ -184,94 +184,146 @@ JSON-RPC 2.0 over WebSocket。见 `docs/protocol.md`。
 
 ## 4. 安全模型
 
-这是整个项目**最需要认真对待**的部分。一个能读你所有标签页、Cookie、并代你点击的组件，权限等级等同于「遥控你的浏览器」。
+> **⚠️ BUA 的信任模型是「本机即信任」。**
+> 这降低了部署门槛，也意味着**任何能访问本机回环地址的进程都能遥控用户的浏览器**。
+> 这条必须在 onboarding 里如实告知。见 §4.1。
 
-### 4.0 ⚠️ 先纠正一个错误认知：origin 白名单不是安全边界
+### 4.0 为什么不做鉴权（以及它带来的后果）
 
-设计初期我把「域名白名单」当成主要安全机制。**竞品调研证明这是错的**，三方独立来源都承认 URL 级白名单不可靠：
+**设计决定**：扩展不做 token、不做证书、不签发任何授权凭据。任何 agent 都能直接连接桥。
 
-| 来源 | 原文 |
+理由：BUA 的目标是「让**任意** agent 都能用浏览器」——一旦引入授权凭据，每个 agent 都要集成配对流程，门槛就回来了。
+
+**但必须说清代价。** 桥监听在回环上且无鉴权，因此：
+
+| 谁能驱动浏览器 | 是否成立 |
 |---|---|
-| Playwright MCP 官方注释 | `--allowed-origins` *"does not serve as a security boundary and does not affect redirects"* |
-| chrome-devtools-mcp | 拒绝含 regexp group 的 pattern，理由是「在重定向和子资源上无法强制执行」 |
-| **Chrome 155 官方博客** | *"Because CDP operates beneath the web platform's origin model, **origin-based filtering cannot securely restrict it**"* |
+| 用户主动启动的 agent | ✅ 预期行为 |
+| 用户机器上的**任意**脚本 / 程序 | ⚠️ **同样成立** |
+| 从公共网络访问的第三方 | ❌ **不成立**（仅绑回环 + Host 校验） |
 
-**原因是结构性的**：CDP 位于 Web 平台 origin 模型**之下**。一旦 `attach()` 成功，就能读到该 tab 的一切（含跨域 iframe 内容），并对任意 origin 发起导航。白名单只能约束**我们自己代码愿意检查的东西** —— 它不是一道墙，是一个自觉。
+**换句话说**：本机上的恶意软件本来就已拥有用户权限（能读 Chrome 的 profile 和 Cookie 文件），BUA 并没有授予它新的能力上限；但它确实**降低了一个门槛** —— 从「理解 Chrome profile 格式」降到「会发 WebSocket 消息」。
 
-> 所以本项目的定位必须说清楚：**origin 白名单是用户体验工具和纵深防御的一层，不是安全边界。真正的闸门是扩展侧的动作级校验。**
+这是刻意接受的取舍，不是疏漏。因此 §4.2 的 onboarding 告知是**本设计中不可省略的一环**。
 
-### 4.1 分层机制
+#### 仍然保留的一道防线：Host 头校验
 
-#### L1 · 传输层（防本机劫持 + DNS rebinding）
+唯一保留的传输层校验是 **Host 头必须是 `127.0.0.1:<port>` / `localhost:<port>`**。
 
-| # | 措施 | 说明 |
-|---|---|---|
-| 1 | **硬绑 `127.0.0.1`** | 不提供 `0.0.0.0` 选项。（MCP 规范 SHOULD） |
-| 2 | **强制 `Origin` 校验** | WS upgrade 时校验，允许值 = `chrome-extension://<我们的扩展ID>` + 显式本地客户端来源；不合法一律 403。（MCP 规范 **MUST**） |
-| 3 | **强制 `Host` 头校验** | 只接受 `127.0.0.1:<port>` / `localhost:<port>`，其余 403 —— **这是防 DNS rebinding 的关键**，且不可用 `*` 关闭 |
-| 4 | **握手 token（≥256 bit）** | 桥启动时生成，写入仅当前用户可读的文件（`~/.bua/bridge.json`）。校验失败**立即断开、记审计、限速**。⭐ **这是业界空白，BUA 的核心差异化** |
-| 5 | **不做 `killProcessOnPort`** | 端口占用 → 报错并提示用户换端口。**绝不强杀用户进程** |
-| 6 | **不踢旧连接** | 多客户端并存，各自独立会话。不搞「新连接踢旧连接」 |
-| 7 | **只追加审计日志** | 所有动作记 `{ts, sessionId, method, targetUrl, origin, approvedBy, result}` |
+理由：这**不限制任何 agent**（本机进程随便连），但能挡住 **DNS rebinding** —— 攻击者把域名解析到 `127.0.0.1`，让**用户浏览器里的恶意页面**去连本地桥。
 
-**为什么 4–6 要写这么细**：这三条是现有项目的**反面教材**。Browser MCP（7.2k★）开 `9009` 端口**无 token、无 Origin 校验**，而且 `killProcessOnPort(9009)` 会**强杀用户机器上占用该端口的任意进程**，新连接还会直接把旧连接 `ws.close()` 踢掉。mcp-chrome（12.5k★）的 README Roadmap 里 **`- [ ] Authentication` 至今未完成**。
+这道校验不违反「不限制 agent」的目标，却是真实可挡的攻击面，所以保留。
 
-#### L2 · 授权层（谁能调、能调什么）
+> 注意它挡的是「浏览器发起的跨站请求」，不是「本机进程」。后者的信任由用户自行承担。
+
+### 4.1 安全设计原则
+
+#### L1 · 传输层
 
 | # | 措施 | 说明 |
 |---|---|---|
-| 8 | **per-session origin 白名单** | 会话建立时声明；**每次 tab-scoped 动作前校验当前 tab 顶层 URL 的 origin**，`navigate` 校验**目标 URL** |
-| 9 | **扩展内可视授权 UI** | 按 origin 允许/拒绝/一次性，可撤销。**不要把授权只放在配置文件里** —— 用户改不动就等于没有 |
-| 10 | **`localhost` 自动放行需谨慎** | 本地服务常是用户自己的 dashboard，但也是 SSRF 目标。默认放行但**可关** |
-| 11 | **能力开关** | 抄 Codex 的 `capabilities.fileUploads` / `.downloads` / `.mediaDownloads`：在 `getInfo` 里声明，命令执行前先校验 |
-| 12 | **无 CDP 降级模式** | `attach()` 失败（尤其 Chrome 155 的政策错误串）→ 降级到 `chrome.scripting` + `chrome.tabs`，并**在 capabilities 里如实声明**可用子集。⭐ **现有项目无一实现** |
+| 1 | **硬绑 `127.0.0.1`** | 不提供 `0.0.0.0` 选项。这是唯一阻止**远程**访问的措施 |
+| 2 | **`Host` 头校验** | 只接受 `127.0.0.1:<port>` / `localhost:<port>`，否则 403。防 DNS rebinding，**不限制 agent** |
+| 3 | ❌ **不做 token** | 见 §4.0 —— 刻意取舍 |
+| 4 | ❌ **不做 `Origin` 校验** | 会排除非扩展客户端 = 限制 agent，与目标冲突 |
+| 5 | **端口占用就报错** | ❌ **绝不** `killProcessOnPort`（强杀用户进程不可接受） |
+| 6 | **多客户端并存** | ❌ **不**踢旧连接。各客户端独立会话 |
+| 7 | **只追加审计日志** | 记 `{ts, sessionId, method, targetUrl, origin, result}` |
 
-#### L3 · 动作层（防误操作与提示注入）
+> 第 5、6 条是竞品调研发现的**行业反面教材**：Browser MCP（7.2k★）会强杀占用端口的任意进程，并用新连接踢掉旧连接。BUA 明确不做。
 
-| # | 措施 | 说明 |
-|---|---|---|
-| 13 | **动作风险三级分级** | 扩展侧**硬编码**，**不信任 agent 传的 hint**（MCP 规范明确警告 tool annotations 不可信）。见下表 |
-| 14 | **审批信息嵌进 action schema** | ⭐ 所有 `write`/`destructive` 动作**必须**携带人类可读的目标描述字段 `targetDescription`。坐标无法让人判断风险，描述可以 —— 抄 Playwright MCP `browser_click` 的 `element` 参数（其注释即 *"used to obtain permission"*） |
-| 15 | **敏感字段占位符** | agent 传 `{{secret:github_password}}`，**扩展侧替换为真实值再输入**，真实值永不进入 agent 上下文 |
-| 16 | **TOCTOU 强校验** | `page_info` / `dom_snapshot` 返回 `snapshotId`；后续动作携带它，**不匹配则拒绝并要求重新观察** |
-| 17 | **不做 `networkidle` 等待** | 不可靠（Codex 显式拒绝该模式），改用显式条件等待 |
-| 18 | **`evaluate` 可关闭** | 关闭时禁止 `javascript:` / `data:` 导航 |
-| 19 | **明确不做** | 不开本地 CDP 端口；不做二进制补丁；不提供 `--remote-allow-origins=*` |
+#### L2 · 能力协商（替代授权）
 
-**动作风险分级表**（L3-13）：
+既然不限制 agent，就不需要「授权层级」。取而代之的是**如实的能力声明**：
 
-| 级别 | 动作 | 审批策略 |
-|---|---|---|
-| `read` | 截图、DOM/无障碍快照、列标签、读 URL/标题 | **免审批**（对标 MCP `readOnlyHint`） |
-| `write` | 点击、输入、滚动、选择、导航 | 按 origin 授权即可 |
-| `destructive` | **提交表单、支付/结算、删除、发送消息、上传/下载文件、写剪贴板、关闭标签** | **每次必审批**，且审批 UI 必须展示：人类可读目标描述 + 目标 origin + 关键参数 |
+- 桥在 `hello` 响应里返回 **`capabilities`** 对象，声明本后端**实际能做**什么
+- 关键场景：**企业策略拒绝 `chrome.debugger.attach()` 时**（Chrome 155+），扩展降级到 `chrome.scripting` 模式，并在 capabilities 里如实报告 `cdp: false`
+- agent 应写成「**先探测再使用**」，而不是假定能力存在
 
-> `destructive` 的识别**必须在扩展侧**，不能靠 agent 自律。open-browser-use 的 `SECURITY.md` 写了「Integrations should confirm uploads, downloads, ... form submission, purchases, deletion」—— 但那是**建议，不是实现**。BUA 要把它做成机制。
-
-### 4.2 授权层级
-
-```
-none                 → 只能看到「有这些标签」，读不到内容
-read                 → 可读 DOM / 截图 / 无障碍树
-interact             → 可点击、输入、导航
-restricted-interact  → 上述 + 破坏性动作逐次确认（默认档）
-full                 → 无逐次确认
+```jsonc
+// 桥 → 扩展（hello 响应节选）
+"capabilities": {
+  "cdp": true,            // 关键：false 表示已降级，无 CDP 能力
+  "screenshots": true,
+  "fileUploads": false,
+  "downloads": true,
+  "evaluate": true        // 可关闭
+}
 ```
 
-每个授权可限定 origin 范围与 TTL。**但见 §4.0：这是 UX 与纵深防御，安全靠 L3 的动作级闸门。**
+⭐ **这个降级模式现有项目无一实现** —— 企业环境下它们直接不可用。
+
+#### L3 · 动作层（信息性分级，非闸门）
+
+动作风险分级**保留**，但定位变了：**不是拦截闸门，是给 agent 与用户的信息**。
+
+| 级别 | 动作 | 含义 |
+|---|---|---|
+| `read` | 截图、快照、列标签、读 URL/标题 | 无副作用 |
+| `write` | 点击、输入、滚动、选择、导航 | 改变页面状态 |
+| `destructive` | 提交表单、支付/结算、删除、发送消息、上传/下载、写剪贴板、关标签 | **不可逆或影响外部系统** |
+
+两个仍然有价值的机制：
+
+**① `targetDescription` 强制字段**（所有 `write` / `destructive`）
+
+坐标无法让人判断风险，描述可以。它进审计日志，让用户**事后能读懂 agent 干了什么**。
+
+> 设计原型是 Playwright MCP 的 `browser_click` —— 其 `element` 参数注释即 *"used to obtain permission"*。
+
+**② `snapshotId` TOCTOU 强校验**
+
+`page_info` / `dom_snapshot` 返回 `snapshotId`，后续动作必须携带。不匹配则拒绝并要求重新观察。**这是防误操作，不是防 agent** —— 「观察」与「操作」之间页面变化会导致点错东西。
+
+#### L4 · 凭据保护
+
+`{{secret:name}}` 占位符：agent 传占位符，**扩展侧替换为真实值再输入**，真实值永不进入 agent 上下文。
+
+这保护的不是「用户」而是「agent 的上下文」—— 防止凭据被写进会话日志、被模型记住、或在下次请求里泄露。
+
+### 4.2 引导页（onboarding）—— 本设计的必需组件
+
+既然风险已被刻意接受，**如实告知就是不可省略的一环**。
+
+引导页必须在**扩展自己的 UI 内**（`sidePanel` / onboarding 页）完成，且：
+
+| 必须包含 | 内容 |
+|---|---|
+| **能力说明** | 能读所有标签页内容、能截图、能代用户点击输入 |
+| **风险披露** | 「任何能访问本机回环地址的程序都可以通过本扩展操作你的浏览器」 |
+| **不可逆提示** | 提交表单 / 支付 / 删除等操作**无法撤销** |
+| **调试横幅说明** | 附加期间 Chrome 顶部会常驻横幅，**用户关掉横幅会立即终止会话** |
+| **主动同意** | 用户必须**主动点击**确认，不能只是「继续」按钮一闪而过 |
+
+> 这条同时满足 Chrome Web Store 的 **Prominent Disclosure** 要求（官方明文：*"Disclosures in the Chrome Web Store description or inline installation page do not satisfy this requirement."*）。合规要求与诚实设计在这里是一致的。
+
+#### 未来演进：引导页签发证书
+
+**当前不做**，但引导页是这个能力的天然落点。将来若要收紧，最小改动路径是：
+
+1. 引导页生成密钥对，私钥存 `chrome.storage.local`，**公钥**展示给用户
+2. 桥侧持有对应私钥/凭据
+3. `hello` 携带签名而非明文 token
+
+好处是**无需改动其他任何一层** —— 协议已经是「一条 hello 消息」，加字段即可。保持这个可扩展性，是本设计不做 token 之外的额外收益。
 
 ### 4.3 审计轨迹
 
-继承 Codex 的 `management.getAuditTrail()` 并推广到**所有变更型操作**：每次变更记录「操作 + 变更前状态」+ **`sessionId`**，使撤销与追责都成为可能。
+所有变更型操作记录「操作 + 变更前状态」+ `sessionId` + `targetDescription`。
 
-多 agent 场景下 `sessionId` 是关键 —— 用户必须能回答「**是谁**改了我的浏览器」。
+无鉴权之下审计**更重要**了 —— 它是用户唯一的追溯手段。用户得能回答：
+
+- **是谁**改的（`sessionId`）
+- **改了什么**（方法 + 参数 + 变更前状态）
+- **当时想干什么**（`targetDescription`）
 
 ### 4.4 信任边界声明
 
-> **BUA 把用户的真实浏览器暴露给本地调用方。它不是沙箱。**
+> **BUA 把用户的真实浏览器暴露给本机任意调用方。它不是沙箱。**
 > 能访问本机用户账号的进程 = 能访问浏览器自动化通道。
 
-这条要写进 README，不能含糊。诚实的边界声明比虚假的安全感更有价值。
+这条要写进 README 与引导页，不能含糊。**诚实的边界声明比虚假的安全感更有价值。**
+
 
 
 ---
@@ -317,7 +369,7 @@ full                 → 无逐次确认
 | `activeTab` | ✅ | 当前标签的基础访问 | 核心功能 |
 | `tabs` | ✅ | 列标签、`user.claimTab` | 核心功能 |
 | `sidePanel` | ✅ | 用户面板与**显著披露同意界面** | 合规必需 |
-| `storage` | ✅ | 配置与 token | 基础 |
+| `storage` | ✅ | 配置持久化（含 onboarding 已确认标记） | 基础 |
 | `debugger` | ✅ **核心** | CDP 能力：真实输入事件、截图、跨 iframe 一致控制 | 官方白名单例外 |
 | `scripting` | ⚠️ 仅当确有非 debugger 兜底路径 | DOM 快照的轻量路径 | 用了才声明 |
 | ~~`<all_urls>`~~ | ❌ **不申请** | debugger 不需要 host permission | §5.1 ② |
@@ -334,7 +386,7 @@ full                 → 无逐次确认
 **这与 BUA 的设计目标（降低门槛、任意 agent 复用）直接冲突。** 因此 v0 确定：
 
 - **传输用本地 WebSocket**，不注册 native host
-- 代价是必须自己做 token 鉴权（见 §4），但换来「只装一个扩展」
+- 代价是**无隔离** —— 本机任意进程都能连（见 §4.0），换来「只装一个扩展」
 - 附带好处：同机进程间传输**不受**「用户数据传输必须加密」条款约束 —— 官方明文 *"The requirement to handle the user data securely does not apply to transmissions between a Chrome extension or app and a native program on the same computer."*
 
 ### 5.4 🔴 最硬的 UX 约束：调试横幅
@@ -391,23 +443,25 @@ Chrome 155（2026-10-06 stable）起，管理员若配置了 `runtime_blocked_ho
 | 方案 | 真登录态 | 本地端口 | 关键问题 |
 |---|---|---|---|
 | **扩展 + `chrome.debugger`**（← BUA） | ✅ | **无 CDP 端口** | 需要 `debugger` 权限警告 |
-| 扩展 + 本地 WebSocket | ✅ | 有（需自建鉴权） | 行业普遍无鉴权 |
+| 扩展 + 本地 WebSocket | ✅ | 有（本设计不鉴权，见 §4.0） | 本机任意进程可驱动 |
 | `--remote-debugging-port` | ✅ | **有，且无认证** | Chrome 136+ 对默认 profile **静默失效**；144+ 每次连接弹窗 |
 | Chrome for Testing | ❌ | 有 | 不是用户的浏览器 |
 | profile 快照 | ⚠️ 登录可能失效 | 有 | 需用户完全退出浏览器 |
 | 二进制补丁 | ✅ | 有 | 破坏签名、更新即失效、杀软可疑 |
 
-**这是 BUA 的核心卖点**：它根本不需要在 `127.0.0.1` 上开 CDP 端口，因此「本机任意进程连上调试端口即接管浏览器」这个风险面**不存在**。
+**关键区别**：BUA 不需要在 `127.0.0.1` 上开 **CDP 端口**。它自己的桥仍监听本地端口（扩展要连它），但那个端口讲的是 BUA 协议**而非 CDP** —— 攻击者不能对着它发任意 `Runtime.evaluate` 之外的东西，且能力受 BUA 方法面约束（这仍不是隔离，见 §4.0）。
 
-> 但 BUA **自己的桥**仍监听本地端口（扩展要连它），所以 token 鉴权是硬需求 —— 见 §4.1 L1。
+对比之下，开在真实 profile 上的 CDP 端口等于把**完整 CDP** 交给任何本机进程。
 
-### 6.2 三个必须补齐的行业空白（差异化，非抄袭）
+### 6.2 调研发现的三个行业空白
 
-| # | 空白 | 现状 | BUA 做法 |
+| # | 空白 | 现状 | BUA 的取舍 |
 |---|---|---|---|
-| 1 | **本地桥的握手鉴权** | ⭐ **全行业没有**。Browser MCP（7.2k★）无 token 无 Origin 校验；mcp-chrome（12.5k★）Roadmap 里 `- [ ] Authentication` 未完成；open-browser-use 自述 *"Planned hardening includes client tokens, peer validation"* | ≥256 bit token + Origin/Host 双校验（§4.1 L1） |
-| 2 | **动作风险三级分类** | 竞品**无一实现**。open-browser-use 的 SECURITY.md 只是**建议** | 扩展侧硬编码分级 + 破坏性动作逐次审批 + `targetDescription` 强制字段（§4.1 L3） |
-| 3 | **无 CDP 降级模式** | **现有项目无一实现**。企业策略拒绝 `attach()` 时直接不可用 | 降级到 `chrome.scripting` + `chrome.tabs`，并在 capabilities 里如实声明（§4.1 L2-12） |
+| 1 | 本地桥握手鉴权 | ⭐ **全行业没有**。Browser MCP 无 token 无校验；mcp-chrome Roadmap 未完成；open-browser-use 自述仅「计划中」 | ⚠️ **刻意不采用** —— 与「不限制 agent」冲突。以 onboarding 告知替代，见 §4.0/§4.2 |
+| 2 | 动作风险分级 | 竞品**无一实现**，open-browser-use 仅在 SECURITY.md 提建议 | ✅ **采用**，但定位为**信息性**而非闸门（§4.1 L3） |
+| 3 | 无 CDP 降级模式 | **现有项目无一实现**，企业策略下直接不可用 | ✅ **采用** —— 这是本设计最被低估的差异化（§4.1 L2） |
+
+> 第 1 项从「差异化」变为「刻意放弃」，是 2026-10-12 产品决策的结果：降低门槛优先于本机隔离。**但第 3 项的价值反而更突出了** —— 在无鉴权的信任模型下，「后端实际能做什么」比「谁被允许做什么」更关键。
 
 ### 6.3 值得采纳的既有共识
 
@@ -431,11 +485,13 @@ Chrome 155（2026-10-06 stable）起，管理员若配置了 `runtime_blocked_ho
 
 | 路线 | 为什么不做 |
 |---|---|
-| `--remote-debugging-port` 开在真实 profile | CDP 端口无认证；Chrome 136+ 对默认 profile 静默失效。三方（chrome-devtools-mcp 官方、MCP 规范、patch-browser 作者）独立指出其不安全 |
-| 二进制补丁（patch-browser） | 破坏代码签名与完整性校验、Chrome 每次更新即失效、需管理员权限、杀软/EDR 高度可疑、企业环境不可接受 |
+| `--remote-debugging-port` 开在真实 profile | CDP 端口无认证；Chrome 136+ 对默认 profile 静默失效 |
+| 二进制补丁（patch-browser） | 破坏代码签名、更新即失效、需管理员权限、杀软/EDR 高度可疑 |
 | `--remote-allow-origins=*` | 等于放行任意来源 |
 | `killProcessOnPort` | 强杀用户进程，不可接受 |
 | 「新连接踢旧连接」 | 破坏多 agent 并发前提 |
+| native messaging 作为默认传输 | 强制附带写注册表的安装器，与「只装一个扩展」冲突（§5.3） |
+
 
 ---
 
@@ -448,30 +504,29 @@ Chrome 155（2026-10-06 stable）起，管理员若配置了 `runtime_blocked_ho
 
 ### M1 — 最小可用（MVP）
 - [ ] `protocol`：定义方法名、类型、错误码
-- [ ] `extension`：MV3 骨架 + side panel + `chrome.debugger` attach + token 配对
-- [ ] `server`：ws 服务端 + token 校验 + 单会话
+- [ ] `extension`：MV3 骨架 + **onboarding 风险告知页** + side panel + `chrome.debugger` attach
+- [ ] `server`：ws 服务端 + Host 校验 + 单会话
 - [ ] `sdk`：`agent.browsers` / `browser.tabs` / `tab.goto` / `tab.screenshot` / `tab.playwright.locator` 核心子集
 - [ ] **端到端实测**：一个真实 agent 完成「打开页面→读内容→点击→截图」
 
 ### M2 — API 面补齐
 - [ ] `tab.ax` 全量 + DOM 快照注入
 - [ ] `tab.cua` / `tab.dom_cua`
-- [ ] `capabilities` 协商机制
+- [ ] `capabilities` 协商机制落地
 - [ ] `browser.user.claimTab` + `openTabs`
 
-### M3 — 多 agent 与安全
-- [ ] **L1 传输层**：Origin + Host 双校验、token 握手（≥256 bit）、只绑 127.0.0.1、不踢旧连接、不 kill 端口占用进程
-- [ ] **L3 动作级闸门**（核心差异化）：动作风险三级分级（扩展侧硬编码）、破坏性动作逐次审批、审批 UI 展示人类可读目标描述
-- [ ] `targetDescription` 强制字段（所有 write/destructive 动作）
-- [ ] 会话隔离与标签所有权；显式 `tabId` 路由（对齐 chrome-devtools-mcp `--pageIdRouting` 的做法，优于隐式 current-tab）
-- [ ] session TTL + 后台清理（对齐 browser-use 的 `session_timeout_minutes` + `cleanup_loop`）
-- [ ] tab group 作可视锚点 + `chrome.storage.local` 持久化（对抗 MV3 service worker 被杀）
-- [ ] 扩展内可视授权 UI（按 origin，可撤销）
-- [ ] **无 CDP 降级模式**：`attach()` 被企业策略拒绝时降级到 `chrome.scripting`，并在 capabilities 里如实声明
-- [ ] 敏感字段占位符（`{{secret:name}}`，真实值不进 agent 上下文）
-- [ ] TOCTOU 强校验（`snapshotId` 不匹配即拒绝）
+### M3 — 能力与稳健性
+- [ ] **无 CDP 降级模式**（核心差异化）：企业策略拒绝 `attach()` 时降级到 `chrome.scripting`，并在 `capabilities.cdp` 如实报 `false`
+- [ ] 显式 `tabId` 路由（对齐 chrome-devtools-mcp `--pageIdRouting`）
+- [ ] session TTL + 后台清理
+- [ ] tab group 可视锚点 + `chrome.storage.local` 持久化（抗 MV3 service worker 被杀）
+- [ ] 动作风险分级 + `targetDescription` 强制字段 + 审计日志（含 `sessionId`）
+- [ ] 敏感字段占位符（`{{secret:name}}`）
+- [ ] TOCTOU 强校验（`snapshotId`）
 - [ ] `browserAuth` 能力
 - [ ] MCP 适配器
+- [ ] WebMCP 工具发现与调用（`webmcp_list_tools` / `webmcp_invoke_tool`，含 `registration_id` 快照失效）
+
 
 ### M4 — 上架准备
 - [ ] manifest 加 `"key"` 固定扩展 ID、`minimum_chrome_version: "125"`

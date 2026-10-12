@@ -8,31 +8,23 @@
 export const BUA_ERROR_CODES = {
   /** 协议版本不匹配 —— 应对：升级扩展或桥 */
   PROTOCOL_VERSION: 'BUA_PROTOCOL_VERSION',
-  /** token 无效 —— 应对：重新配对。注意实现上通常直接断连而不回错 */
-  UNAUTHORIZED: 'BUA_UNAUTHORIZED',
-  /** 授权层级不够 —— 应对：请求用户提权 */
-  GRANT_INSUFFICIENT: 'BUA_GRANT_INSUFFICIENT',
-  /** 域名不在白名单 —— 应对：请求用户加白 */
-  ORIGIN_DENIED: 'BUA_ORIGIN_DENIED',
-  /** 敏感操作需用户确认 —— 应对：发起确认流程并等待 */
-  CONSENT_REQUIRED: 'BUA_CONSENT_REQUIRED',
-  /** 用户拒绝 —— 应对：停止，不要重试 */
-  CONSENT_DECLINED: 'BUA_CONSENT_DECLINED',
   /** 标签不存在或已关闭 —— 应对：重新列标签 */
   TAB_NOT_FOUND: 'BUA_TAB_NOT_FOUND',
   /** 标签已被其他会话接管 —— 应对：换标签或等释放 */
   TAB_CLAIMED: 'BUA_TAB_CLAIMED',
-  /** 句柄失效（locatorId / blobRef 过期） —— 应对：重新构造 */
+  /** 句柄失效（locatorId / blobRef / snapshotId 过期） —— 应对：重新构造或重新观察 */
   HANDLE_STALE: 'BUA_HANDLE_STALE',
   /**
-   * chrome.debugger attach 失败（可能被 DevTools 或其他客户端占用）
-   * —— 应对：降级到非 debugger 路径，而不是失败退出
+   * chrome.debugger attach 失败（可能被 DevTools 或其他客户端占用，或企业策略拒绝）
+   * —— 应对：查 capabilities 看是否已降级，走非 CDP 路径
    */
   DEBUGGER_UNAVAILABLE: 'BUA_DEBUGGER_UNAVAILABLE',
   /** 导航超时 —— 应对：检查 tab.url() 后决定，不要盲目重试 */
   NAVIGATION_TIMEOUT: 'BUA_NAVIGATION_TIMEOUT',
-  /** 当前后端不支持该能力 —— 应对：查能力表，走替代路径 */
+  /** 当前后端不支持该方法或该能力关闭 —— 应对：查 capabilities，走替代路径 */
   UNSUPPORTED: 'BUA_UNSUPPORTED',
+  /** 缺少必需的 `targetDescription` —— 应对：补上人类可读的目标描述后重试 */
+  MISSING_TARGET_DESCRIPTION: 'BUA_MISSING_TARGET_DESCRIPTION',
   /** 扩展侧内部错误 —— 应对：上报日志 */
   INTERNAL: 'BUA_INTERNAL',
 } as const;

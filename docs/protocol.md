@@ -27,35 +27,37 @@
 | 安装成本 | 注册表 + host manifest | 无 |
 | 跨平台 | 每平台一套 | 一套 |
 | 任意 agent 复用 | 难（绑定宿主进程） | 易（连同一个 ws） |
-| 安全 | OS 层隔离 | **必须自己做 token 鉴权** |
+| 安全 | OS 层隔离（文件系统权限） | **无隔离 —— 本机任何进程都能连** |
 
-代价是最后一行。Token 因此是硬需求，见 §2。
+最后一行是本设计**刻意接受**的代价，见 §2。
 
 ---
 
-## 2. 配对与鉴权
+## 2. 信任模型与传输层
 
-### 2.1 威胁
+### 2.1 不鉴权（设计决定）
 
-桥监听在回环上，**本机任何进程都能连**。若无鉴权，任何本地程序都能借 BUA 遥控用户浏览器 —— 这与 BUA 自身的权限等级相同，等同于把浏览器交给未知进程。
+**BUA 不做 token、不做证书、不签发任何授权凭据。任何 agent 都能直接连接桥。**
 
-### 2.2 配对流程
+理由：目标就是「让**任意** agent 都能用浏览器」。一旦引入授权凭据，每个 agent 都要集成配对流程，门槛就回来了。
 
-```
-1. bua-server 启动
-2. 生成 32 字节高熵 token（crypto.randomBytes）
-3. 写入 $BUA_HOME/pairing.json，权限设为「仅当前用户可读」
-   { "version": 1, "token": "<hex>", "port": <port>, "createdAt": <ms> }
-4. 打印配对引导（含 token 指纹，不含 token 明文）：
-     bua: 桥已就绪  端口 17432  token 指纹 3f9a…
-     在扩展中点「配对」并粘贴 token
-5. 用户在扩展 side panel 粘贴 token
-6. 扩展侧保存（chrome.storage.local，可选用 WebCrypto 加密）
-```
+**代价必须说清楚**：桥监听回环且无鉴权，所以**本机任意脚本/程序都能驱动浏览器**。
 
-### 2.3 握手
+| 谁能驱动浏览器 | 是否成立 |
+|---|---|
+| 用户主动启动的 agent | ✅ 预期行为 |
+| 用户机器上的**任意**脚本/程序 | ⚠️ **同样成立** |
+| 从公共网络访问的第三方 | ❌ **不成立**（仅绑回环 + Host 校验） |
 
-连接建立后，扩展**必须**在 `hello` 中携带 token。校验失败立即断开，**不返回任何可用于区分「token 错误」与「服务不存在」的信息**。
+本机恶意软件本来就已有用户权限（能读 Chrome profile 与 Cookie 文件），BUA 没有提升它的能力上限；但确实**降低了一个门槛** —— 从「理解 Chrome profile 格式」降到「会发 WebSocket 消息」。
+
+> 这是刻意取舍，不是疏漏。因此**引导页的风险告知是不可省略的一环**（见 `design.md` §4.2）。
+
+**未来演进**：可在引导页签发证书（生成密钥对，`hello` 携带签名而非明文）。协议已经是「一条 hello 消息」，加字段即可，无需改动其他层。
+
+### 2.2 握手
+
+无鉴权，但保留**协议版本与能力协商**：
 
 ```jsonc
 // 扩展 → 桥
@@ -65,12 +67,11 @@
   "method": "bua.hello",
   "params": {
     "protocolVersion": "v0",
-    "token": "<hex>",
     "client": {
       "extensionId": "…",
       "extensionVersion": "0.1.0",
       "chromeVersion": "154.0.8037.99",
-      "capabilities": ["cdp", "management", "bua.audit", "bua.consent"]
+      "capabilities": ["cdp", "management", "bua.audit"]
     }
   }
 }
@@ -82,57 +83,40 @@
   "result": {
     "sessionId": "s_7f3a…",
     "heartbeatMs": 15000,
-    "grant": { "level": "read", "origins": [], "expiresAt": null },
     "capabilities": {
-      "cdp": true,
+      "cdp": true,           // ⭐ false = 已降级到 chrome.scripting
+      "screenshots": true,
       "fileUploads": false,
-      "downloads": false
+      "downloads": true,
+      "evaluate": true,
+      "management": true
     }
   }
 }
 ```
 
-**鉴权失败的响应**：桥关闭连接（code `4001`），不回 JSON-RPC 错误体。
+**`capabilities` 取代了授权层级。** 不限制 agent，就不需要声明「谁被允许做什么」；需要声明的是「这个后端**此刻实际能**做什么」。最有价值的场景是企业策略（Chrome 155+）拒绝 `attach()` 时，扩展降级到 `chrome.scripting` 并把 `cdp` 报为 `false` —— agent 应据此降级而非失败。
 
-### 2.4 传输层强制校验（L1）
+### 2.3 传输层保留的一道防线：`Host` 头
 
-三条**必须**在 WS upgrade 阶段完成，任一不合格一律 `403` 且不建立连接：
+| # | 校验项 | 规则 |
+|---|---|---|
+| 1 | **绑定地址** | 硬绑 `127.0.0.1`，**不提供** `0.0.0.0` 选项 |
+| 2 | **`Host` 头** | 只接受 `127.0.0.1:<port>` / `localhost:<port>`，否则 `403` |
 
-| # | 校验项 | 规则 | 依据 |
-|---|---|---|---|
-| 1 | **绑定地址** | 硬绑 `127.0.0.1`，**不提供** `0.0.0.0` 选项 | MCP 规范 SHOULD |
-| 2 | **`Origin` 头** | 只接受 `chrome-extension://<扩展ID>` 与显式的本地客户端来源 | MCP 规范 **MUST**（防浏览器发起的攻击） |
-| 3 | **`Host` 头** | 只接受 `127.0.0.1:<port>` / `localhost:<port>` | **防 DNS rebinding**，不可用 `*` 关闭 |
+`Host` 校验**不限制任何 agent**（本机进程随便连），但能挡住 **DNS rebinding** —— 攻击者把域名解析到 `127.0.0.1`，让用户浏览器里的恶意页面去连本地桥。这道防线不违反「不限制 agent」的目标，却挡得住真实攻击，因此保留。
 
 **明确不做**：
 
-- ❌ `killProcessOnPort` —— 端口被占用就报错并提示用户换端口，**绝不强杀用户进程**
-- ❌ 踢旧连接 —— 多客户端并存，各自独立会话
-- ❌ 无 token 的裸监听
-
-> 这三条是竞品调研中发现的**行业反面教材**：Browser MCP（7.2k★）开 `9009` 无 token、无 Origin 校验，且会强杀占用该端口的进程、新连接直接踢掉旧连接。BUA 明确不做。
-
-### 2.5 授权层级
-
-对齐 Codex 的授权语义，并扩展到域名与时限：
-
-```ts
-type Grant = {
-  level: "none" | "read" | "interact" | "restricted-interact" | "full";
-  origins: string[];          // 空数组 = 未授予任何域名
-  expiresAt: number | null;   // Unix ms；null = 无期限
-};
-```
-
-| level | 可做 |
+| ❌ | 原因 |
 |---|---|
-| `none` | 只能看到「有这些标签」（标题/URL 可选脱敏），不能读内容 |
-| `read` | 读 DOM / 截图 / 无障碍树，不能点击输入 |
-| `interact` | 可点击、输入、导航 |
-| `restricted-interact` | 上述 + 敏感操作逐次确认（**默认档**） |
-| `full` | 无逐次确认 |
+| `Origin` 校验 | 会排除非扩展客户端 = **限制 agent**，与目标冲突 |
+| `killProcessOnPort` | **强杀用户进程不可接受**。端口占用就报错，提示用户换端口 |
+| 踢旧连接 | 破坏多 agent 并发前提。各客户端独立会话 |
+| 绑 `0.0.0.0` | 会让远程可访问，这是唯一真正的边界 |
 
-超出授权范围的操作返回 `BUA_ORIGIN_DENIED` / `BUA_GRANT_INSUFFICIENT`。
+> 后三条是竞品调研发现的**行业反面教材**：Browser MCP（7.2k★）会强杀占用该端口的任意进程，并用新连接踢掉旧连接。
+
 
 ---
 
@@ -144,10 +128,9 @@ type Grant = {
 
 | 方法 | 说明 |
 |---|---|
-| `bua.hello` | 握手与鉴权（§2.3） |
+| `bua.hello` | 握手与能力协商（§2.2） |
 | `bua.heartbeat` | 心跳。扩展 → 桥，桥需在 `2 × heartbeatMs` 内收到 |
 | `bua.goodbye` | 主动断开 |
-| `bua.pair.reset` | 重置 token（仅本地 CLI，不经 ws） |
 
 ### 3.1 浏览器
 
@@ -402,20 +385,22 @@ JSON-RPC 错误对象中，`error.data.buaCode` 携带机器可路由的错误�
 | buaCode | 含义 | agent 应对 |
 |---|---|---|
 | `BUA_PROTOCOL_VERSION` | 协议版本不匹配 | 升级扩展或桥 |
-| `BUA_UNAUTHORIZED` | token 无效（一般不返回，直接断连） | 重新配对 |
-| `BUA_GRANT_INSUFFICIENT` | 授权层级不够 | 请求用户提权 |
-| `BUA_ORIGIN_DENIED` | 域名不在白名单 | 请求用户加白 |
-| `BUA_CONSENT_REQUIRED` | 敏感操作需确认 | 发起确认流程，等用户 |
-| `BUA_CONSENT_DECLINED` | 用户拒绝 | 停止，不要重试 |
 | `BUA_TAB_NOT_FOUND` | 标签不存在或已关闭 | 重新列标签 |
 | `BUA_TAB_CLAIMED` | 标签已被其他会话接管 | 换标签或等释放 |
-| `BUA_HANDLE_STALE` | 句柄失效 | 重新构造定位器 |
-| `BUA_DEBUGGER_UNAVAILABLE` | `chrome.debugger` attach 失败（可能被 DevTools 占用） | 降级到非 debugger 路径 |
-| `BUA_NAVIGATION_TIMEOUT` | 导航超时 | 检查 `tab.url()` 再决定 |
-| `BUA_UNSUPPORTED` | 后端不支持该能力 | 查能力表，走替代路径 |
+| `BUA_HANDLE_STALE` | 句柄失效（`locatorId` / `blobRef` / `snapshotId`） | 重新构造或重新观察 |
+| `BUA_DEBUGGER_UNAVAILABLE` | `chrome.debugger` attach 失败（DevTools 占用，或企业策略拒绝） | 查 `capabilities.cdp`，走非 CDP 路径 |
+| `BUA_NAVIGATION_TIMEOUT` | 导航超时 | 检查 `tab.url()` 再决定，不要盲目重试 |
+| `BUA_UNSUPPORTED` | 后端不支持该方法，或对应能力已关闭 | 查 `capabilities`，走替代路径 |
+| `BUA_MISSING_TARGET_DESCRIPTION` | 缺少必需的 `targetDescription` | 补上人类可读的目标描述后重试 |
 | `BUA_INTERNAL` | 扩展内部错误 | 上报日志 |
 
-**`BUA_DEBUGGER_UNAVAILABLE` 值得单独说明**：`chrome.debugger` 一个标签同时只能有一个客户端。用户开着 DevTools 时会抢占，此时应优雅降级而不是报错失败。
+**`BUA_DEBUGGER_UNAVAILABLE` 值得单独说明**：两种成因，处理方式不同。
+
+1. **DevTools 抢占** —— `chrome.debugger` 一个标签同时只能有一个客户端。用户开着 DevTools 时 attach 会失败，此时应**优雅降级**而非报错退出。
+2. **企业策略拒绝**（Chrome 155+）—— 管理员配置了 `runtime_blocked_hosts` / `DisableScreenshots` / DLP 时，attach 在**所有**目标上失败，且无法用 `runtime_allowed_hosts` 绕过。此时应切到 `chrome.scripting` 模式并在 `capabilities.cdp` 报 `false`。
+
+两者都通过 `capabilities` 让 agent 感知，而不是让 agent 猜。
+
 
 ---
 

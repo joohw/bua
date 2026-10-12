@@ -5,8 +5,6 @@
  * agent 逻辑可以低成本迁移。对齐基准见 `research/03-codex-api-reference.md`。
  */
 
-import type { Grant } from './grant.js';
-
 /* ────────────────────────────── 浏览器 ────────────────────────────── */
 
 /**
@@ -134,21 +132,10 @@ export interface InputModifiers {
 /* ──────────────────── 变更型动作的强制字段（L3） ──────────────────── */
 
 /**
- * 动作风险级别。**在扩展侧硬编码判定，不信任 agent 传的 hint**
- * （MCP 规范明确警告 tool annotations 不可信）。
- *
- * - `read`        截图 / 快照 / 列标签 —— 免审批
- * - `write`       点击 / 输入 / 滚动 / 导航 —— 按 origin 授权
- * - `destructive` 提交表单 / 支付 / 删除 / 发送消息 / 上传下载 / 写剪贴板 / 关标签
- *                 —— **每次必审批**
- */
-export type ActionRisk = 'read' | 'write' | 'destructive';
-
-/**
  * 所有 `write` 与 `destructive` 动作**必须**携带的人类可读目标描述。
  *
  * 理由：**坐标本身无法让人判断风险，描述可以。**
- * 审批 UI 展示的正是这个字段。
+ * 它进审计日志，让用户事后能读懂 agent 干了什么。
  *
  * 设计原型是 Playwright MCP 的 `browser_click` —— 其 `element` 参数注释即
  * *"used to obtain permission"*。
@@ -261,6 +248,34 @@ export interface CapabilityInfo {
 
 export type CapabilityScope = 'browser' | 'tab';
 
+/**
+ * 后端**实际能做**什么。
+ *
+ * 这取代了原设计的「授权层级」。既然 BUA 不限制 agent、不签发凭据
+ * （见 `docs/design.md` §4.0），需要声明的就不是「谁被允许做什么」，
+ * 而是「这台机器上这个后端**此刻**能做什么」。
+ *
+ * 最有价值的场景是**降级**：企业策略（Chrome 155+）拒绝
+ * `chrome.debugger.attach()` 时，扩展改用 `chrome.scripting` 兜底，
+ * 并把 `cdp` 报为 `false`。agent 应当**先探测再使用**。
+ */
+export interface Capabilities {
+  /** 是否持有可用 CDP。`false` 表示已降级到 `chrome.scripting` 模式。 */
+  cdp: boolean;
+  /** 能否截图。企业 `DisableScreenshots` 策略下为 `false`。 */
+  screenshots: boolean;
+  /** 能否处理文件上传（`waitForEvent("filechooser")`）。 */
+  fileUploads: boolean;
+  /** 能否触发/等待下载。 */
+  downloads: boolean;
+  /** 能否在页面上下文执行 JS。可被用户关闭。 */
+  evaluate: boolean;
+  /** 能否读写浏览器级 API（窗口/标签组/书签）。 */
+  management: boolean;
+  /** 降级或受策略限制时的人类可读说明，用于诊断。 */
+  notes?: string[];
+}
+
 /* ───────────────────────── 会话与握手 ───────────────────────── */
 
 /** 协议版本。扩展与桥必须一致，否则 `BUA_PROTOCOL_VERSION`。 */
@@ -270,14 +285,19 @@ export interface ClientInfo {
   extensionId: string;
   extensionVersion: string;
   chromeVersion?: string;
-  /** 本扩展实例支持的能力 id 列表。 */
+  /** 本扩展实例实现的能力 id 列表（`CAPABILITY_IDS` 的子集）。 */
   capabilities: string[];
 }
 
+/**
+ * 握手参数。
+ *
+ * ⚠️ **没有 token 字段。** 这是刻意的取舍 —— BUA 不签发凭据，
+ * 任何本机进程都能连接并驱动浏览器。风险由 onboarding 页如实告知用户。
+ * 见 `docs/design.md` §4.0 / §4.2。
+ */
 export interface HelloParams {
   protocolVersion: string;
-  /** 配对时用户粘贴的 token。校验失败时桥直接断连，不回错误体。 */
-  token: string;
   client: ClientInfo;
 }
 
@@ -285,7 +305,8 @@ export interface HelloResult {
   sessionId: string;
   /** 心跳间隔（ms）。桥需在 `2 × heartbeatMs` 内收到心跳。 */
   heartbeatMs: number;
-  grant: Grant;
+  /** 本后端此刻实际具备的能力。agent 应据此降级，而非假定能力存在。 */
+  capabilities: Capabilities;
 }
 
 /* ──────────────────────────── 默认值 ──────────────────────────── */

@@ -211,44 +211,15 @@ export const MUTATING_METHODS: ReadonlySet<MethodName> = new Set<MethodName>([
 ]);
 
 /**
- * 各方法所需的最低授权层级。
- * 未列出的方法默认 `none`（可枚举、可握手，但读不到内容）。
+ * ⚠️ 本文件**不再**声明「各方法所需的最低授权层级」。
+ *
+ * 原设计有一个 `METHOD_REQUIRED_GRANT` 表，把每个方法映射到授权层级。
+ * 授权模型已整体移除（BUA 不限制 agent、不签发凭据，见 `docs/design.md` §4.0），
+ * 取而代之的是：
+ *
+ * - **能力协商**（`Capabilities`，见 `shapes.ts`）—— 声明后端**实际能做**什么，
+ *   用于企业策略拒绝 CDP 时的降级场景
+ * - **动作风险分级**（`risk.ts`）—— 信息性标注，用于审计可读性与 agent 自我约束
+ *   （`MUTATING_METHODS` 仍保留在下方，作为风险分级的数据源）
  */
-export const METHOD_REQUIRED_GRANT: Readonly<Partial<Record<MethodName, 'read' | 'interact' | 'restricted-interact'>>> =
-  Object.freeze({
-    // 读内容
-    [M.blobGet]: 'read',
-    [M.userGetTabContext]: 'read',
-    [M.tabsContent]: 'read',
-    [M.tabUrl]: 'read',
-    [M.tabTitle]: 'read',
-    [M.tabScreenshot]: 'read',
-    [M.tabGetJsDialog]: 'read',
-    [M.pwDomSnapshot]: 'read',
-    [M.pwEvaluate]: 'read',
-    [M.pwElementInfo]: 'read',
-    [M.pwElementScreenshot]: 'read',
-    [M.locatorInnerText]: 'read',
-    [M.locatorTextContent]: 'read',
-    [M.locatorAllTextContents]: 'read',
-    [M.locatorGetAttribute]: 'read',
-    [M.locatorIsVisible]: 'read',
-    [M.locatorIsEnabled]: 'read',
-    [M.locatorCount]: 'read',
-    [M.locatorEvaluate]: 'read',
-    [M.locatorEvaluateAll]: 'read',
-    [M.axGet]: 'read',
-    [M.domCuaGetVisibleDom]: 'read',
-    [M.contentExport]: 'read',
-    [M.contentExportGsuite]: 'read',
-    [M.contentExportYouTubeTranscript]: 'read',
-    [M.browserHistory]: 'read',
-    // 交互
-    [M.userClaimTab]: 'interact',
-    [M.tabsNew]: 'interact',
-    [M.tabGoto]: 'interact',
-    [M.tabBack]: 'interact',
-    [M.tabForward]: 'interact',
-    [M.tabReload]: 'interact',
-    [M.axWrite]: 'interact',
-  });
+
