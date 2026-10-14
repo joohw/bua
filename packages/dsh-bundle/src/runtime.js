@@ -17,7 +17,7 @@ export class BrowserRuntime {
       socketFactory: (url) => new WebSocket(url, { handshakeTimeout: 3000 }) });
     this.connections.add(conn);
     try {
-      const hello = await conn.connect({ name: 'dsh-plugin-bua', version: '0.0.1' });
+      const hello = await conn.connect({ name: 'dsh-plugin-bua', version: '0.0.2' });
       if (typeof hello.sessionId !== 'string' || typeof hello.backend?.connected !== 'boolean' || !hello.capabilities) {
         throw new Error('服务未返回有效的 BUA 握手。');
       }

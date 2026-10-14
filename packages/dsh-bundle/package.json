@@ -1,6 +1,6 @@
 {
   "name": "dsh-plugin-bua",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "license": "MIT",
   "homepage": "https://joohw.github.io/bua/",
   "repository": { "type": "git", "url": "git+https://github.com/joohw/bua.git", "directory": "packages/dsh-bundle" },
@@ -28,7 +28,7 @@
     "test": "node --test --test-concurrency=1 --test-timeout=20000 test/*.test.mjs"
   },
   "dependencies": { "ws": "^8.18.0" },
-  "peerDependencies": { "@deepseek-ai/cordis": "^4.0.4", "@deepseek-ai/dsh-tools": "0.0.1-rc.1" },
+  "peerDependencies": { "@deepseek-ai/cordis": "^4.0.4", "@deepseek-ai/dsh-tools": "0.0.1-rc.1 || ^0.2.0-rc.2" },
   "peerDependenciesMeta": { "@deepseek-ai/cordis": { "optional": true }, "@deepseek-ai/dsh-tools": { "optional": true } },
   "devDependencies": { "@bua/server": "workspace:*", "@bua/sdk": "workspace:*", "@bua/protocol": "workspace:*", "esbuild": "^0.24.2", "@deepseek-ai/cordis": "^4.0.4", "@deepseek-ai/dsh-tools": "0.0.1-rc.1" },
   "dsh": {

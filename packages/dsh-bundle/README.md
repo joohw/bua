@@ -37,7 +37,7 @@ cd packages/dsh-bundle
 npm pack
 ```
 
-构建将 SDK、协议和桥的代码包含在 `dist/index.js` 内，运行依赖仅为 `ws` 和 DSH 宿主提供的工具框架，不包含仓库绝对路径或 Chrome 扩展。打包文件可用 `dsh plugin --profile demo add ./dsh-plugin-bua-0.0.1.tgz` 安装。
+构建将 SDK、协议和桥的代码包含在 `dist/index.js` 内，运行依赖仅为 `ws` 和 DSH 宿主提供的工具框架，不包含仓库绝对路径或 Chrome 扩展。打包文件可用 `dsh plugin --profile demo add ./dsh-plugin-bua-0.0.2.tgz` 安装。
 
 维护者完成构建、测试和 npm 登录后，可使用 `npm publish --access public` 发布新版。每次发布需使用新的版本号。
 
