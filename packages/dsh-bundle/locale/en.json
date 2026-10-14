@@ -1,6 +1,6 @@
 {
   "meta": {
     "title": "BUA Browser Use",
-    "description": "让 DSH 操作用户真实的浏览器（真实标签页与登录态）：读页面、点击、输入、截图。需要本机运行 bua-server 与 BUA 扩展。"
+    "description": "Control your real browser from DSH. Automatically starts or reuses the local bridge. Requires the separately installed and enabled BUA Chrome extension."
   }
 }

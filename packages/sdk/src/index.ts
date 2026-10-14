@@ -22,6 +22,8 @@ import { BuaError, Connection, type BridgeEvent, type ConnectOptions } from './c
 export { BuaError, Connection } from './connection.js';
 export type { BridgeEvent, BuaErrorInfo, ConnectOptions, HelloResult } from './connection.js';
 
+type RpcConnection = Pick<Connection, 'call'>;
+
 /* ─────────────────────────── 线上结构 ─────────────────────────── */
 
 export interface TabInfo {
@@ -88,12 +90,12 @@ export interface LocatorOptions {
  * 因为按选择器重查在这个 SDK 的粒度上更简单，也更不容易踩到句柄过期的坑。）
  */
 export class Locator {
-  readonly #conn: Connection;
+  readonly #conn: RpcConnection;
   readonly #selector: string;
   readonly #role: { role: string; name?: string; exact?: boolean } | null;
 
   constructor(
-    conn: Connection,
+    conn: RpcConnection,
     selector: string,
     role: { role: string; name?: string; exact?: boolean } | null = null,
   ) {
@@ -174,8 +176,8 @@ export interface DomNode {
 }
 
 export class PlaywrightApi {
-  readonly #conn: Connection;
-  constructor(conn: Connection) {
+  readonly #conn: RpcConnection;
+  constructor(conn: RpcConnection) {
     this.#conn = conn;
   }
 
@@ -232,8 +234,8 @@ export class PlaywrightApi {
 }
 
 export class AxApi {
-  readonly #conn: Connection;
-  constructor(conn: Connection) {
+  readonly #conn: RpcConnection;
+  constructor(conn: RpcConnection) {
     this.#conn = conn;
   }
 
@@ -249,8 +251,8 @@ export class AxApi {
 }
 
 export class CuaApi {
-  readonly #conn: Connection;
-  constructor(conn: Connection) {
+  readonly #conn: RpcConnection;
+  constructor(conn: RpcConnection) {
     this.#conn = conn;
   }
 
@@ -280,8 +282,8 @@ export class CuaApi {
 }
 
 export class DomCuaApi {
-  readonly #conn: Connection;
-  constructor(conn: Connection) {
+  readonly #conn: RpcConnection;
+  constructor(conn: RpcConnection) {
     this.#conn = conn;
   }
 
@@ -297,8 +299,8 @@ export class DomCuaApi {
 }
 
 export class ContentApi {
-  readonly #conn: Connection;
-  constructor(conn: Connection) {
+  readonly #conn: RpcConnection;
+  constructor(conn: RpcConnection) {
     this.#conn = conn;
   }
 
@@ -322,11 +324,14 @@ export class Tab {
   constructor(conn: Connection, id: number) {
     this.#conn = conn;
     this.id = id;
-    this.playwright = new PlaywrightApi(conn);
-    this.ax = new AxApi(conn);
-    this.cua = new CuaApi(conn);
-    this.domCua = new DomCuaApi(conn);
-    this.content = new ContentApi(conn);
+    const scoped: RpcConnection = {
+      call: (method, params = {}) => conn.call(method, { ...params, tabId: id }),
+    };
+    this.playwright = new PlaywrightApi(scoped);
+    this.ax = new AxApi(scoped);
+    this.cua = new CuaApi(scoped);
+    this.domCua = new DomCuaApi(scoped);
+    this.content = new ContentApi(scoped);
   }
 
   /* 导航 */
@@ -418,7 +423,21 @@ export class Tabs {
   }
 
   async list(): Promise<TabInfo[]> {
-    const r = await this.#conn.call<{ tabs: TabInfo[] }>(M.tabsList, {});
+    const r = await this.#conn.call<{ tabs?: TabInfo[] }>(M.tabsList, {});
+    /*
+     * 形状校验是刻意的。
+     *
+     * 若扩展回了 `{}` 或非预期结构，直接 `.length` 会抛 `Cannot read properties of
+     * undefined`，那个错误在 MCP / HTTP 这类上层会变成一句无从下手的内部异常 ——
+     * 调用方既不知道是哪一层出的问题，也拿不到可路由的 buaCode。
+     * 这里显式区分「协议形状不符」与「真的有标签」。
+     */
+    if (!Array.isArray(r?.tabs)) {
+      throw new BuaError({
+        buaCode: BUA_ERROR_CODES.INTERNAL,
+        message: '后端返回的标签列表格式不正确（期望 tabs 数组）。可能是扩展版本与协议不匹配。',
+      });
+    }
     return r.tabs;
   }
 
@@ -523,7 +542,14 @@ export class Browsers {
 
   /** 列出可用浏览器。 */
   async list(): Promise<BrowserInfo[]> {
-    const r = await this.#conn.call<{ browsers: BrowserInfo[] }>(M.browserList, {});
+    const r = await this.#conn.call<{ browsers?: BrowserInfo[] }>(M.browserList, {});
+    // 同 tabs.list：形状不符时给可路由的错误，而不是崩在 undefined 上
+    if (!Array.isArray(r?.browsers)) {
+      throw new BuaError({
+        buaCode: BUA_ERROR_CODES.INTERNAL,
+        message: '后端返回的浏览器列表格式不正确（期望 browsers 数组）。可能是扩展版本与协议不匹配。',
+      });
+    }
     return r.browsers;
   }
 

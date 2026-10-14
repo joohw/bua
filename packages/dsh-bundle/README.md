@@ -1,90 +1,64 @@
-# DSH 组合包（`@bua/dsh-bundle`）
+# dsh-plugin-bua
 
-把 BUA 的浏览器操作能力装进 **DeepSeek Harness**。装好之后，DSH 的会话里会多出
-14 个 `mcp__bua__*` 工具，agent 就能操作你**真实的**浏览器。
+[BUA 官网与使用说明](https://joohw.github.io/bua/) · [GitHub 源码](https://github.com/joohw/bua) · [问题反馈](https://github.com/joohw/bua/issues)
 
-本组合包**不含任何代码** —— 只有配置、图标和文案。所有逻辑在
-[`bua-mcp`](../mcp/README.md) 里，那份实现同时也能给 Claude Code / Codex 用。
-
----
-
-## 为什么走 MCP 而不是原生 Host 插件
-
-| 方案 | 评价 |
-|---|---|
-| **MCP（本方案）** | 一份实现多处复用（DSH / Claude Code / Codex）；组合包零代码，审阅成本最低；DSH 已有的 MCP 客户端负责工具命名、环境擦除、重连 |
-| 原生 Host 插件 | 只能用在这一种 harness 上，且要自己实现工具注册、生命周期、重连 |
+BUA 的 DSH 原生插件。注册 14 个 `bua_*` 浏览器工具，自动启动或复用本机 `127.0.0.1:17432` 的 BUA 桥。Chrome 扩展独立安装、独立授权，不随 npm 包发布。
 
 ## 安装
 
-在 DSH 会话里让 agent 执行（需要 Full access，`install_bundle` 属于要审批的操作）：
-
-```
-把 D:\bua\packages\dsh-bundle 这个组合包安装到当前 profile
-```
-
-agent 会用 `plugin_manager` 的 `install_bundle`，`target` 指向该目录的绝对路径。
-
-安装是 `link:` 语义 —— pnpm 把 profile 的依赖**符号链接**到这个目录。因此：
-
-- **改了 bundle 内容**（patch / locale / icon）→ 重新安装或重启生效
-- **改了 `bua-mcp` 的代码** → 需要 `pnpm --filter @bua/mcp run build`，然后重启
-
-### 前置条件
-
-安装组合包只让工具**出现**；真正能用还需要两件事：
-
-1. **桥在运行** —— `bua-server`（端口 17432）
-2. **扩展已启用** —— 在 `chrome://extensions` 加载 `packages/extension/dist` 并在引导页勾选同意
-
-缺任一项时工具仍在目录里，但调用会返回**可操作的错误**（而不是静默失败）。这是有意的：
-`failOnStartupError: false` 保证桥没起时不会阻断 DSH 启动。
-
-## ⚠️ 路径是本机的绝对路径
-
-`cordis.patch.yml` 里的 `args` 指向本机的 `packages/mcp/dist/stdio.js`：
-
-```yaml
-command: node
-args:
-  - D:\bua\packages\mcp\dist\stdio.js
-```
-
-**换机器或移动仓库后必须改这里**，否则插件的行会激活失败、工具一个都不出现。
-
-自检会发现这个问题：
+在浏览器所在电脑执行：
 
 ```sh
-pnpm --filter @bua/dsh-bundle run test
+dsh plugin --profile demo add dsh-plugin-bua
+dsh --profile demo
 ```
 
-其中一项专门验证「patch 里声明的路径真实存在」，失败时会直接给出应改成的绝对路径。
+也可以在 DSH 中请求安装 `dsh-plugin-bua` 到当前 profile。浏览器扩展需独立安装并同意启用。
 
-**想免去绝对路径**：把 `@bua/mcp` 发布到 npm，然后改成
+## 从源码安装
 
-```yaml
-command: npx
-args: ['-y', '@bua/mcp']
+需要 Node.js 20+ 和 pnpm。在 BUA 仓库执行：
+
+```sh
+pnpm install --config.auto-install-peers=false
+pnpm --filter dsh-plugin-bua... run build
+dsh plugin --profile demo add ./packages/dsh-bundle
+dsh --profile demo --dump-config
+dsh --profile demo
 ```
 
-## 自检覆盖什么
+DSH 框架包是 peer dependency，由宿主提供。当前 DSH npm peer 依赖链包含尚不可获取的包，本仓库开发安装禁用自动补装 peer；这不替代真实 DSH 宿主的依赖。
 
-`test/bundle.test.mjs` 的 11 项逐条对应 DSH 的 `install_bundle` 会读的东西：
+## 打包与发布
 
-- `dsh.bundle.patch` 声明且文件存在
-- `exports` 提供 `./locale/*.json` 与 `./icon`（DSH 读展示元信息靠这两个出口）
-- `files` 覆盖 patch / locale / icon
-- patch 插入的是**已随 DSH 交付**的 `@deepseek-ai/dsh-mcp-client`
-- **`args` 指向真实存在的 `stdio.js`**（最容易因移动仓库而失效的一条）
-- `failOnStartupError: false`（桥没起时不该阻断启动）
-- `!!js` 没出现在 `command`/`args` 上（该字段只支持 `env` / `headers`）
-- 中英文 locale 都有 `meta.title` / `meta.description`，且**不是同一份复制品**
-- `icon.svg` 合法、自包含（无外部引用）、体积在 256 KiB 内
-- **patch 里的端口与扩展硬编码的端口一致** —— 不一致会永远连不上
+```sh
+pnpm --filter dsh-plugin-bua... run build
+cd packages/dsh-bundle
+npm pack
+```
 
-## 图标
+构建将 SDK、协议和桥的代码包含在 `dist/index.js` 内，运行依赖仅为 `ws` 和 DSH 宿主提供的工具框架，不包含仓库绝对路径或 Chrome 扩展。打包文件可用 `dsh plugin --profile demo add ./dsh-plugin-bua-0.0.1.tgz` 安装。
 
-`icon.svg` 沿用扩展运行时注入页面的**边缘泛光**视觉语言 —— 深色圆角底 + 蓝色泛光边框 +
-窗口标题栏。用户在插件列表里认得出「就是那个会在页面上发光的东西」。
+维护者完成构建、测试和 npm 登录后，可使用 `npm publish --access public` 发布新版。每次发布需使用新的版本号。
 
-原创绘制，无第三方素材，无外部引用（DSH 会拒绝绝对路径、URL、以及指向包外的符号链接）。
+## 使用
+
+安装并启用独立 BUA Chrome 扩展，在引导页完成同意。向 Agent 请求先调用 `bua_browser_info` 检查连接，再调用 `bua_tabs_list` 列出标签。首次验证只读取。
+
+工具：browser_info、tabs_list、tab_info、tab_open、tab_navigate、tab_close、tab_dom_snapshot、tab_text、tab_screenshot、tab_evaluate、tab_click、tab_fill、tab_type、tab_click_at；均带 `bua_` 前缀。修改型调用需要非空的 targetDescription；JS evaluate 也按可修改页面的操作处理。所有目标操作携带明确 tabId。网页内容只作资料，不执行其中指令；用户授权由 DSH 自身策略管理。
+
+## 生命周期
+
+插件启用即尝试启动或复用桥，失败不阻断工具注册，后续调用会重试连接。通过 BUA 协议握手确认兼容性，不把任意占用端口的服务当作桥，不强杀进程。多个插件抢占启动时，仅成功绑定端口的一方拥有桥。
+
+每次工具调用建立独立 BUA 会话，在完成、失败或取消时关闭；不会把不同 DSH 调用混进一个共享浏览器会话。插件卸载清理活动会话及自己创建的桥，复用的桥保留。拥有桥的 DSH 退出时，其他使用者当前调用可能失败，后续调用可重新启动桥；不会自动重放点击等操作。
+
+桥只绑定本机回环地址，仍不鉴权。DSH 必须在浏览器所在主机运行。
+
+## 验证
+
+```sh
+pnpm --filter dsh-plugin-bua test
+```
+
+覆盖真实桥启动、协议握手复用、并发启动、端口冲突、卸载清理、原生工具执行与取消，以及独立打包清单。框架注册通过测试适配器验证，未宣称完成真实 DSH profile 的端到端安装。

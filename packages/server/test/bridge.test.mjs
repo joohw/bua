@@ -138,6 +138,23 @@ async function connectAgent(url, name = 'test-agent') {
 
 /* ─────────────────────── 传输层拦截 ─────────────────────── */
 
+test('agent 断开时通知扩展清理对应会话', async () => {
+  const bridge = await startBridge();
+  const ext = await connectExtension(bridge.url);
+  const agent = await connectAgent(bridge.url);
+  try {
+    const event = new Promise((resolve, reject) => {
+      const timer = setTimeout(() => reject(new Error('缺少 session.closed 通知')), 2000);
+      ext.ws.on('message', (data) => {
+        const msg = JSON.parse(String(data));
+        if (msg.params?.type === 'session.closed') { clearTimeout(timer); resolve(msg.params); }
+      });
+    });
+    await agent.close();
+    assert.deepEqual(await event, { type: 'session.closed', sessionId: agent.hello.result.sessionId });
+  } finally { await ext.close(); await bridge.close(); }
+});
+
 test('恶意网页来源（http origin）被拒绝升级', async () => {
   const b = await startBridge();
   try {

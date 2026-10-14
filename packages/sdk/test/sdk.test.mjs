@@ -87,6 +87,52 @@ const HELLO_OK = {
   },
 };
 
+test('tab 子命名空间和嵌套 locator 始终寻址自己的标签', async () => {
+  const methods = ['playwright.evaluate', 'playwright.domSnapshot', 'playwright.waitForTimeout',
+    'playwright.waitForLoadState', 'ax.get', 'ax.click', 'cua.click', 'cua.doubleClick',
+    'cua.move', 'cua.scroll', 'cua.type', 'cua.keypress', 'dom_cua.click',
+    'content.export', 'locator.click', 'locator.fill', 'locator.innerText',
+    'locator.textContent', 'locator.isVisible', 'locator.isEnabled', 'locator.count'];
+  const { bridge, agent } = await withAgent(Object.fromEntries(methods.map((method) =>
+    [method, (params) => ({ result: { value: params.tabId }, path: 'export.txt' })])));
+  try {
+    const browser = await agent.browsers.getDefault();
+    const first = await browser.tabs.get(11);
+    const second = await browser.tabs.get(22);
+    const intent = { targetDescription: 'Test target' };
+    assert.equal(await first.text(), 11);
+    assert.equal(await second.text(), 22);
+    const start = bridge.calls.length;
+    await first.playwright.domSnapshot();
+    await first.playwright.waitForTimeout(1);
+    await first.playwright.waitForLoadState();
+    await first.ax.get();
+    await first.ax.click(1, 2, intent);
+    await first.cua.click(1, 2, intent);
+    await first.cua.doubleClick(1, 2, intent);
+    await first.cua.move(1, 2);
+    await first.cua.scroll(1, 2, 0, 10);
+    await first.cua.type('hello', intent);
+    await first.cua.keypress('Enter', intent);
+    await first.domCua.getVisibleDom();
+    await first.domCua.click(1, intent);
+    await first.content.export();
+    const locator = first.playwright.locator('#parent').locator('button');
+    await locator.click(intent);
+    await locator.fill('hello', intent);
+    await locator.innerText();
+    await locator.textContent();
+    await locator.isVisible();
+    await locator.isEnabled();
+    await locator.count();
+    assert.equal(bridge.calls.length - start, 21);
+    for (const call of bridge.calls.slice(start)) assert.equal(call.params.tabId, 11, call.method);
+  } finally {
+    await agent.close();
+    await bridge.close();
+  }
+});
+
 /** 起假桥 + 接上 SDK。
  *
  * 默认 handler 覆盖 `browser.list`（`getDefault()` 依赖它）；其余方法各自按需覆盖。

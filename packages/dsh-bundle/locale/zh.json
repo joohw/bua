@@ -1,6 +1,6 @@
 {
   "meta": {
     "title": "BUA 浏览器操作",
-    "description": "让 DSH 操作用户真实的浏览器（真实标签页与登录态）：读取页面、点击、输入、截图。需要本机运行 bua-server 与 BUA 扩展。"
+    "description": "让 DSH 操作用户真实浏览器：读取页面、点击、输入、截图。自动启动或复用本地桥，需要独立安装并启用 BUA Chrome 扩展。"
   }
 }

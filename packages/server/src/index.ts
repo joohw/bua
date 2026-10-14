@@ -251,6 +251,11 @@ export class Bridge {
       if (sessionId === null) return;
       const removed = this.#store.remove(sessionId);
       this.#sockets.delete(sessionId);
+      if (removed?.role === 'agent') {
+        const extension = this.#store.getExtension();
+        const socket = extension ? this.#sockets.get(extension.sessionId) : undefined;
+        if (socket) this.#send(socket, { jsonrpc: '2.0', method: 'bua.event', params: { type: 'session.closed', sessionId } });
+      }
       // 该会话的未完成转发一并清理，避免悬挂
       for (const [fwdId, pending] of [...this.#pendingForwards]) {
         if (pending.sessionId === sessionId) this.#pendingForwards.delete(fwdId);
@@ -562,8 +567,38 @@ export class Bridge {
       pending.agentWs,
       ok
         ? { jsonrpc: '2.0', id: responseId, result: msg['result'] }
-        : { jsonrpc: '2.0', id: pending.agentId, error: msg['error'] as RpcError['error'] },
+        : { jsonrpc: '2.0', id: pending.agentId, error: this.#normalizeForwardedError(msg['error']) },
     );
+  }
+
+  /**
+   * 规范从扩展转发回来的错误对象。
+   *
+   * 为什么需要这一步：agent 是**按 `buaCode` 路由**的（重试 / 换路 / 停止），
+   * 而不是去解析错误文案。扩展侧可能只在 `data.buaCode` 里给出码，也可能什么都没给；
+   * 若桥原样透传，agent 拿到一个没有码的错误就只能当作未知失败处理 —— 那时候
+   * 「没有扩展连接」和「标签不存在」对 agent 来说毫无区别。
+   *
+   * 所以这里保证**离开桥的错误一定带 `data.buaCode`**：扩展给了就用它的，
+   * 没给就兜底为 `BUA_INTERNAL`。
+   */
+  #normalizeForwardedError(raw: unknown): RpcError['error'] {
+    const err = (typeof raw === 'object' && raw !== null ? raw : {}) as {
+      code?: unknown;
+      message?: unknown;
+      data?: unknown;
+    };
+    const code = typeof err.code === 'number' ? err.code : RPC_ERROR_CODES.BUA_ERROR;
+    const message = typeof err.message === 'string' ? err.message : '扩展未提供错误说明';
+    const existing =
+      typeof err.data === 'object' && err.data !== null
+        ? (err.data as Record<string, unknown>)
+        : {};
+    const buaCode =
+      typeof existing['buaCode'] === 'string'
+        ? (existing['buaCode'] as BuaErrorCode)
+        : BUA_ERROR_CODES.INTERNAL;
+    return { code, message, data: { ...existing, buaCode } };
   }
 
   /** 从参数里取 `targetDescription`；空串或非字符串一律视为缺失。 */
