@@ -1,0 +1,83 @@
+name: Extension CI and store review
+
+on:
+  pull_request:
+    paths: ['packages/extension/**', 'packages/protocol/**', 'packages/server/**', 'docs/styles.css', 'docs/assets/fonts/**', 'pnpm-lock.yaml', 'package.json', '.github/workflows/extension.yml']
+  push:
+    branches: [main]
+    tags: ['extension-v*']
+    paths: ['packages/extension/**', 'packages/protocol/**', 'packages/server/**', 'docs/styles.css', 'docs/assets/fonts/**', 'pnpm-lock.yaml', 'package.json', '.github/workflows/extension.yml']
+  workflow_dispatch:
+    inputs:
+      submit_review:
+        description: Submit the validated package to Chrome Web Store review
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile --config.auto-install-peers=false
+      - run: pnpm --filter @bua/extension... run build
+      - run: pnpm --filter @bua/extension typecheck
+      - run: pnpm --filter @bua/extension test
+      - run: pnpm --filter @bua/extension release
+      - name: Check version and trusted release ref
+        env:
+          SUBMIT_REVIEW: ${{ inputs.submit_review }}
+        run: |
+          node --input-type=module <<'JS'
+          import { readFileSync } from 'node:fs';
+          const manifest = JSON.parse(readFileSync('packages/extension/manifest.json'));
+          const pkg = JSON.parse(readFileSync('packages/extension/package.json'));
+          if (manifest.version !== pkg.version) throw Error('Manifest and package versions differ');
+          const tag = process.env.GITHUB_REF.startsWith('refs/tags/');
+          if (tag && process.env.GITHUB_REF_NAME !== `extension-v${manifest.version}`) throw Error('Tag must match manifest version');
+          if (process.env.SUBMIT_REVIEW === 'true' && process.env.GITHUB_REF !== 'refs/heads/main' && !tag) throw Error('Submit review from main or a release tag');
+          JS
+          if [[ "$GITHUB_REF" == refs/tags/* ]]; then git merge-base --is-ancestor HEAD origin/main; fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: extension-package
+          path: packages/extension/release/*
+          if-no-files-found: error
+          retention-days: 30
+
+  chrome-review:
+    needs: validate
+    if: startsWith(github.ref, 'refs/tags/extension-v') || (github.event_name == 'workflow_dispatch' && inputs.submit_review)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    concurrency:
+      group: chrome-web-store-review
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/download-artifact@v4
+        with:
+          name: extension-package
+          path: packages/extension/release
+      - name: Upload and submit for staged review
+        env:
+          CWS_PUBLISHER_ID: ${{ vars.CWS_PUBLISHER_ID }}
+          CWS_EXTENSION_ID: ${{ vars.CWS_EXTENSION_ID }}
+          CWS_CLIENT_ID: ${{ secrets.CWS_CLIENT_ID }}
+          CWS_CLIENT_SECRET: ${{ secrets.CWS_CLIENT_SECRET }}
+          CWS_REFRESH_TOKEN: ${{ secrets.CWS_REFRESH_TOKEN }}
+        run: node packages/extension/scripts/submit-review.mjs
