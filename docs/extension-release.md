@@ -21,7 +21,7 @@
 ## 提交版本
 
 1. 同时递增 `packages/extension/manifest.json` 和 `packages/extension/package.json` 的版本，合并至 main。版本必须高于商店已有版本。
-2. 给已合并的提交打标签，例如 `extension-v0.1.2` 并推送。标签必须与 manifest 版本一致。
+2. 从已合并的提交创建并发布 GitHub Release，标签使用 `v0.1.2` 或 `extension-v0.1.2`，必须与 manifest 版本一致。每次 Release 发布都会自动触发送审流程，预发布 Release 也包含在内。仅推送标签、保存草稿或编辑已有 Release 不会重复触发送审。
 3. 工作流先验证和打包，再将同一份 artifact 校验 SHA-256、上传并提交审核。提交串行执行，失败不会被当作成功。
 4. 或在 Actions 选择 main → Run workflow → 勾选 `submit_review`，提交当前 main 版本；不勾选只验证和产出安装包。
 5. Chrome 审核通过后版本处于暂存状态，开发者在 Dashboard 完成最终上架。工作流采用 `STAGED_PUBLISH`，不跳过审核，并在校验警告时停止。

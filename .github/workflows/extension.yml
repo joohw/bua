@@ -5,8 +5,9 @@ on:
     paths: ['packages/extension/**', 'packages/protocol/**', 'packages/server/**', 'docs/styles.css', 'docs/assets/fonts/**', 'pnpm-lock.yaml', 'package.json', '.github/workflows/extension.yml']
   push:
     branches: [main]
-    tags: ['extension-v*']
     paths: ['packages/extension/**', 'packages/protocol/**', 'packages/server/**', 'docs/styles.css', 'docs/assets/fonts/**', 'pnpm-lock.yaml', 'package.json', '.github/workflows/extension.yml']
+  release:
+    types: [published]
   workflow_dispatch:
     inputs:
       submit_review:
@@ -45,7 +46,7 @@ jobs:
           const pkg = JSON.parse(readFileSync('packages/extension/package.json'));
           if (manifest.version !== pkg.version) throw Error('Manifest and package versions differ');
           const tag = process.env.GITHUB_REF.startsWith('refs/tags/');
-          if (tag && process.env.GITHUB_REF_NAME !== `extension-v${manifest.version}`) throw Error('Tag must match manifest version');
+          if (tag && ![`v${manifest.version}`, `extension-v${manifest.version}`].includes(process.env.GITHUB_REF_NAME)) throw Error('Release tag must be v<manifest version> or extension-v<manifest version>');
           if (process.env.SUBMIT_REVIEW === 'true' && process.env.GITHUB_REF !== 'refs/heads/main' && !tag) throw Error('Submit review from main or a release tag');
           JS
           if [[ "$GITHUB_REF" == refs/tags/* ]]; then git merge-base --is-ancestor HEAD origin/main; fi
@@ -58,7 +59,7 @@ jobs:
 
   chrome-review:
     needs: validate
-    if: startsWith(github.ref, 'refs/tags/extension-v') || (github.event_name == 'workflow_dispatch' && inputs.submit_review)
+    if: github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && inputs.submit_review)
     runs-on: ubuntu-latest
     timeout-minutes: 15
     concurrency:

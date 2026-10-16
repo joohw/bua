@@ -115,7 +115,7 @@ pnpm --filter @bua/extension release
 
 `release` 执行构建、自检和打包，输出 ZIP 与 SHA-256 校验文件到 `packages/extension/release/`。v0.1.1 发布时通过了 34 项扩展测试；实机端到端测试另见 `pnpm --filter @bua/extension test:e2e`。
 
-GitHub Actions 自动检查扩展相关的 PR / main 改动并保存安装包。推送 `extension-v<版本>` 标签，或手动运行工作流勾选 `submit_review`，可提交 Chrome Web Store 审核；审核通过后暂存待上架。首次需配置商店 API 凭据，见 [CI 与审核发布指南](docs/extension-release.md)。
+GitHub Actions 自动检查扩展相关的 PR / main 改动并保存安装包。每次发布 GitHub Release（标签为 `v<版本>` 或 `extension-v<版本>`，与 manifest 一致）会自动提交 Chrome Web Store 审核；也可手动运行工作流勾选 `submit_review` 提交；审核通过后暂存待上架。首次需配置商店 API 凭据，见 [CI 与审核发布指南](docs/extension-release.md)。
 
 ## 项目结构与文档
 
