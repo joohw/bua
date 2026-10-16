@@ -11,7 +11,7 @@ on:
   workflow_dispatch:
     inputs:
       submit_review:
-        description: Submit the validated package to Chrome Web Store review
+        description: Submit the validated package to Chrome and Microsoft Edge review
         type: boolean
         default: false
 
@@ -82,3 +82,27 @@ jobs:
           CWS_CLIENT_SECRET: ${{ secrets.CWS_CLIENT_SECRET }}
           CWS_REFRESH_TOKEN: ${{ secrets.CWS_REFRESH_TOKEN }}
         run: node packages/extension/scripts/submit-review.mjs
+
+  edge-review:
+    needs: validate
+    if: github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && inputs.submit_review)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    concurrency:
+      group: microsoft-edge-store-review
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/download-artifact@v4
+        with:
+          name: extension-package
+          path: packages/extension/release
+      - name: Upload and submit Edge package
+        env:
+          EDGE_PRODUCT_ID: ${{ vars.EDGE_PRODUCT_ID }}
+          EDGE_CLIENT_ID: ${{ secrets.EDGE_CLIENT_ID }}
+          EDGE_API_KEY: ${{ secrets.EDGE_API_KEY }}
+        run: node packages/extension/scripts/submit-edge-review.mjs
