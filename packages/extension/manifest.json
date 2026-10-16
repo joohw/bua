@@ -2,7 +2,8 @@
   "manifest_version": 3,
   "name": "BUA — Browser Use Agent",
   "short_name": "BUA",
-  "version": "0.1.0",
+  "homepage_url": "https://joohw.github.io/bua/",
+  "version": "0.1.1",
   "description": "让任意 Agent 操作用户真实浏览器：读取页面、点击、输入、截图。真实标签页与登录态，无需重启浏览器。",
   "minimum_chrome_version": "125",
   "icons": {
@@ -16,14 +17,15 @@
     "type": "module"
   },
   "action": {
-    "default_title": "BUA — 浏览器操作状态",
-    "default_popup": "popup.html"
+    "default_title": "BUA — 设置"
   },
   "options_page": "onboarding.html",
   "permissions": [
     "debugger",
     "tabs",
+    "tabGroups",
     "storage",
+    "alarms",
     "scripting",
     "activeTab"
   ],

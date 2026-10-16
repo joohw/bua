@@ -10,8 +10,6 @@
  * ├── background.js        打包后的 service worker
  * ├── onboarding.html      引导页（权限说明 + 风险告知 + 主动同意）
  * ├── onboarding.js
- * ├── popup.html           工具栏弹窗（连接状态 + 操作流水）
- * ├── popup.js
  * └── icons/icon-*.png
  * ```
  *
@@ -22,12 +20,14 @@ import { mkdir, writeFile, rm, readFile } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { deflateSync } from 'node:zlib';
+import { watch } from 'node:fs';
 
 import { build } from 'esbuild';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const root = resolve(here, '..');
 const outdir = join(root, 'dist');
+const watching = process.argv.includes('--watch');
 
 /* ─────────────────────── 图标生成 ─────────────────────── */
 
@@ -59,51 +59,51 @@ function chunk(type, data) {
 }
 
 /**
- * 生成一个图标：深色圆角底 + 蓝色边缘泛光，呼应扩展的核心视觉。
+ * 共用品牌图标：蓝色圆角底、浏览器窗口与操作指针。
+ * 在同一归一化画布上生成各尺寸，4× 超采样保证工具栏边缘清晰。
  *
  * @param {number} size - 边长（像素）
  */
 function makeIcon(size) {
   const raw = Buffer.alloc(size * (size * 4 + 1));
-  const cx = (size - 1) / 2;
-  const cy = (size - 1) / 2;
-  const radius = size / 2;
-  const ringWidth = Math.max(1, size * 0.13);
+  function roundedRect(x, y, left, top, right, bottom, radius) {
+    const dx = Math.max(left + radius - x, 0, x - (right - radius));
+    const dy = Math.max(top + radius - y, 0, y - (bottom - radius));
+    return x >= left && x <= right && y >= top && y <= bottom && dx * dx + dy * dy <= radius * radius;
+  }
+  function polygon(x, y, points) {
+    let inside = false;
+    for (let i = 0, j = points.length - 1; i < points.length; j = i++) {
+      const [xi, yi] = points[i];
+      const [xj, yj] = points[j];
+      if ((yi > y) !== (yj > y) && x < (xj - xi) * (y - yi) / (yj - yi) + xi) inside = !inside;
+    }
+    return inside;
+  }
+  const cursor = [[52, 47], [81, 67], [69, 70], [63, 83]];
+  function sample(x, y) {
+    if (!roundedRect(x, y, 3, 3, 97, 97, 23)) return [0, 0, 0, 0];
+    let color = [38 - y * .12, 126 - y * .35, 247 - y * .24, 255];
+    if (roundedRect(x, y, 20, 24, 80, 73, 9)) color = [239, 247, 255, 255];
+    if (roundedRect(x, y, 26, 39, 74, 67, 3)) color = [20, 65, 131, 255];
+    if (y >= 30 && y <= 34 && x >= 28 && x <= 40) color = [93, 155, 235, 255];
+    if (polygon(x, y, cursor)) color = [255, 255, 255, 255];
+    return color;
+  }
 
   let p = 0;
   for (let y = 0; y < size; y += 1) {
     raw[p] = 0; // filter type: none
     p += 1;
     for (let x = 0; x < size; x += 1) {
-      const dist = Math.hypot(x - cx, y - cy);
-      let r = 15;
-      let g = 23;
-      let b = 42;
-      let a = 255;
-
-      if (dist > radius) {
-        a = 0; // 圆形裁切
-      } else {
-        // 边缘泛光：越靠外越亮、越偏蓝
-        const edge = Math.max(0, dist - (radius - ringWidth * 2)) / (ringWidth * 2);
-        if (edge > 0) {
-          const t = Math.min(1, edge);
-          r = Math.round(15 + (59 - 15) * t);
-          g = Math.round(23 + (130 - 23) * t);
-          b = Math.round(42 + (246 - 42) * t);
-        }
-        // 中心一个亮点，让图标在小尺寸下也认得出
-        if (dist < size * 0.16) {
-          r = 96;
-          g = 165;
-          b = 250;
-        }
+      const channels = [0, 0, 0, 0];
+      for (let sy = 0; sy < 4; sy++) for (let sx = 0; sx < 4; sx++) {
+        const color = sample((x + (sx + .5) / 4) * 100 / size, (y + (sy + .5) / 4) * 100 / size);
+        for (let c = 0; c < 3; c++) channels[c] += color[c] * color[3] / 255;
+        channels[3] += color[3];
       }
-
-      raw[p] = r;
-      raw[p + 1] = g;
-      raw[p + 2] = b;
-      raw[p + 3] = a;
+      for (let c = 0; c < 3; c++) raw[p + c] = channels[3] ? Math.round(channels[c] * 255 / channels[3]) : 0;
+      raw[p + 3] = Math.round(channels[3] / 16);
       p += 4;
     }
   }
@@ -128,22 +128,23 @@ function makeIcon(size) {
 /* ─────────────────────── 构建 ─────────────────────── */
 
 async function main() {
-  await rm(outdir, { recursive: true, force: true });
+  // Watch 时保持已加载的目录完整，避免 Chrome 读到被删除的 manifest。
+  if (!watching) await rm(outdir, { recursive: true, force: true });
   await mkdir(join(outdir, 'icons'), { recursive: true });
 
-  // ① 打包 service worker 与两个页面脚本
+  // ① 打包 service worker 与设置页
   await build({
     entryPoints: {
       background: join(root, 'src/background.ts'),
       onboarding: join(root, 'src/onboarding.ts'),
-      popup: join(root, 'src/popup.ts'),
+      logs: join(root, 'src/logs.ts'),
     },
     outdir,
     bundle: true,
     format: 'esm',
     target: 'chrome125',
     platform: 'browser',
-    sourcemap: false,
+    sourcemap: watching ? 'inline' : false,
     minify: false, // 保持可读：上架审核要能读懂代码，也是 MV3 政策要求
     legalComments: 'none',
     logLevel: 'info',
@@ -151,11 +152,22 @@ async function main() {
 
   // ② 静态资源
   await writeFile(join(outdir, 'manifest.json'), await readFile(join(root, 'manifest.json')));
-  for (const page of ['onboarding', 'popup']) {
+  for (const page of ['onboarding', 'logs']) {
     await writeFile(
       join(outdir, `${page}.html`),
       await readFile(join(root, `src/${page}.html`)),
     );
+  }
+
+  // 与官网共用排版、色板和本地字体；扩展页面不依赖远端资源。
+  const website = resolve(root, '../../docs');
+  await mkdir(join(outdir, 'assets/fonts'), { recursive: true });
+  await writeFile(join(outdir, 'website.css'), await readFile(join(website, 'styles.css')));
+  for (const file of ['outfit-latin.woff2', 'OFL.txt']) {
+    await writeFile(join(outdir, 'assets/fonts', file), await readFile(join(website, 'assets/fonts', file)));
+  }
+  for (const file of ['settings.svg', 'LUCIDE-LICENSE']) {
+    await writeFile(join(outdir, 'icons', file), await readFile(join(root, 'src/icons', file)));
   }
 
   // ③ 图标
@@ -168,3 +180,43 @@ async function main() {
 }
 
 await main();
+
+if (watching) {
+  let timer;
+  let building = false;
+  let pending = false;
+  async function rebuild() {
+    if (building) { pending = true; return; }
+    building = true;
+    try {
+      await main();
+      process.stdout.write('bua: 更新完成。选项页请刷新；后台或 manifest 改动请重新加载扩展。\n');
+    } catch (error) {
+      console.error('bua: 构建失败，修正源码后会自动重试。', error);
+    } finally {
+      building = false;
+      if (pending) { pending = false; void rebuild(); }
+    }
+  }
+  function schedule() {
+    clearTimeout(timer);
+    timer = setTimeout(() => { void rebuild(); }, 150);
+  }
+  const watchers = [
+    watch(join(root, 'src'), { recursive: true }, schedule),
+    watch(join(root, 'manifest.json'), schedule),
+    watch(resolve(root, '../../docs/styles.css'), schedule),
+    watch(resolve(root, '../../docs/assets/fonts'), schedule),
+    watch(resolve(root, '../protocol/src'), { recursive: true }, schedule),
+  ];
+  for (const watcher of watchers) watcher.on('error', (error) => {
+    console.error('bua: 文件监听失败，请重新启动 dev。', error);
+    process.exitCode = 1;
+    for (const item of watchers) item.close();
+  });
+  for (const signal of ['SIGINT', 'SIGTERM']) process.on(signal, () => {
+    clearTimeout(timer);
+    for (const watcher of watchers) watcher.close();
+  });
+  process.stdout.write(`bua: 开发监听已启动 → ${outdir}\n`);
+}

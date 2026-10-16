@@ -117,6 +117,7 @@ function overlayMain(globalKey: string): void {
    * 就会把已经设好的状态覆盖回去 —— 表现是「明明在操作，徽标却显示待机」。
    */
   let hasExplicitState = false;
+  let expiry: ReturnType<typeof setTimeout> | undefined;
 
   function build(): void {
     // 除了「还没建立」之外，还要处理「曾被建立但已被页面移除」的情况。
@@ -139,7 +140,9 @@ function overlayMain(globalKey: string): void {
 
     host = document.createElement('div');
     host.id = HOST_ID;
-    host.setAttribute('style', 'all:initial;pointer-events:none');
+    // 内联 all:initial 会覆盖 shadow 的 :host 定位规则，因此定位也必须放在
+    // 同一内联声明中；important 防止网页自己的规则改写覆盖层的几何与交互。
+    host.setAttribute('style', 'all:initial;position:fixed!important;inset:0!important;z-index:2147483647!important;pointer-events:none!important;display:block!important;contain:strict!important');
     const shadow = host.attachShadow({ mode: 'closed' });
 
     const style = document.createElement('style');
@@ -163,6 +166,8 @@ function overlayMain(globalKey: string): void {
   }
 
   function apply(options: { state: StateName; label?: string; warnings?: string[] }): void {
+    clearTimeout(expiry);
+    expiry = setTimeout(destroy, 6_000);
     hasExplicitState = true;
     build();
     if (glow === null || badge === null || badgeText === null || warnBox === null) return;
@@ -201,6 +206,7 @@ function overlayMain(globalKey: string): void {
   }
 
   function destroy(): void {
+    clearTimeout(expiry);
     if (host !== null) host.remove();
     host = null;
     glow = null;

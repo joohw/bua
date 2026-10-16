@@ -1,11 +1,12 @@
 {
   "name": "@bua/extension",
-  "version": "0.1.0",
-  "description": "BUA Chrome MV3 扩展：通过 chrome.debugger 操作用户真实浏览器。边缘泛光指示状态。",
+  "version": "0.1.1",
+  "description": "BUA Chrome MV3 扩展：通过 chrome.debugger 操作用户真实浏览器。",
   "license": "MIT",
   "private": true,
   "type": "module",
   "scripts": {
+    "dev": "node scripts/build.mjs --watch",
     "build": "node scripts/build.mjs",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "pretest": "node scripts/demo-overlay.mjs",

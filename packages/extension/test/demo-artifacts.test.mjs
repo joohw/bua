@@ -98,6 +98,8 @@ function makeSandbox() {
       },
     },
     location: { search: '' },
+    setTimeout: () => 1,
+    clearTimeout: () => {},
   };
   sandbox.globalThis = sandbox;
   return sandbox;

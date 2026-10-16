@@ -102,7 +102,7 @@ function makeSandbox({ readyState = 'complete' } = {}) {
     },
   };
 
-  const sandbox = { document, __listeners: listeners, __body: body };
+  const sandbox = { document, __listeners: listeners, __body: body, setTimeout: () => 1, clearTimeout: () => {} };
   sandbox.globalThis = sandbox;
   return sandbox;
 }
@@ -148,7 +148,8 @@ test('document 已就绪时立即建立宿主元素', () => {
   inject(sandbox);
   const host = findHost(sandbox.__body);
   assert.ok(host, '应插入宿主元素');
-  assert.equal(host.attributes.style, 'all:initial;pointer-events:none');
+  assert.match(host.attributes.style, /position:fixed!important/);
+  assert.match(host.attributes.style, /inset:0!important/);
   assert.ok(host.shadowRoot, '应挂载 shadow root');
 });
 
@@ -341,11 +342,28 @@ test('宿主元素 pointer-events:none，不拦截页面点击', () => {
 });
 
 test('注入脚本自包含：不引用外部作用域变量', () => {
-  // 沙箱刻意不提供 console / setTimeout 等 —— 只要脚本引用了任何外部东西就会抛错
+  // 只提供 DOM 与浏览器定时器，不提供模块作用域变量。
   const sandbox = makeSandbox();
   assert.equal(sandbox.console, undefined);
-  assert.equal(sandbox.setTimeout, undefined);
+  assert.equal(typeof sandbox.setTimeout, 'function');
   assert.doesNotThrow(() => inject(sandbox));
+});
+
+test('停止续租后覆盖层自动销毁，后续操作可重新建立', () => {
+  const sandbox = makeSandbox();
+  let expire;
+  sandbox.setTimeout = (callback, delay) => {
+    assert.equal(delay, 6000);
+    expire = callback;
+    return 1;
+  };
+  const api = inject(sandbox);
+  api.set({ state: 'active' });
+  assert.ok(findHost(sandbox.__body));
+  expire();
+  assert.equal(findHost(sandbox.__body), undefined);
+  api.set({ state: 'active' });
+  assert.ok(findHost(sandbox.__body));
 });
 
 test('注入脚本只挂一个全局键，不污染页面其他全局', () => {

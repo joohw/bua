@@ -4,163 +4,34 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>BUA — 授权与风险告知</title>
+  <link rel="icon" type="image/png" href="icons/icon-32.png">
+  <link rel="stylesheet" href="website.css">
   <style>
-    :root {
-      --bg: #0f172a;
-      --panel: #1e293b;
-      --line: #334155;
-      --text: #e2e8f0;
-      --dim: #94a3b8;
-      --accent: #3b82f6;
-      --warn: #f59e0b;
-      --danger: #ef4444;
-    }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      padding: 28px 22px 40px;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: var(--bg);
-      color: var(--text);
-      font: 14px/1.65 ui-sans-serif, -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
-    }
-    main { width: 100%; max-width: 560px; }
     [hidden] { display: none !important; }
-    ol { margin: 0; padding-left: 22px; }
-    pre { padding: 11px 13px; border-radius: 8px; background: #0b1220; border: 1px solid var(--line); overflow-x: auto; color: #93c5fd; }
-    h1 { font-size: 17px; margin: 0 0 4px; letter-spacing: .01em; }
-    .sub { color: var(--dim); font-size: 12px; margin-bottom: 20px; }
-    section {
-      background: var(--panel);
-      border: 1px solid var(--line);
-      border-radius: 10px;
-      padding: 14px 16px;
-      margin-bottom: 14px;
-    }
-    section h2 {
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: .08em;
-      color: var(--dim);
-      margin: 0 0 10px;
-      font-weight: 600;
-    }
-    ul { margin: 0; padding-left: 18px; }
-    li { margin-bottom: 6px; }
-    li:last-child { margin-bottom: 0; }
-    strong { color: #fff; font-weight: 600; }
-    .danger { border-color: rgba(239,68,68,.5); }
-    .danger h2 { color: var(--danger); }
-    .warnbox {
-      background: rgba(245,158,11,.1);
-      border: 1px solid rgba(245,158,11,.4);
-      border-radius: 8px;
-      padding: 10px 12px;
-      color: #fde68a;
-      font-size: 13px;
-      margin-top: 10px;
-    }
-    label.field { display: block; margin-bottom: 12px; }
-    label.field span { display: block; color: var(--dim); font-size: 12px; margin-bottom: 5px; }
-    .portline {
-      display: flex; justify-content: space-between; align-items: center; gap: 12px;
-      padding: 8px 11px; border-radius: 8px;
-      background: #0b1220; border: 1px solid var(--line); margin-bottom: 8px;
-    }
-    .portline span { color: var(--dim); font-size: 12px; }
-    .portline code {
-      font: 12px/1 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-      color: #93c5fd; word-break: break-all;
-    }
-    .consent {
-      display: flex;
-      gap: 10px;
-      align-items: flex-start;
-      background: var(--panel);
-      border: 1px solid var(--line);
-      border-radius: 10px;
-      padding: 13px 15px;
-      margin-bottom: 14px;
-      cursor: pointer;
-      user-select: none;
-    }
-    .consent input { margin-top: 3px; flex: none; width: 16px; height: 16px; accent-color: var(--accent); }
-    .consent span { font-size: 13px; }
-    button {
-      width: 100%;
-      padding: 11px;
-      border: 0;
-      border-radius: 9px;
-      background: var(--accent);
-      color: #fff;
-      font: 600 14px/1 inherit;
-      cursor: pointer;
-    }
-    button:disabled { background: #334155; color: #64748b; cursor: not-allowed; }
-    .status { margin-top: 14px; font-size: 12px; color: var(--dim); text-align: center; min-height: 18px; }
-    .status.ok { color: #4ade80; }
-    .status.err { color: #f87171; }
-    a { color: var(--accent); }
-    :root { color-scheme: dark; --bg: #0b1120; --panel: #141e30; --line: #28354b; --text: #dce5f3; --dim: #9aabc3; --accent: #60a5fa; }
-    body { padding: 56px 24px; background: radial-gradient(ellipse at 50% 0, #172b48 0, transparent 55%), var(--bg); font-size: 14px; line-height: 1.8; }
-    main { max-width: 720px; }
-    .brand { display: flex; align-items: center; gap: 16px; margin-bottom: 30px; }
-    .brand-mark { display: grid; place-items: center; width: 56px; height: 56px; flex: none; border-radius: 17px; background: #152d4e; border: 1px solid #385f90; box-shadow: 0 0 28px #3b82f622; color: #93c5fd; font-size: 15px; font-weight: 800; letter-spacing: .06em; }
-    .eyebrow { font-size: 11px; letter-spacing: .16em; color: #89a4c7; margin-bottom: 3px; }
-    h1 { font-size: 25px; line-height: 1.3; font-weight: 650; }
-    .sub { margin: 6px 0 0; font-size: 13px; }
-    section { padding: 24px 26px; margin-bottom: 16px; border-radius: 16px; box-shadow: 0 8px 24px #00000012; }
-    section h2 { color: #edf3fc; font-size: 15px; letter-spacing: 0; text-transform: none; margin-bottom: 14px; }
-    li { margin-bottom: 10px; }
-    li::marker { color: #6684ab; }
-    .danger { background: #221c28; border-color: #613746; }
-    .danger h2 { color: #fda4af; }
-    .warnbox { padding: 14px 16px; margin-top: 18px; border-radius: 10px; line-height: 1.75; }
-    .portline { padding: 12px 14px; border-radius: 10px; }
-    .consent { padding: 18px 20px; border-radius: 14px; gap: 12px; line-height: 1.75; transition: border-color .15s, background .15s; }
-    .consent:hover, .consent:has(input:checked) { border-color: #547cad; background: #172740; }
-    .consent input { margin-top: 4px; width: 18px; height: 18px; }
-    button { min-height: 48px; padding: 14px 20px; border-radius: 12px; background: #3b82f6; font-family: inherit; font-size: 14px; line-height: 1.4; font-weight: 600; transition: background .15s; }
-    button:hover:not(:disabled) { background: #2563eb; }
-    button:disabled { background: #253248; color: #8191a8; }
-    button:focus-visible, input:focus-visible, a:focus-visible { outline: 3px solid #93c5fd; outline-offset: 4px; }
-    .status { font-size: 13px; margin-top: 20px; }
+    .content { max-width: 760px; }
+    .brand { margin-bottom: 56px; }
+    h1 { margin-bottom: 40px; }
+    section { margin-bottom: 40px; }
+    section h2 { margin-top: 0; }
+    strong { color: var(--fg); font-weight: 500; }
+    .danger h2 { color: var(--accent); }
+    .consent { display: flex; align-items: flex-start; gap: 12px; padding: 24px 0; margin: 8px 0 16px; border-top: 1px solid hsl(30 9% 86%); cursor: pointer; color: var(--dim); font-size: 14px; }
+    .consent input { flex: none; width: 17px; height: 17px; margin: 5px 0 0; accent-color: var(--accent); }
+    button { padding: 12px 24px; border: 1px solid var(--accent); border-radius: 6px; background: var(--accent); color: white; font: 500 15px/1.5 inherit; font-family: inherit; cursor: pointer; }
+    button:hover:not(:disabled) { background: hsl(8 52% 37%); }
+    button:disabled { background: hsl(30 8% 90%); border-color: transparent; color: var(--dim); cursor: not-allowed; }
+    button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+    .portline { display: flex; justify-content: space-between; gap: 16px; margin-top: 24px; padding-top: 16px; border-top: 1px solid hsl(30 9% 86%); color: var(--dim); font-size: 13px; }
+    .status { margin-top: 20px; font-size: 13px; color: var(--dim); }
     .status:empty { display: none; }
-    .success { display: flex; gap: 14px; align-items: center; margin-bottom: 22px; padding: 18px 22px; background: #102c2b; border: 1px solid #27524a; border-radius: 14px; }
-    .success-icon { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; color: #6ee7b7; background: #1b4339; font-weight: 700; flex: none; }
-    .success strong { color: #a7f3d0; }
-    .success p { margin: 2px 0 0; color: #9bbcb4; font-size: 12px; }
-    .steps { list-style: none; counter-reset: step; padding: 0; }
-    .steps > li { position: relative; counter-increment: step; padding: 0 0 22px 48px; margin: 0 0 22px; border-bottom: 1px solid var(--line); }
-    .steps > li:last-child { border: 0; padding-bottom: 0; margin-bottom: 0; }
-    .steps > li::before { content: counter(step, decimal-leading-zero); position: absolute; top: 0; left: 0; width: 32px; height: 32px; display: grid; place-items: center; border-radius: 9px; background: #1b3150; color: #93c5fd; font-size: 12px; font-weight: 700; }
-    .steps > li > strong { display: block; margin-bottom: 5px; font-size: 15px; }
-    pre { font: 13px/1.6 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; padding: 14px 16px; margin: 12px 0; }
-    .page-footer { margin-top: 26px; text-align: center; color: #7185a0; font-size: 11px; letter-spacing: .04em; }
-    @media (max-width: 600px) {
-      body { padding: 28px 16px; }
-      .brand { gap: 12px; margin-bottom: 24px; }
-      h1 { font-size: 20px; }
-      .brand-mark { width: 48px; height: 48px; border-radius: 14px; }
-      section { padding: 20px 18px; }
-      .portline { align-items: flex-start; flex-direction: column; gap: 5px; }
-      .steps > li { padding-left: 42px; }
-    }
+    .status.ok { color: hsl(145 35% 32%); }
+    .status.err { color: var(--accent); }
+    @media (max-width: 600px) { .brand { margin-bottom: 40px; } h1 { margin-bottom: 32px; } }
   </style>
 </head>
 <body>
-  <main>
-  <header class="brand">
-    <div class="brand-mark" aria-hidden="true">BUA</div>
-    <div>
-    <div class="eyebrow">BROWSER USE AGENT</div>
+  <main class="content">
   <h1 id="pageTitle">连接你的真实浏览器</h1>
-  <div class="sub">让任意 Agent 操作你的真实浏览器</div>
-    </div>
-  </header>
   <div id="disclosure">
 
   <section>
@@ -174,47 +45,13 @@
   </section>
 
   <section class="danger">
-    <h2>⚠ 风险告知 —— 请务必读完</h2>
+    <h2>风险告知</h2>
     <ul>
       <li><strong>BUA 不校验调用方身份。</strong>任何能访问本机 <code>127.0.0.1</code> 的程序都可以连接 BUA 桥，并操作你的浏览器。</li>
       <li>它能读到你的<strong>全部标签页内容</strong>，包括已登录的邮箱、网盘、后台管理系统。</li>
       <li>它发起的操作<strong>无法撤销</strong> —— 提交表单、支付、删除、发送消息一旦发生就收不回来。</li>
       <li>本机上的恶意软件本来就拥有你的用户权限；BUA 没有给它新的能力上限，但<strong>降低了门槛</strong> —— 从「解析 Chrome 配置格式」降到「发一条 WebSocket 消息」。</li>
     </ul>
-    <div class="warnbox">
-      这是刻意的设计取舍：为了「让<strong>任意</strong> Agent 都能用浏览器」，我们没有引入配对凭据。
-      如果你需要隔离，请勿启用，或只在专用机器/专用 profile 上使用。
-    </div>
-  </section>
-
-  <section>
-    <h2>Chrome 的调试横幅</h2>
-    <ul>
-      <li>Agent 操作期间，Chrome 顶部会常驻一条「正在调试此浏览器」横幅。这是 Chrome 的行为，<strong>无法隐藏</strong>。</li>
-      <li><strong>关闭那条横幅会立即终止本次操作会话。</strong></li>
-      <li>BUA 会另外给页面加一圈<strong>蓝色边缘泛光</strong>表示「正在被操作」；降级或出错时变成琥珀色。</li>
-    </ul>
-  </section>
-
-  <section>
-    <h2>连接方式</h2>
-    <p style="margin:0 0 10px;font-size:13px;color:var(--dim)">
-      扩展通过固定的本地端口连接桥，<strong style="color:var(--text)">无需也无法配置</strong>。
-      在终端启动桥即可：
-    </p>
-    <pre style="margin:0 0 10px;padding:11px 13px;border-radius:8px;background:#0b1220;border:1px solid var(--line);overflow-x:auto;font:12px/1.6 ui-monospace,monospace;color:#93c5fd">bua-server</pre>
-    <div class="portline">
-      <span>连接地址</span>
-      <code>ws://127.0.0.1:17432</code>
-    </div>
-    <div class="portline">
-      <span>浏览器版本</span>
-      <code id="chromeVersion">检测中…</code>
-    </div>
-    <p style="margin:12px 0 0;font-size:12px;color:var(--dim)">
-      端口固定是为了避免「扩展填的端口与桥起的端口不一致」这种查不出原因的连接失败。
-      若该端口被占用，桥会明确报端口冲突，请换端口启动桥并<strong style="color:var(--text)">重新加载扩展</strong>。
-    </p>
   </section>
 
   <label class="consent" for="agree">
@@ -225,30 +62,29 @@
   <button id="enable" disabled>启用 BUA</button>
   </div>
   <div id="tutorial" hidden>
-    <div class="success">
-      <span class="success-icon" aria-hidden="true">✓</span>
-      <div><strong>BUA 已启用</strong><p>接下来，连接本地桥并开始第一次浏览器操作。</p></div>
-    </div>
-    <section>
-      <h2>快速开始</h2>
-      <ol class="steps">
-        <li><strong>启动本地桥。</strong>在已安装 BUA 服务端的终端运行：<pre>bua-server</pre>保持终端运行，扩展会自动连接 <code>ws://127.0.0.1:17432</code>。</li>
-        <li><strong>检查连接。</strong>点击 Chrome 工具栏中的 BUA 图标，确认显示已连接；未连接时先检查本地桥是否启动。</li>
-        <li><strong>连接你的 Agent。</strong>让支持 BUA 的 Agent 或使用 <code>@bua/sdk</code> 的程序连接本地桥，然后选择要操作的标签页。</li>
-        <li><strong>开始使用。</strong>在浏览器中打开目标网页，再让 Agent 读取内容、截图，或执行点击和输入。</li>
-      </ol>
-    </section>
-    <section>
-      <h2>操作时如何查看与停止</h2>
-      <ul>
-        <li>页面蓝色边缘泛光表示正在被操作；琥珀色表示降级或异常。</li>
-        <li>点击 BUA 图标可查看连接状态和操作流水。</li>
-        <li>关闭 Chrome 顶部的调试横幅会终止本次操作会话。需要停用 BUA 时，在扩展管理页面关闭扩展。</li>
-      </ul>
-    </section>
+  <section>
+    <h2>Chrome 的调试横幅</h2>
+    <ul>
+      <li>Agent 操作时，Chrome 会显示<strong>无法隐藏</strong>的调试横幅。</li>
+      <li><strong>关闭那条横幅会立即终止本次操作会话。</strong></li>
+      <li>点击 BUA 图标可打开设置与使用说明。</li>
+      <li>需要停用 BUA 时，在扩展管理页面关闭扩展。</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>开始使用</h2>
+    <p >
+      前往 BUA 官网查看安装、Agent 接入与最新使用说明。
+    </p>
+    <nav style="display:flex;flex-wrap:wrap;gap:12px 24px">
+      <a href="https://joohw.github.io/bua/" target="_blank" rel="noopener noreferrer">查看使用说明 ↗</a>
+      <a href="logs.html" target="_blank" rel="noopener noreferrer">查看操作日志 ↗</a>
+    </nav>
+  </section>
+
   </div>
   <div class="status" id="status" role="status" aria-live="polite"></div>
-  <footer class="page-footer">BUA · 真实浏览器，真实登录态</footer>
   </main>
 
   <script src="onboarding.js"></script>

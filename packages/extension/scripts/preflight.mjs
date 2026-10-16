@@ -61,7 +61,7 @@ check(
 
 /* ── ② 权限：只声明真实使用的 ── */
 
-const MUTATING_PERMS = ['debugger', 'tabs', 'storage', 'scripting', 'activeTab'];
+const MUTATING_PERMS = ['debugger', 'tabs', 'tabGroups', 'storage', 'alarms', 'scripting', 'activeTab'];
 const perms = manifest.permissions ?? [];
 const extra = perms.filter((p) => !MUTATING_PERMS.includes(p));
 
@@ -137,7 +137,7 @@ check(
 
 /* ── ⑥ 必需文件齐全 ── */
 
-const required = ['manifest.json', 'background.js', 'onboarding.html', 'onboarding.js', 'popup.html', 'popup.js'];
+const required = ['manifest.json', 'background.js', 'onboarding.html', 'onboarding.js', 'logs.html', 'logs.js'];
 const missing = required.filter((f) => !existsSync(join(dist, f)));
 check(
   'required-files',

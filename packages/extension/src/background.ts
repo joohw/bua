@@ -5,7 +5,6 @@
  *
  * 1. 连本地桥（WebSocket，客户端角色 `extension`）
  * 2. 按需 `chrome.debugger.attach` 到目标标签
- * 3. **注入边缘泛光**并在导航后自动恢复（`Page.addScriptToEvaluateOnNewDocument`）
  * 4. 把桥转发来的方法调用落到 `chrome.debugger.sendCommand` / `chrome.*`
  * 5. 记录操作流水（供弹窗展示）与降级状态
  *
@@ -21,13 +20,13 @@ import {
   type Capabilities,
 } from '@bua/protocol';
 
-import { OVERLAY_GLOBAL, OVERLAY_SCRIPT, type OverlayState } from './overlay.js';
 
 /* ─────────────────────── 常量 ─────────────────────── */
 
 const LOG_KEY = 'activityLog';
 const CONSENT_KEY = 'onboardingAcceptedAt';
 const MAX_LOG = 200;
+const CONNECTION_ALARM = 'bua:connection-watchdog';
 
 /**
  * 桥端口 —— **硬编码，不可配置**。
@@ -47,6 +46,9 @@ const BRIDGE_PORT = 17432;
 /* ─────────────────────── 持久状态 ─────────────────────── */
 
 interface ActivityEntry {
+  id?: string;
+  tabId?: number;
+  url?: string;
   ts: number;
   method: string;
   risk: 'read' | 'write' | 'destructive';
@@ -64,6 +66,33 @@ interface ActivityEntry {
 let ws: WebSocket | null = null;
 let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
 const attachedTabs = new Set<number>();
+const tabSessions = new Map<number, Set<string>>();
+const debugGroups = new Map<number, number>();
+
+async function markDebugging(tabId: number): Promise<void> {
+  await chrome.action.setBadgeText({ tabId, text: 'DBG' });
+  await chrome.action.setBadgeBackgroundColor({ tabId, color: '#2563eb' });
+  await chrome.action.setTitle({ tabId, title: 'BUA · 正在调试此标签页' });
+  try {
+    const tab = await chrome.tabs.get(tabId);
+    if (tab.groupId !== -1 || tab.pinned) return;
+    const groupId = await chrome.tabs.group({ tabIds: tabId });
+    debugGroups.set(tabId, groupId);
+    await chrome.tabGroups.update(groupId, { title: 'BUA · 正在调试', color: 'blue', collapsed: false });
+  } catch (error) { console.warn('[bua] 标签组标识失败', error); }
+}
+
+async function clearDebugging(tabId: number): Promise<void> {
+  tabSessions.delete(tabId);
+  const groupId = debugGroups.get(tabId);
+  debugGroups.delete(tabId);
+  try {
+    const tab = await chrome.tabs.get(tabId);
+    if (groupId !== undefined && tab.groupId === groupId) await chrome.tabs.ungroup(tabId);
+    await chrome.action.setBadgeText({ tabId, text: '' });
+    await chrome.action.setTitle({ tabId, title: 'BUA — 设置' });
+  } catch { /* 标签已关闭 */ }
+}
 
 /**
  * 后端**实际具备**的能力。
@@ -96,13 +125,15 @@ let capabilitiesProbed = false;
 async function detectCapabilities(): Promise<void> {
   if (capabilitiesProbed) return;
 
-  const [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
+  const tabs = await chrome.tabs.query({});
+  const candidates = tabs.filter((tab) => /^https?:\/\//.test(tab.url ?? '') && !/^https?:\/\/(chromewebstore\.google\.com|chrome\.google\.com\/webstore)(\/|$)/.test(tab.url ?? ''));
+  const tab = candidates.find((candidate) => candidate.active) ?? candidates[0];
   const probeTabId = tab?.id;
 
   if (probeTabId === undefined) {
     currentCapabilities = {
       ...currentCapabilities,
-      notes: ['没有可探测的标签（未打开任何页面）。'],
+      notes: [],
     };
     return;
   }
@@ -124,17 +155,20 @@ async function detectCapabilities(): Promise<void> {
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     const byPolicy = /restricted by policy/i.test(message);
+    // 单个页面受限或调试器被占用，不能据此宣告整个浏览器已降级。
+    if (!byPolicy) {
+      currentCapabilities = { ...currentCapabilities, notes: [] };
+      return;
+    }
     currentCapabilities = {
       cdp: false,
       screenshots: !/Screenshot capture is restricted by policy/i.test(message),
       fileUploads: false,
       downloads: false,
-      evaluate: true, // chrome.scripting 仍可在页面里执行 JS
+      evaluate: false,
       management: true, // chrome.tabs / bookmarks 等不受 CDP 策略影响
       notes: [
-        byPolicy
-          ? '⚠ 企业策略拒绝了 CDP，已降级到 chrome.scripting 模式'
-          : `⚠ 无法 attach CDP：${message}`,
+        '⚠ 企业策略限制了 CDP 浏览器操作',
         '真实输入事件、截图与跨 iframe 一致控制不可用',
       ],
     };
@@ -151,7 +185,6 @@ async function detectCapabilities(): Promise<void> {
       capabilities: currentCapabilities,
     },
   });
-  await refreshAllOverlays();
 }
 
 function detectChromeVersion(): string | null {
@@ -170,7 +203,7 @@ async function getLog(): Promise<ActivityEntry[]> {
 
 async function appendLog(entry: ActivityEntry): Promise<void> {
   const log = await getLog();
-  log.unshift(entry);
+  log.unshift({ ...entry, id: crypto.randomUUID() });
   await chrome.storage.local.set({ [LOG_KEY]: log.slice(0, MAX_LOG) });
   // 通知弹窗（若打开着）
   try {
@@ -178,67 +211,6 @@ async function appendLog(entry: ActivityEntry): Promise<void> {
   } catch {
     /* 没有监听者时忽略 */
   }
-}
-
-/* ─────────────────────── 边缘泛光 ─────────────────────── */
-
-/**
- * 确保标签已注册「每次新文档都注入覆盖层」。
- *
- * 用 `Page.addScriptToEvaluateOnNewDocument` 而不是 `Runtime.evaluate`：
- * 前者在**每次导航**后自动重跑，后者只在当前文档有效，页面一跳泛光就没了。
- *
- * @returns CDP 返回的 identifier，用于后续移除
- */
-async function registerOverlayScript(tabId: number): Promise<string | null> {
-  try {
-    const result = (await chrome.debugger.sendCommand(
-      { tabId },
-      'Page.addScriptToEvaluateOnNewDocument',
-      { source: OVERLAY_SCRIPT, runImmediately: true },
-    )) as { identifier?: string } | undefined;
-    return result?.identifier ?? null;
-  } catch (err) {
-    // 这不是致命失败：泛光只是视觉提示，缺了它核心功能仍可用
-    console.warn('[bua] 注册覆盖层脚本失败：', err);
-    return null;
-  }
-}
-
-/**
- * 把当前状态推给页面里的覆盖层。
- *
- * 覆盖层在 `closed` shadow root 里，我们通过它挂在 `globalThis` 上的 API 驱动。
- * 页面 CSP 可能禁止 `Runtime.evaluate`，此时静默失败（泛光缺失不影响功能）。
- */
-async function paintOverlay(
-  tabId: number,
-  state: OverlayState,
-  warnings: string[] = [],
-): Promise<void> {
-  const payload = { state, warnings };
-  try {
-    await chrome.debugger.sendCommand({ tabId }, 'Runtime.evaluate', {
-      expression: `globalThis.${OVERLAY_GLOBAL} && globalThis.${OVERLAY_GLOBAL}.set(${JSON.stringify(payload)})`,
-      returnByValue: true,
-      awaitPromise: false,
-    });
-  } catch {
-    /* 页面可能已关闭或 CSP 受限，忽略 */
-  }
-}
-
-/** 重新计算并刷新某个标签的泛光状态。 */
-async function refreshOverlay(tabId: number): Promise<void> {
-  if (!attachedTabs.has(tabId)) return;
-  const warnings = currentCapabilities.notes ?? [];
-  const state: OverlayState = currentCapabilities.cdp ? 'active' : 'degraded';
-  await paintOverlay(tabId, state, warnings);
-}
-
-/** 对所有已 attach 的标签刷新泛光。能力变化时调用。 */
-async function refreshAllOverlays(): Promise<void> {
-  await Promise.all([...attachedTabs].map((id) => refreshOverlay(id)));
 }
 
 /* ─────────────────────── CDP attach ─────────────────────── */
@@ -264,16 +236,24 @@ async function attachTab(tabId: number): Promise<{ ok: true } | { ok: false; rea
   }
 
   attachedTabs.add(tabId);
+  if (!capabilitiesProbed) {
+    currentCapabilities = { cdp: true, screenshots: true, fileUploads: true, downloads: true, evaluate: true, management: true, notes: [] };
+    capabilitiesProbed = true;
+    send({ jsonrpc: '2.0', method: 'bua.event', params: { type: 'backend.ready', chromeVersion: detectChromeVersion(), capabilities: currentCapabilities } });
+  }
   await chrome.debugger.sendCommand({ tabId }, 'Page.enable').catch(() => {});
   await chrome.debugger.sendCommand({ tabId }, 'Runtime.enable').catch(() => {});
-  await registerOverlayScript(tabId);
-  await refreshOverlay(tabId);
+  await markDebugging(tabId);
   return { ok: true };
 }
 
 async function detachTab(tabId: number): Promise<void> {
-  if (!attachedTabs.has(tabId)) return;
+  if (!attachedTabs.has(tabId)) {
+    tabSessions.delete(tabId);
+    return;
+  }
   attachedTabs.delete(tabId);
+  await clearDebugging(tabId);
   try {
     await chrome.debugger.detach({ tabId });
   } catch {
@@ -289,6 +269,7 @@ chrome.debugger.onDetach.addListener((source, reason) => {
   const tabId = source.tabId;
   if (typeof tabId !== 'number') return;
   attachedTabs.delete(tabId);
+  void clearDebugging(tabId);
   send({
     jsonrpc: '2.0',
     method: 'bua.event',
@@ -309,11 +290,21 @@ async function connect(): Promise<void> {
   const accepted = await isConsentGiven();
   if (!accepted) return; // 未经用户同意不建立连接
 
+  // 同意检查有异步等待；多个唤醒事件可能同时进入，需再次检查。
+  if (ws !== null && (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING)) return;
+
   const port = BRIDGE_PORT;
   const socket = new WebSocket(`ws://127.0.0.1:${port}`);
   ws = socket;
+  let keepaliveTimer: ReturnType<typeof setInterval> | null = null;
 
   socket.addEventListener('open', () => {
+    // MV3 的空闲窗口是 30 秒；真实 WebSocket 消息才能保持后台连接活跃。
+    keepaliveTimer = setInterval(() => {
+      if (socket.readyState === WebSocket.OPEN) {
+        socket.send(JSON.stringify({ jsonrpc: '2.0', method: M.heartbeat, params: {} }));
+      }
+    }, 20_000);
     retryDelayMs = 2_000; // 连上了，重置退避
     send({
       jsonrpc: '2.0',
@@ -344,7 +335,12 @@ async function connect(): Promise<void> {
     void handleBridgeMessage(msg);
   });
 
-  socket.addEventListener('close', () => {
+  socket.addEventListener('close', (event) => {
+    if (keepaliveTimer !== null) clearInterval(keepaliveTimer);
+    console.warn('BUA 桥连接关闭', { code: event.code, reason: event.reason, wasClean: event.wasClean });
+    // 手动重连时旧连接的 close 可能晚于新连接创建，不能清除新连接。
+    if (ws !== socket) return;
+    void Promise.all([...attachedTabs].map(detachTab));
     ws = null;
     scheduleReconnect();
   });
@@ -555,6 +551,16 @@ async function handleBridgeMessage(raw: unknown): Promise<void> {
   const msg = raw as Record<string, unknown>;
   const id = msg['id'];
   const method = msg['method'];
+  if (method === 'bua.event') {
+    const event = msg['params'] as { type?: string; sessionId?: string } | undefined;
+    if (event?.type === 'session.closed' && event.sessionId) {
+      for (const [tabId, owners] of tabSessions) {
+        owners.delete(event.sessionId);
+        if (owners.size === 0) await detachTab(tabId);
+      }
+    }
+    return;
+  }
   if (typeof method !== 'string' || id === undefined) return; // 只处理请求
 
   const params =
@@ -566,9 +572,19 @@ async function handleBridgeMessage(raw: unknown): Promise<void> {
   const targetDescription =
     typeof params['targetDescription'] === 'string' ? params['targetDescription'] : undefined;
 
+  let logTabId = typeof params['tabId'] === 'number' ? params['tabId'] : undefined;
+  let logUrl: string | undefined;
+  async function capturePage(tabId: number): Promise<void> {
+    logTabId = tabId;
+    logUrl = (await chrome.tabs.get(tabId).catch(() => undefined))?.url;
+  }
+  if (logTabId !== undefined) await capturePage(logTabId);
+
   const respond = async (result: unknown, errorCode?: string, message?: string): Promise<void> => {
     await appendLog({
       ts: Date.now(),
+      ...(logTabId !== undefined ? { tabId: logTabId } : {}),
+      ...(logUrl !== undefined ? { url: logUrl } : {}),
       method,
       risk,
       ok: errorCode === undefined,
@@ -591,6 +607,7 @@ async function handleBridgeMessage(raw: unknown): Promise<void> {
 
   /* ── 不需要 tabId 的方法（走 chrome.* 而非 CDP）── */
   switch (method) {
+    case M.userOpenTabs:
     case M.tabsList: {
       const tabs = await chrome.tabs.query({});
       await respond({
@@ -602,8 +619,42 @@ async function handleBridgeMessage(raw: unknown): Promise<void> {
           pinned: t.pinned === true,
           windowId: t.windowId,
           status: t.status,
+          ...(method === M.userOpenTabs ? {
+            audible: t.audible === true,
+            claimed: (tabSessions.get(t.id!)?.size ?? 0) > 0,
+            claimedBy: tabSessions.get(t.id!)?.values().next().value,
+          } : {}),
         })),
       });
+      return;
+    }
+    case M.userGetTabContext:
+    case M.userClaimTab: {
+      const target = params['tabId'];
+      if (typeof target !== 'number') {
+        await respond(null, BUA_ERROR_CODES.TAB_NOT_FOUND, '需要明确的 tabId');
+        return;
+      }
+      let tab: chrome.tabs.Tab;
+      try {
+        tab = await chrome.tabs.get(target);
+      } catch {
+        await respond(null, BUA_ERROR_CODES.TAB_NOT_FOUND, '标签已关闭，请重新列出标签');
+        return;
+      }
+      if (method === M.userGetTabContext) {
+        // 元数据上下文不附加 debugger，不接管页面。
+        await respond({ context: { title: tab.title, url: tab.url } });
+        return;
+      }
+      const owners = tabSessions.get(target) ?? new Set<string>();
+      if (!sessionId || [...owners].some((owner) => owner !== sessionId)) {
+        await respond(null, BUA_ERROR_CODES.TAB_CLAIMED, '标签已被其他会话使用，或请求缺少会话身份');
+        return;
+      }
+      owners.add(sessionId);
+      tabSessions.set(target, owners);
+      await respond({ tabId: target });
       return;
     }
     case M.tabsNew: {
@@ -612,11 +663,15 @@ async function handleBridgeMessage(raw: unknown): Promise<void> {
         ...(url !== undefined ? { url } : {}),
         active: params['visible'] === true,
       });
+      logTabId = tab.id;
+      logUrl = tab.url ?? url;
       await respond({ tabId: tab.id, url: tab.url, title: tab.title });
       return;
     }
     case M.tabsSelected: {
       const [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
+      logTabId = tab?.id;
+      logUrl = tab?.url;
       await respond(tab === undefined ? { tab: null } : { tab: { id: tab.id, url: tab.url, title: tab.title } });
       return;
     }
@@ -670,11 +725,17 @@ async function handleBridgeMessage(raw: unknown): Promise<void> {
     return;
   }
 
+  await capturePage(tabId);
   const attach = await attachTab(tabId);
   if (!attach.ok) {
     // attach 失败要区分：DevTools 占用可重试；企业策略不可绕过
     await respond(null, BUA_ERROR_CODES.DEBUGGER_UNAVAILABLE, attach.reason);
     return;
+  }
+  if (sessionId) {
+    const owners = tabSessions.get(tabId) ?? new Set<string>();
+    owners.add(sessionId);
+    tabSessions.set(tabId, owners);
   }
 
   const cdpCalls = methodToCdp(method, params);
@@ -682,17 +743,6 @@ async function handleBridgeMessage(raw: unknown): Promise<void> {
     await respond(null, BUA_ERROR_CODES.UNSUPPORTED, `方法 ${method} 尚未实现`);
     return;
   }
-
-  /*
-   * 在派发操作**之前**刷新覆盖层。
-   *
-   * 两个原因：
-   * 1. 自愈 —— 覆盖层是 body 的子节点，会被任何执行
-   *    `document.body.innerHTML = ...` 的页面清掉。每次操作前重绘保证它一直在。
-   * 2. 时序 —— 本方法自身可能就是读覆盖层状态的调用（例如 agent 用
-   *    `playwright.evaluate` 检查泛光），此时必须先重建再执行，否则读到「不存在」。
-   */
-  await refreshOverlay(tabId);
 
   try {
     let last: unknown = null;
@@ -712,6 +762,25 @@ async function isConsentGiven(): Promise<boolean> {
   const bag = await chrome.storage.local.get(CONSENT_KEY);
   return typeof bag[CONSENT_KEY] === 'number';
 }
+
+// 浏览器管理的 alarm 可在 SW 被回收后重新唤醒，补足 setTimeout 丢失的重试。
+async function syncConnectionAlarm(): Promise<void> {
+  if (await isConsentGiven()) {
+    await chrome.alarms.create(CONNECTION_ALARM, { periodInMinutes: 0.5 });
+  } else {
+    await chrome.alarms.clear(CONNECTION_ALARM);
+  }
+}
+chrome.alarms.onAlarm.addListener((alarm) => {
+  if (alarm.name !== CONNECTION_ALARM) return;
+  void connect();
+});
+void syncConnectionAlarm();
+
+// 点击工具栏图标直接打开设置页。
+chrome.action.onClicked.addListener(() => {
+  void chrome.runtime.openOptionsPage();
+});
 
 // 安装时：首次安装打开引导页（必须在扩展自己的 UI 内完成同意），并尝试连接
 chrome.runtime.onInstalled.addListener((details) => {
@@ -733,6 +802,9 @@ void connect();
 chrome.storage.onChanged.addListener((changes, area) => {
   if (area !== 'local') return;
   if (CONSENT_KEY in changes) {
+    void syncConnectionAlarm();
+    if (reconnectTimer !== null) clearTimeout(reconnectTimer);
+    reconnectTimer = null;
     retryDelayMs = 2_000;
     ws?.close();
     ws = null;
@@ -740,17 +812,9 @@ chrome.storage.onChanged.addListener((changes, area) => {
   }
 });
 
-// 页面导航后重新绘制泛光（overlay 脚本本身由 CDP 自动重注入）
-chrome.tabs.onUpdated.addListener((tabId, info) => {
-  if (info.status === 'loading' && attachedTabs.has(tabId)) {
-    // 导航会清掉注入的脚本实例，但 addScriptToEvaluateOnNewDocument 会重新注入，
-    // 因此只需在新文档就绪后重绘一次状态
-    setTimeout(() => void refreshOverlay(tabId), 400);
-  }
-});
-
 chrome.tabs.onRemoved.addListener((tabId) => {
   attachedTabs.delete(tabId);
+  void clearDebugging(tabId);
 });
 
 // 供弹窗查询状态
@@ -759,23 +823,36 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
   const type = (msg as Record<string, unknown>)['type'];
   if (type === 'bua:status') {
     void (async () => {
-      const log = await getLog();
       sendResponse({
         connected: ws !== null && ws.readyState === WebSocket.OPEN,
         port: BRIDGE_PORT,
         consentGiven: await isConsentGiven(),
         attachedTabs: [...attachedTabs],
         capabilities: currentCapabilities,
-        log,
       });
     })();
     return true; // 异步响应
+  }
+  if (type === 'bua:logPage') {
+    void (async () => {
+      // 必须先按当前标签和完整地址筛选，再分页；旧记录无法归属时不展示。
+      const log = typeof msg.tabId === 'number' && typeof msg.url === 'string'
+        ? (await getLog()).filter((entry) => entry.tabId === msg.tabId && entry.url === msg.url)
+        : [];
+      const cursor = typeof msg.cursor === 'string' ? msg.cursor : null;
+      const key = (entry: ActivityEntry): string => entry.id ?? JSON.stringify(entry);
+      const start = cursor === null ? 0 : log.findIndex((entry) => key(entry) === cursor) + 1;
+      // 游标已超出保留窗口时停止，避免重新返回第一页。
+      const entries = cursor !== null && start === 0 ? [] : log.slice(start, start + 20);
+      const hasMore = entries.length > 0 && start + entries.length < log.length;
+      sendResponse({ entries, nextCursor: hasMore ? key(entries[entries.length - 1]!) : null });
+    })().catch(() => sendResponse({ error: '无法读取操作记录' }));
+    return true;
   }
   if (type === 'bua:setCapabilities') {
     const caps = (msg as Record<string, unknown>)['capabilities'];
     if (typeof caps === 'object' && caps !== null) {
       currentCapabilities = caps as Capabilities;
-      void refreshAllOverlays();
     }
     return false;
   }

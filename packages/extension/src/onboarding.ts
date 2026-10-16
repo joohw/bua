@@ -21,8 +21,6 @@ void (function main(): void {
     setStatus('');
   }
   async function load(): Promise<void> {
-    const match = /\bChrome\/([\d.]+)/.exec(navigator.userAgent);
-    $('chromeVersion').textContent = match?.[1] ?? '未知';
     try {
       const bag = await chrome.storage.local.get(CONSENT_KEY);
       if (typeof bag[CONSENT_KEY] === 'number') showTutorial();
