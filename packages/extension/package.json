@@ -1,6 +1,6 @@
 {
   "name": "@bua/extension",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "BUA Chrome MV3 扩展：通过 chrome.debugger 操作用户真实浏览器。",
   "license": "MIT",
   "private": true,

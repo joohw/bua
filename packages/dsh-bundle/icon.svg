@@ -1,38 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="BUA">
-  <!--
-    BUA 的图标：浏览器窗口的边缘泛光。
-    与扩展运行时注入页面四周的光晕是同一套视觉语言，因此用户在插件列表里
-    认得出「就是那个会在页面上发光的东西」。
-    原创绘制，无第三方素材。
-  -->
-  <defs>
-    <linearGradient id="edge" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#60a5fa"/>
-      <stop offset="1" stop-color="#2563eb"/>
-    </linearGradient>
-    <filter id="bloom" x="-40%" y="-40%" width="180%" height="180%">
-      <feGaussianBlur stdDeviation="2.2" result="b"/>
-      <feMerge>
-        <feMergeNode in="b"/>
-        <feMergeNode in="SourceGraphic"/>
-      </feMerge>
-    </filter>
-  </defs>
-
-  <!-- 深色底 -->
-  <rect width="64" height="64" rx="13" fill="#0f172a"/>
-
-  <!-- 窗口外框 + 泛光 -->
-  <g filter="url(#bloom)">
-    <rect x="10" y="13" width="44" height="38" rx="6.5"
-          fill="none" stroke="url(#edge)" stroke-width="3.2"/>
-  </g>
-
-  <!-- 顶部标题栏，暗示这是一个浏览器窗口 -->
-  <line x1="10" y1="23" x2="54" y2="23" stroke="url(#edge)" stroke-width="2" opacity="0.55"/>
-  <circle cx="16.5" cy="18" r="1.5" fill="#60a5fa" opacity="0.8"/>
-  <circle cx="22" cy="18" r="1.5" fill="#60a5fa" opacity="0.5"/>
-
-  <!-- 中心的光点：被操作的内容 -->
-  <circle cx="32" cy="38" r="3.4" fill="#93c5fd" opacity="0.95"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="64" height="64" role="img" aria-label="BUA">
+  <!-- Shared with extension and favicon: site accent #ab4636, background #fbfaf9. -->
+  <rect x="3" y="3" width="94" height="94" rx="23" fill="#ab4636"/>
+  <rect x="20" y="24" width="60" height="49" rx="9" fill="#fbfaf9"/>
+  <rect x="26" y="39" width="48" height="28" rx="3" fill="#ab4636"/>
+  <path d="M28 32h12" stroke="#ab4636" stroke-width="4"/>
+  <polygon points="53.461,51.782 53.256,51.038 53.129,50.400 53.079,49.867 53.107,49.441 53.212,49.120 53.394,48.905 53.654,48.796 53.992,48.793 54.407,48.896 54.899,49.104 55.469,49.418 56.116,49.839 76.884,64.161 77.508,64.623 78.007,65.062 78.382,65.479 78.632,65.873 78.757,66.245 78.758,66.594 78.635,66.920 78.387,67.224 78.014,67.505 77.517,67.763 76.895,67.999 76.149,68.213 73.851,68.787 73.061,69.013 72.310,69.284 71.598,69.602 70.923,69.965 70.287,70.376 69.689,70.832 69.129,71.334 68.608,71.883 68.125,72.478 67.680,73.119 67.273,73.806 66.905,74.540 65.095,78.460 64.750,79.152 64.414,79.715 64.087,80.148 63.769,80.451 63.459,80.625 63.159,80.670 62.867,80.585 62.583,80.370 62.309,80.027 62.044,79.553 61.787,78.950 61.539,78.218" fill="#fbfaf9" stroke="#ab4636" stroke-width="7" stroke-linejoin="round" paint-order="stroke fill"/>
 </svg>

@@ -19,7 +19,7 @@
 import { mkdir, writeFile, rm, readFile } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { deflateSync } from 'node:zlib';
+import { makeIcon } from './icon.mjs';
 import { watch } from 'node:fs';
 
 import { build } from 'esbuild';
@@ -28,102 +28,6 @@ const here = dirname(fileURLToPath(import.meta.url));
 const root = resolve(here, '..');
 const outdir = join(root, 'dist');
 const watching = process.argv.includes('--watch');
-
-/* ─────────────────────── 图标生成 ─────────────────────── */
-
-/** PNG 的 CRC32。 */
-const CRC_TABLE = (() => {
-  const table = new Uint32Array(256);
-  for (let n = 0; n < 256; n += 1) {
-    let c = n;
-    for (let k = 0; k < 8; k += 1) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1;
-    table[n] = c >>> 0;
-  }
-  return table;
-})();
-
-function crc32(buf) {
-  let c = 0xffffffff;
-  for (const b of buf) c = CRC_TABLE[(c ^ b) & 0xff] ^ (c >>> 8);
-  return (c ^ 0xffffffff) >>> 0;
-}
-
-function chunk(type, data) {
-  const len = Buffer.alloc(4);
-  len.writeUInt32BE(data.length, 0);
-  const typeBuf = Buffer.from(type, 'latin1');
-  const body = Buffer.concat([typeBuf, data]);
-  const crc = Buffer.alloc(4);
-  crc.writeUInt32BE(crc32(body), 0);
-  return Buffer.concat([len, body, crc]);
-}
-
-/**
- * 共用品牌图标：蓝色圆角底、浏览器窗口与操作指针。
- * 在同一归一化画布上生成各尺寸，4× 超采样保证工具栏边缘清晰。
- *
- * @param {number} size - 边长（像素）
- */
-function makeIcon(size) {
-  const raw = Buffer.alloc(size * (size * 4 + 1));
-  function roundedRect(x, y, left, top, right, bottom, radius) {
-    const dx = Math.max(left + radius - x, 0, x - (right - radius));
-    const dy = Math.max(top + radius - y, 0, y - (bottom - radius));
-    return x >= left && x <= right && y >= top && y <= bottom && dx * dx + dy * dy <= radius * radius;
-  }
-  function polygon(x, y, points) {
-    let inside = false;
-    for (let i = 0, j = points.length - 1; i < points.length; j = i++) {
-      const [xi, yi] = points[i];
-      const [xj, yj] = points[j];
-      if ((yi > y) !== (yj > y) && x < (xj - xi) * (y - yi) / (yj - yi) + xi) inside = !inside;
-    }
-    return inside;
-  }
-  const cursor = [[52, 47], [81, 67], [69, 70], [63, 83]];
-  function sample(x, y) {
-    if (!roundedRect(x, y, 3, 3, 97, 97, 23)) return [0, 0, 0, 0];
-    let color = [38 - y * .12, 126 - y * .35, 247 - y * .24, 255];
-    if (roundedRect(x, y, 20, 24, 80, 73, 9)) color = [239, 247, 255, 255];
-    if (roundedRect(x, y, 26, 39, 74, 67, 3)) color = [20, 65, 131, 255];
-    if (y >= 30 && y <= 34 && x >= 28 && x <= 40) color = [93, 155, 235, 255];
-    if (polygon(x, y, cursor)) color = [255, 255, 255, 255];
-    return color;
-  }
-
-  let p = 0;
-  for (let y = 0; y < size; y += 1) {
-    raw[p] = 0; // filter type: none
-    p += 1;
-    for (let x = 0; x < size; x += 1) {
-      const channels = [0, 0, 0, 0];
-      for (let sy = 0; sy < 4; sy++) for (let sx = 0; sx < 4; sx++) {
-        const color = sample((x + (sx + .5) / 4) * 100 / size, (y + (sy + .5) / 4) * 100 / size);
-        for (let c = 0; c < 3; c++) channels[c] += color[c] * color[3] / 255;
-        channels[3] += color[3];
-      }
-      for (let c = 0; c < 3; c++) raw[p + c] = channels[3] ? Math.round(channels[c] * 255 / channels[3]) : 0;
-      raw[p + 3] = Math.round(channels[3] / 16);
-      p += 4;
-    }
-  }
-
-  const ihdr = Buffer.alloc(13);
-  ihdr.writeUInt32BE(size, 0);
-  ihdr.writeUInt32BE(size, 4);
-  ihdr[8] = 8; // bit depth
-  ihdr[9] = 6; // color type: RGBA
-  ihdr[10] = 0;
-  ihdr[11] = 0;
-  ihdr[12] = 0;
-
-  return Buffer.concat([
-    Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]),
-    chunk('IHDR', ihdr),
-    chunk('IDAT', deflateSync(raw, { level: 9 })),
-    chunk('IEND', Buffer.alloc(0)),
-  ]);
-}
 
 /* ─────────────────────── 构建 ─────────────────────── */
 
