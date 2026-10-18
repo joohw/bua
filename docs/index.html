@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>BUA — Browser Use Agent：让任意 Agent 操作用户真实浏览器</title>
-<meta name="description" content="BUA（Browser Use Agent）是开源的浏览器使用层：Chrome MV3 扩展 + 本地桥 + SDK 与 MCP，让 DeepSeek Harness、OpenClaw、Hermes 等 AI Agent 直接操作用户已登录的真实标签页，无需重启浏览器或开放 CDP 调试端口。">
-<meta name="keywords" content="BUA,Browser Use Agent,浏览器自动化,AI Agent 浏览器,DeepSeek Harness 插件,DSH 插件,dsh-plugin-bua,Chrome MV3,MCP,Cordis bundle,Codex 浏览器 API,OpenClaw,Hermes Agent">
+<title>BUA — Browser Use Agent：让 AI 操作真实浏览器的开源浏览器自动化方案</title>
+<meta name="description" content="BUA（Browser Use Agent）是开源的 AI 浏览器自动化方案：Chrome MV3 扩展 + 本地桥 + SDK/MCP，让 DeepSeek Harness、OpenClaw 等 Agent 操作用户已登录的真实浏览器，读取、截图、点击、填表、导航，无需开放 CDP 端口。">
+<meta name="keywords" content="BUA,Browser Use Agent,浏览器自动化,AI 浏览器自动化,让 AI 操作浏览器,AI 控制浏览器,Agent 浏览器工具,Chrome 扩展自动化,Chrome MV3,MCP 浏览器,浏览器 MCP,DeepSeek Harness 插件,DSH 插件,dsh-plugin-bua,Cordis bundle,Playwright 对比,Puppeteer 对比,CDP 调试端口,登录态复用,Cookie 复用,网页自动化,表单自动填写,网页截图,浏览器 RPA,OpenClaw,Hermes Agent,Codex 浏览器 API">
 <meta name="author" content="joohw">
 <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
 <link rel="canonical" href="https://joohw.github.io/bua/">
@@ -16,17 +16,17 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="BUA — Browser Use Agent">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:title" content="BUA — 让任意 Agent 操作用户真实浏览器">
-<meta property="og:description" content="开源浏览器使用层：Chrome MV3 扩展 + 本地桥 + SDK/MCP，让 AI Agent 沿用真实标签页、Cookie 与登录态，无需 CDP 调试端口。">
+<meta property="og:title" content="BUA — 让 AI 操作真实浏览器的开源浏览器自动化方案">
+<meta property="og:description" content="开源 AI 浏览器自动化层：Chrome MV3 扩展 + 本地桥 + SDK/MCP，让 Agent 沿用真实标签页、Cookie 与登录态，无需 CDP 调试端口。">
 <meta property="og:url" content="https://joohw.github.io/bua/">
 <meta property="og:image" content="https://joohw.github.io/bua/og-image.png">
 <meta property="og:image:type" content="image/png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="BUA — Browser Use Agent，让任意 Agent 操作用户真实浏览器">
+<meta property="og:image:alt" content="BUA — Browser Use Agent，让 AI 操作真实浏览器的开源浏览器自动化方案">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="BUA — 让任意 Agent 操作用户真实浏览器">
-<meta name="twitter:description" content="开源浏览器使用层：Chrome MV3 扩展 + 本地桥 + SDK/MCP，让 AI Agent 沿用真实登录态，无需 CDP 调试端口。">
+<meta name="twitter:title" content="BUA — 让 AI 操作真实浏览器的开源浏览器自动化方案">
+<meta name="twitter:description" content="开源 AI 浏览器自动化层：Chrome MV3 扩展 + 本地桥 + SDK/MCP，让 Agent 沿用真实登录态，无需 CDP 调试端口。">
 <meta name="twitter:image" content="https://joohw.github.io/bua/og-image.png">
 <meta name="twitter:image:alt" content="BUA — Browser Use Agent">
 <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
@@ -43,8 +43,8 @@
       "@id": "https://joohw.github.io/bua/#website",
       "url": "https://joohw.github.io/bua/",
       "name": "BUA — Browser Use Agent",
-      "alternateName": "BUA 浏览器使用 Agent",
-      "description": "开源的浏览器使用层，让 AI Agent 操作用户真实浏览器。",
+      "alternateName": ["BUA 浏览器使用 Agent", "BUA 浏览器自动化", "Browser Use Agent"],
+      "description": "开源的 AI 浏览器自动化层，让 Agent 操作用户真实浏览器、复用登录态，无需 CDP 调试端口。",
       "inLanguage": "zh-CN",
       "publisher": { "@id": "https://joohw.github.io/bua/#author" }
     },
@@ -56,7 +56,8 @@
       "applicationCategory": "DeveloperApplication",
       "applicationSubCategory": "浏览器自动化 / AI Agent 工具",
       "operatingSystem": "Windows, macOS, Linux",
-      "description": "BUA 由 Chrome MV3 扩展、本地桥和 Agent 客户端组成。Agent 通过本地桥调用扩展，由扩展使用 chrome.debugger 操作用户真实页面，支持读取、截图、点击、输入、滚动与导航；可通过 DeepSeek Harness 原生插件、MCP 或 SDK 接入。",
+      "description": "BUA 由 Chrome MV3 扩展、本地桥和 Agent 客户端组成。Agent 通过本地桥调用扩展，由扩展使用 chrome.debugger 操作用户真实页面，支持读取、截图、点击、输入、滚动与导航，可作为需要登录态的浏览器自动化方案；可通过 DeepSeek Harness 原生插件、MCP 或 SDK 接入。",
+      "keywords": "Browser Use Agent, 浏览器自动化, AI 浏览器, Chrome 扩展, MCP, DeepSeek Harness 插件, dsh-plugin-bua, 登录态复用",
       "url": "https://joohw.github.io/bua/",
       "downloadUrl": "https://joohw.github.io/bua/downloads/bua-extension-v0.1.1.zip",
       "softwareVersion": "0.1.1",
@@ -65,8 +66,11 @@
       "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
       "featureList": [
         "沿用用户真实标签页、Cookie 与登录态",
+        "读取需要登录的页面",
         "无需重启浏览器或开放 CDP 调试端口",
-        "页面读取、截图、点击、输入、滚动与导航",
+        "页面读取、DOM 快照、截图、点击、输入、滚动与导航",
+        "表单填写与提交流程",
+        "多标签页读取与切换",
         "DeepSeek Harness 原生插件 dsh-plugin-bua",
         "MCP stdio 接入与 @bua/sdk"
       ],
@@ -88,6 +92,22 @@
       "mainEntity": [
         {
           "@type": "Question",
+          "name": "如何让 AI 操作浏览器？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "安装并启用 BUA 浏览器扩展后，通过 DeepSeek Harness 原生插件 dsh-plugin-bua、stdio MCP 或 @bua/sdk 接入 Agent；Agent 调用 bua_browser_info 确认连接，再用 bua_tabs_list、bua_tab_text、bua_tab_click 等工具读取和操作页面。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "BUA 支持哪些浏览器？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "支持 Chrome 以及基于 Chromium 的 Microsoft Edge；扩展依赖 chrome.debugger，Firefox 没有等价 API，暂不支持。"
+          }
+        },
+        {
+          "@type": "Question",
           "name": "BUA 需要重启浏览器或开放 CDP 调试端口吗？",
           "acceptedAnswer": {
             "@type": "Answer",
@@ -107,7 +127,23 @@
           "name": "BUA 和 Playwright、Puppeteer 有什么区别？",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Playwright 和 Puppeteer 通常启动独立的浏览器实例；BUA 直接使用你现有的标签页、Cookie 和登录态，适合需要沿用真实会话的 Agent 任务，两者可以配合使用。"
+            "text": "Playwright 和 Puppeteer 通常启动独立的浏览器实例，登录态需自行准备或导入；BUA 直接使用你现有的标签页、Cookie 和登录态，适合需要沿用真实会话的 Agent 任务。两者可以配合使用，BUA 不替代可复现的自动化测试。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "BUA 可以读取需要登录的页面吗？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "可以。BUA 使用用户已登录的浏览器配置与 Cookie，因此能读取登录后的页面；是否可操作仍受页面权限、浏览器企业策略和调试器占用限制。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "BUA 支持哪些浏览器操作？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "支持读取正文、DOM 快照、截图、点击、填写、输入、滚动、导航、打开或关闭标签，以及执行页面 JS；变更类操作需要提供 targetDescription，并受 Harness 工具策略控制。"
           }
         },
         {
@@ -135,7 +171,6 @@
 <body>
   <header class="site-head">
     <a class="brand" href="./" aria-label="BUA 首页">
-      <span class="dot" aria-hidden="true"></span>
       <b>BUA</b>
       <span class="brand-sub">Browser Use Agent</span>
     </a>
@@ -147,14 +182,14 @@
 
   <main class="content">
     <h1>让任意 Agent 操作用户真实浏览器</h1>
-    <p class="lede">BUA（Browser Use Agent）是面向 AI Agent 的浏览器使用层。扩展直接使用你已登录的标签页、Cookie 和会话，Agent 通过本地桥读取页面、截图、点击、输入、滚动与导航。无需重启浏览器，也无需开放 CDP 调试端口。</p>
+    <p class="lede">BUA（Browser Use Agent）是开源的 AI 浏览器自动化层。扩展直接使用你已登录的标签页、Cookie 和会话，Agent 通过本地桥读取页面、截图、点击、输入、滚动与导航。无需重启浏览器，也无需开放 CDP 调试端口。</p>
     <p class="cta">
       <a class="btn" href="install.html">安装浏览器扩展</a>
       <a class="btn ghost" href="dsh.html">接入 DeepSeek Harness</a>
     </p>
 
     <section aria-labelledby="why">
-      <h2 id="why">为什么选择 BUA</h2>
+      <h2 id="why">为什么选择 BUA 做浏览器自动化</h2>
       <ul class="cards">
         <li>
           <h3>真实浏览器，真实登录态</h3>
@@ -175,8 +210,30 @@
       </ul>
     </section>
 
+    <section aria-labelledby="use-cases">
+      <h2 id="use-cases">BUA 能做什么</h2>
+      <ul class="cards">
+        <li>
+          <h3>读取登录后的页面</h3>
+          <p>后台、文档、工单等需要登录的页面，Agent 可以直接读取正文或 DOM 快照，不必重新准备账号。</p>
+        </li>
+        <li>
+          <h3>跨站收集与整理资料</h3>
+          <p>在多个标签页之间切换，读取并汇总网页内容，适合调研、比对和信息整理。</p>
+        </li>
+        <li>
+          <h3>填写与提交流程</h3>
+          <p>按 CSS 选择器填写表单、点击按钮；变更操作必须说明目标与意图，并受 Harness 工具策略控制。</p>
+        </li>
+        <li>
+          <h3>截图与页面核对</h3>
+          <p>截取当前页面保存为附件，用于人工复核、留档或让多模态模型确认页面状态。</p>
+        </li>
+      </ul>
+    </section>
+
     <section aria-labelledby="integrations">
-      <h2 id="integrations">支持的接入方式</h2>
+      <h2 id="integrations">接入方式：DSH 插件、MCP 与 SDK</h2>
       <div class="table-wrap">
         <table>
           <thead>
@@ -203,8 +260,40 @@
       </div>
     </section>
 
+    <section aria-labelledby="compare">
+      <h2 id="compare">和 Playwright / Puppeteer 有什么不同</h2>
+      <p>BUA 不启动新的浏览器实例，而是把用户正在使用的浏览器交给 Agent。需要可复现的自动化测试时，Playwright、Puppeteer 仍然更合适；需要沿用真实登录态、又不想开放 CDP 调试端口时，用 BUA。</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>方式</th><th>浏览器来源</th><th>登录态</th><th>接入成本</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>BUA</td>
+              <td>用户当前正在用的浏览器</td>
+              <td>直接复用 Cookie 与登录会话</td>
+              <td>安装扩展并接入插件 / MCP / SDK</td>
+            </tr>
+            <tr>
+              <td>Playwright / Puppeteer</td>
+              <td>框架启动的独立浏览器实例</td>
+              <td>需导出、导入或重新准备</td>
+              <td>编写脚本与维护依赖</td>
+            </tr>
+            <tr>
+              <td>手动开远程调试端口</td>
+              <td>手动启动并开放端口的浏览器</td>
+              <td>可复用</td>
+              <td>改启动参数并管理端口暴露</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
     <section aria-labelledby="quickstart">
-      <h2 id="quickstart">三步开始</h2>
+      <h2 id="quickstart">三步开始：让 AI 操作浏览器</h2>
       <ol>
         <li><a href="install.html">安装 BUA 浏览器扩展</a>，并在引导页阅读风险告知后主动启用。</li>
         <li>接入 Agent：DSH 用户安装 <code>dsh-plugin-bua</code>；其他客户端按 <a href="https://github.com/joohw/bua/tree/main/docs/integrations#readme">接入指南</a>配置 MCP 或 SDK。</li>
@@ -220,6 +309,12 @@
     <section class="faq" aria-labelledby="faq">
       <h2 id="faq">常见问题</h2>
 
+      <h3>如何让 AI 操作浏览器？</h3>
+      <p>安装并启用 BUA 浏览器扩展后，通过 DeepSeek Harness 原生插件 <code>dsh-plugin-bua</code>、stdio MCP 或 <code>@bua/sdk</code> 接入 Agent；Agent 调用 <code>bua_browser_info</code> 确认连接，再用 <code>bua_tabs_list</code>、<code>bua_tab_text</code>、<code>bua_tab_click</code> 等工具读取和操作页面。</p>
+
+      <h3>BUA 支持哪些浏览器？</h3>
+      <p>支持 Chrome 以及基于 Chromium 的 Microsoft Edge；扩展依赖 <code>chrome.debugger</code>，Firefox 没有等价 API，暂不支持。</p>
+
       <h3>BUA 需要重启浏览器或开放 CDP 调试端口吗？</h3>
       <p>不需要。BUA 通过 Chrome MV3 扩展使用 <code>chrome.debugger</code> 操作页面，Agent 通过本机回环地址上的本地桥调用扩展，不要求重启浏览器，也不要求开放远程调试端口。</p>
 
@@ -227,7 +322,13 @@
       <p>DeepSeek Harness 使用原生插件 <code>dsh-plugin-bua</code>，由插件自动管理本地桥；OpenClaw、Hermes Agent 及其他客户端通过 stdio MCP 接入；也可以使用 <code>@bua/sdk</code> 自行集成。</p>
 
       <h3>BUA 和 Playwright、Puppeteer 有什么区别？</h3>
-      <p>Playwright 和 Puppeteer 通常启动独立的浏览器实例；BUA 直接使用你现有的标签页、Cookie 和登录态，适合需要沿用真实会话的 Agent 任务，两者可以配合使用。</p>
+      <p>Playwright 和 Puppeteer 通常启动独立的浏览器实例，登录态需自行准备或导入；BUA 直接使用你现有的标签页、Cookie 和登录态，适合需要沿用真实会话的 Agent 任务。两者可以配合使用，BUA 不替代可复现的自动化测试。</p>
+
+      <h3>BUA 可以读取需要登录的页面吗？</h3>
+      <p>可以。BUA 使用用户已登录的浏览器配置与 Cookie，因此能读取登录后的页面；是否可操作仍受页面权限、浏览器企业策略和调试器占用限制。</p>
+
+      <h3>BUA 支持哪些浏览器操作？</h3>
+      <p>支持读取正文、DOM 快照、截图、点击、填写、输入、滚动、导航、打开或关闭标签，以及执行页面 JS；变更类操作需要提供 <code>targetDescription</code>，并受 Harness 工具策略控制。</p>
 
       <h3>BUA 会收集或上传浏览数据吗？</h3>
       <p>不会。扩展不收集、不存储、不上传浏览数据，本地桥只监听 <code>127.0.0.1</code>，详情见<a href="privacy.html">隐私政策</a>。</p>
@@ -238,7 +339,7 @@
 
     <div class="links">
       <a href="install.html">安装扩展</a>
-      <a href="dsh.html">DeepSeek Harness 插件</a>
+      <a href="dsh.html">DSH 浏览器插件（dsh-plugin-bua）</a>
       <a href="privacy.html">隐私政策</a>
       <a href="https://github.com/joohw/bua">源码（MIT）</a>
       <a href="https://github.com/joohw/bua/tree/main/docs">设计文档</a>

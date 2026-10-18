@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>DeepSeek Harness 浏览器插件 dsh-plugin-bua — BUA</title>
-<meta name="description" content="在 DeepSeek Harness（DSH）中安装 dsh-plugin-bua：一条 dsh plugin 命令接入 BUA，插件自动管理本地桥，提供 bua_browser_info、bua_tabs_list、bua_tab_click 等工具，让 Agent 操作用户已登录的真实浏览器。">
-<meta name="keywords" content="DeepSeek Harness,DSH,DSH 插件,dsh plugin,dsh-plugin-bua,BUA,浏览器插件,Cordis bundle,浏览器自动化,MCP,AI Agent">
+<title>DeepSeek Harness 浏览器插件 dsh-plugin-bua：让 DSH Agent 操作真实浏览器</title>
+<meta name="description" content="在 DeepSeek Harness（DSH）中安装 dsh-plugin-bua：一条 dsh plugin 命令接入 BUA，插件自动管理本地桥，提供 bua_browser_info、bua_tabs_list 等工具，让 DSH Agent 读取、截图和操作用户已登录的真实浏览器。">
+<meta name="keywords" content="DeepSeek Harness,DSH,DSH 插件,dsh plugin,dsh-plugin-bua,DeepSeek Harness 浏览器插件,DeepSeek Harness MCP,浏览器 MCP,Cordis bundle,Agent 浏览器工具,AI Agent,登录态复用,BUA,Chrome 扩展,浏览器自动化,bua_browser_info,bua_tabs_list">
 <meta name="author" content="joohw">
 <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
 <link rel="canonical" href="https://joohw.github.io/bua/dsh.html">
@@ -15,8 +15,8 @@
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="BUA — Browser Use Agent">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:title" content="DeepSeek Harness 浏览器插件 dsh-plugin-bua — BUA">
-<meta property="og:description" content="一条 dsh plugin 命令接入 BUA：插件自动管理本地桥，Agent 通过 bua_* 工具操作用户真实标签页。">
+<meta property="og:title" content="DeepSeek Harness 浏览器插件 dsh-plugin-bua">
+<meta property="og:description" content="一条 dsh plugin 命令接入 BUA：插件自动管理本地桥，DSH Agent 通过 bua_* 工具操作用户真实浏览器。">
 <meta property="og:url" content="https://joohw.github.io/bua/dsh.html">
 <meta property="og:image" content="https://joohw.github.io/bua/og-image.png">
 <meta property="og:image:type" content="image/png">
@@ -24,7 +24,7 @@
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="BUA — DeepSeek Harness 浏览器插件">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="DeepSeek Harness 浏览器插件 dsh-plugin-bua — BUA">
+<meta name="twitter:title" content="DeepSeek Harness 浏览器插件 dsh-plugin-bua">
 <meta name="twitter:description" content="一条命令让 DSH Agent 操作用户真实浏览器，插件自动管理本地桥。">
 <meta name="twitter:image" content="https://joohw.github.io/bua/og-image.png">
 <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
@@ -47,8 +47,9 @@
     {
       "@type": "TechArticle",
       "@id": "https://joohw.github.io/bua/dsh.html#article",
-      "headline": "在 DeepSeek Harness 中使用 BUA 浏览器插件",
-      "description": "安装 dsh-plugin-bua 并在 DeepSeek Harness 中调用 bua_* 浏览器工具，插件自动管理本地桥。",
+      "headline": "DeepSeek Harness 浏览器插件安装与使用（dsh-plugin-bua）",
+      "description": "安装 dsh-plugin-bua 并在 DeepSeek Harness 中调用 bua_* 浏览器工具：插件自动管理本地桥，支持读取、截图、点击、填表与导航。",
+      "keywords": "DeepSeek Harness, DSH 插件, dsh-plugin-bua, Cordis bundle, 浏览器 MCP, 浏览器自动化",
       "inLanguage": "zh-CN",
       "dateModified": "2026-10-19",
       "author": { "@type": "Person", "name": "Joo", "url": "https://github.com/joohw" },
@@ -66,6 +67,14 @@
       "@type": "FAQPage",
       "@id": "https://joohw.github.io/bua/dsh.html#faq",
       "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "dsh plugin 怎么安装 BUA 浏览器插件？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "执行 dsh plugin --profile <profile> add dsh-plugin-bua，然后 dsh --profile <profile> 启动；插件会自动管理本地桥，BUA 浏览器扩展仍需单独安装并启用。"
+          }
+        },
         {
           "@type": "Question",
           "name": "dsh-plugin-bua 和 MCP 接入有什么区别？",
@@ -89,6 +98,14 @@
             "@type": "Answer",
             "text": "插件把浏览器能力注册在 bua_ 命名空间下，避免与 Harness 中的其他工具重名，例如 bua_browser_info、bua_tabs_list、bua_tab_click。"
           }
+        },
+        {
+          "@type": "Question",
+          "name": "在 DeepSeek Harness 中如何验证 BUA 已连接？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "让 Agent 调用 bua_browser_info，返回 connected: true 且显示扩展后端才表示链路可用；随后用 bua_tabs_list 列出标签，再用 bua_tab_info 核对标题和网址。"
+          }
         }
       ]
     }
@@ -99,7 +116,6 @@
 <body>
   <header class="site-head">
     <a class="brand" href="./" aria-label="BUA 首页">
-      <span class="dot" aria-hidden="true"></span>
       <b>BUA</b>
       <span class="brand-sub">Browser Use Agent</span>
     </a>
@@ -111,8 +127,8 @@
   </header>
 
   <main class="content">
-    <h1>在 DeepSeek Harness 中使用 BUA</h1>
-    <p class="lede"><code>dsh-plugin-bua</code> 是 BUA 的 DeepSeek Harness 原生插件。安装后插件自动启动或复用本地桥，把浏览器能力注册为 <code>bua_*</code> 工具，Agent 可以直接读取、截图和操作用户已登录的真实标签页。</p>
+    <h1>在 DeepSeek Harness 中使用 BUA 浏览器插件</h1>
+    <p class="lede"><code>dsh-plugin-bua</code> 是 BUA 的 DeepSeek Harness 原生插件。安装后插件自动启动或复用本地桥，把浏览器能力注册为 <code>bua_*</code> 工具，DSH 中的 AI Agent 可以直接读取、截图和操作用户已登录的真实标签页（复用登录态与 Cookie），无需手动配置 MCP 或开放 CDP 端口。</p>
 
     <p class="cta">
       <a class="btn" href="#install">安装插件</a>
@@ -126,6 +142,40 @@
 dsh --profile demo</code></pre>
       <p>插件会自动管理本地桥，不需要再手动运行 <code>bua-server</code>。但 BUA 浏览器扩展仍要<a href="install.html">独立安装</a>，并在引导页阅读风险告知后主动启用。</p>
       <div class="note">从源码安装：<code>pnpm --filter dsh-plugin-bua... run build</code> 后执行 <code>dsh plugin --profile demo add ./packages/dsh-bundle</code>，再用 <code>dsh --profile demo --dump-config</code> 确认插件已加入 profile。</div>
+    </section>
+
+    <section aria-labelledby="plugin-vs-mcp">
+      <h2 id="plugin-vs-mcp">插件接入与 MCP 接入怎么选</h2>
+      <p>DeepSeek Harness 优先用原生插件；只有其他 MCP 客户端才需要手动启动本地桥并配置 stdio 入口。</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>项目</th><th>dsh-plugin-bua 原生插件</th><th>stdio MCP</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>本地桥</td>
+              <td>插件自动启动或复用</td>
+              <td>需手动运行 <code>@bua/server</code></td>
+            </tr>
+            <tr>
+              <td>客户端配置</td>
+              <td><code>dsh plugin add</code> 一条命令</td>
+              <td>编辑客户端的 MCP 配置</td>
+            </tr>
+            <tr>
+              <td>工具呈现</td>
+              <td><code>bua_*</code> 命名空间</td>
+              <td>客户端 MCP 工具列表</td>
+            </tr>
+            <tr>
+              <td>适用</td>
+              <td>DeepSeek Harness</td>
+              <td>OpenClaw、Hermes Agent 等</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </section>
 
     <section aria-labelledby="tools">
@@ -153,7 +203,7 @@ dsh --profile demo</code></pre>
     </section>
 
     <section aria-labelledby="verify">
-      <h2 id="verify">第一次验证</h2>
+      <h2 id="verify">第一次验证：确认 DSH 已连上浏览器</h2>
       <ol>
         <li>向 Agent 发送：“使用 BUA 的 <code>bua_browser_info</code> 确认浏览器已连接，然后用 <code>bua_tabs_list</code> 列出标签。”</li>
         <li><code>bua_browser_info</code> 返回 <code>connected: true</code> 且显示扩展后端，才说明浏览器链路可用；只看到工具列表不代表扩展已连上。</li>
@@ -169,6 +219,9 @@ dsh --profile demo</code></pre>
     <section class="faq" aria-labelledby="faq">
       <h2 id="faq">常见问题</h2>
 
+      <h3>dsh plugin 怎么安装 BUA 浏览器插件？</h3>
+      <p>执行 <code>dsh plugin --profile &lt;profile&gt; add dsh-plugin-bua</code>，然后 <code>dsh --profile &lt;profile&gt;</code> 启动；插件会自动管理本地桥，BUA 浏览器扩展仍需<a href="install.html">单独安装</a>并启用。</p>
+
       <h3>dsh-plugin-bua 和 MCP 接入有什么区别？</h3>
       <p><code>dsh-plugin-bua</code> 是 DeepSeek Harness 的原生插件，会自动启动或复用本地桥，工具直接注册为 <code>bua_*</code>；MCP 接入需要手动启动本地桥，并在客户端配置 stdio 入口。其他 Harness 的 MCP 配置见<a href="https://github.com/joohw/bua/tree/main/docs/integrations#readme">接入指南</a>。</p>
 
@@ -177,6 +230,9 @@ dsh --profile demo</code></pre>
 
       <h3>为什么工具名是 bua_ 前缀？</h3>
       <p>插件把浏览器能力注册在 <code>bua_</code> 命名空间下，避免与 Harness 中的其他工具重名，例如 <code>bua_browser_info</code>、<code>bua_tabs_list</code>、<code>bua_tab_click</code>。</p>
+
+      <h3>在 DeepSeek Harness 中如何验证 BUA 已连接？</h3>
+      <p>让 Agent 调用 <code>bua_browser_info</code>，返回 <code>connected: true</code> 且显示扩展后端才表示链路可用；随后用 <code>bua_tabs_list</code> 列出标签，再用 <code>bua_tab_info</code> 核对标题和网址。</p>
     </section>
 
     <div class="links">

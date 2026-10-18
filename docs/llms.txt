@@ -9,6 +9,14 @@
 - [DeepSeek Harness 插件](https://joohw.github.io/bua/dsh.html): 安装 `dsh-plugin-bua`，使用 `bua_*` 工具接入 DSH。
 - [隐私政策](https://joohw.github.io/bua/privacy.html): 不收集、不存储、不上传浏览数据。
 
+## 常见搜索词与对应页面
+
+- 让 AI 操作浏览器 / AI 浏览器自动化 / 浏览器 Agent → 首页
+- DeepSeek Harness 插件 / DSH 插件 / dsh plugin → `dsh.html`
+- Chrome 扩展安装 / 离线安装 / 加载已解压的扩展程序 → `install.html`
+- Playwright 对比 / Puppeteer 对比 / 登录态复用 → 首页对比表
+- 隐私政策 / 是否上传数据 → `privacy.html`
+
 ## 快速开始
 
 1. 安装并启用 BUA 浏览器扩展（Chrome / Edge）。

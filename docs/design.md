@@ -588,3 +588,4 @@ Chrome 155（2026-10-06 stable）起，管理员若配置了 `runtime_blocked_ho
 - **标题层级**：每页恰好一个 h1；区块用 h2，FAQ 的每个问题用 h3。
 - **图像**：社交分享图统一 1200×630 PNG（`docs/og-image.png`），并在 `og:image`、`twitter:image` 中使用绝对 URL。
 - **配色与字体**：只使用 `styles.css` 顶部的 CSS 变量（`--bg` / `--fg` / `--dim` / `--accent`），字体为 Outfit + 系统中文字体回退。
+- **关键词覆盖**：每个页面只承担一个主题簇——首页覆盖「AI 操作浏览器 / 浏览器自动化 / 登录态复用」，`dsh.html` 覆盖「DSH 插件 / DeepSeek Harness 浏览器插件」，`install.html` 覆盖「Chrome/Edge 扩展安装」。新增关键词时扩写对应页面的 FAQ 或对比表，不要把所有词堆进首页 meta。
