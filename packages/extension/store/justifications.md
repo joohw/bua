@@ -87,6 +87,17 @@ Dashboard 会列出 manifest 里声明的每个权限，逐项填写：
 > current capability snapshot, and the recent activity log. **All data stays on the device** —
 > nothing is transmitted anywhere.
 
+### `alarms`
+
+> After the user explicitly enables BUA, chrome.alarms schedules a connection check every
+> 30 seconds. This wakes the Manifest V3 service worker after suspension so it can reconnect
+> to the local WebSocket bridge at 127.0.0.1:17432 when needed. The alarm is cleared when the
+> user revokes consent. It is not used for notifications, tracking, or scheduled browsing.
+
+实现对应 `background.ts` 中的 `bua:connection-watchdog`：仅在用户同意后创建，
+`periodInMinutes` 为 `0.5`；`onAlarm` 调用连接逻辑，撤销同意时清除。
+将上面的英文填写到 Chrome 商店“隐私权规范”中的 `alarms` 权限理由栏。
+
 ### `scripting`
 
 > Provides the fallback path used only when Chrome refuses `chrome.debugger.attach()` because of an
