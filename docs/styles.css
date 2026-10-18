@@ -36,9 +36,121 @@
   code { font: 13px/1.7 ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace; color: var(--fg); overflow-wrap: anywhere; }
   .links { margin-top: 48px; display: flex; flex-wrap: wrap; column-gap: 24px; row-gap: 12px; font-size: 14px; }
   .fine { margin-top: 24px; max-width: 64ch; font-size: 13px; color: var(--dim); }
+
+  /* Site header */
+  .site-head {
+    width: min(100% - 48px, 760px);
+    margin: 0 auto;
+    padding: 28px 0 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    font-size: 14px;
+  }
+  .site-head .brand { margin: 0; display: inline-flex; align-items: center; gap: 10px; }
+  .site-head .brand .dot {
+    width: 9px; height: 9px; border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 0 4px hsl(8 52% 44% / .12);
+  }
+  .site-head .brand-sub { color: var(--dim); font-size: 13px; letter-spacing: 0; }
+  .site-head nav { display: flex; flex-wrap: wrap; gap: 18px; }
+  .site-head nav a { color: var(--dim); text-decoration: none; }
+  .site-head nav a:hover { color: var(--fg); text-decoration: underline; text-underline-offset: 4px; }
+
+  /* Hero */
+  .lede { font-size: 17px; color: var(--dim); max-width: 62ch; }
+  .cta { display: flex; flex-wrap: wrap; gap: 12px; margin: 28px 0 8px; }
+  .btn {
+    display: inline-block;
+    padding: 10px 20px;
+    border-radius: 999px;
+    background: var(--accent);
+    color: #fff;
+    font-size: 14px;
+    text-decoration: none;
+    border: 1px solid var(--accent);
+  }
+  .btn:hover { background: hsl(8 52% 36%); color: #fff; }
+  .btn.ghost { background: transparent; color: var(--fg); border-color: hsl(30 9% 14% / .18); }
+  .btn.ghost:hover { background: hsl(30 9% 14% / .05); color: var(--fg); }
+  .btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+  /* Feature cards */
+  .cards {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 14px;
+  }
+  .cards li {
+    margin: 0;
+    padding: 18px 20px;
+    border: 1px solid hsl(30 9% 14% / .1);
+    border-radius: 12px;
+    background: #fff;
+  }
+  .cards h3 { margin: 0 0 6px; font-size: 15px; font-weight: 600; letter-spacing: -.005em; }
+  .cards p { margin: 0; font-size: 14px; line-height: 1.7; }
+
+  /* Table */
+  .table-wrap { overflow-x: auto; margin: 0 0 8px; }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid hsl(30 9% 14% / .1); vertical-align: top; }
+  th { font-weight: 600; color: var(--fg); font-size: 13px; }
+  td { color: var(--dim); }
+
+  /* Code */
+  pre {
+    overflow-x: auto;
+    background: hsl(30 14% 94%);
+    border: 1px solid hsl(30 9% 14% / .08);
+    border-radius: 10px;
+    padding: 16px 18px;
+    font: 13px/1.7 ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    color: var(--fg);
+  }
+  pre code { background: none; padding: 0; font-size: inherit; }
+  code { background: hsl(30 14% 94%); border-radius: 5px; padding: .1em .35em; }
+
+  /* Notes */
+  .note {
+    margin: 24px 0;
+    padding: 14px 18px;
+    border-left: 3px solid var(--accent);
+    background: hsl(8 52% 44% / .06);
+    border-radius: 0 8px 8px 0;
+    font-size: 14px;
+    color: var(--fg);
+  }
+
+  /* FAQ */
+  .faq h3 { margin: 26px 0 6px; font-size: 16px; font-weight: 600; letter-spacing: -.005em; }
+  .faq p { margin: 0; }
+
+  /* Footer */
+  .site-foot {
+    width: min(100% - 48px, 760px);
+    margin: 64px auto 0;
+    padding: 24px 0 40px;
+    border-top: 1px solid hsl(30 9% 14% / .1);
+    font-size: 13px;
+    color: var(--dim);
+  }
+  .site-foot a { color: var(--dim); }
+  .site-foot a:hover { color: var(--fg); }
+  .site-foot p { margin: 0 0 10px; color: var(--dim); }
+
   @media (max-width: 600px) {
     .content { width: calc(100% - 40px); padding: 32px 0; }
     .brand { margin-bottom: 40px; }
     h2 { margin-top: 36px; }
     .links { column-gap: 20px; }
+    .site-head, .site-foot { width: calc(100% - 40px); }
+    .site-head { flex-wrap: wrap; padding-top: 20px; }
+    .site-head nav { gap: 14px; }
+    .site-foot { margin-top: 48px; }
   }

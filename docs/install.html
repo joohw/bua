@@ -3,10 +3,58 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>安装扩展 — BUA</title>
+  <title>安装 BUA 浏览器扩展 — Chrome / Edge / ZIP 手动安装</title>
 <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="128x128" href="assets/favicon-128.png">
-  <meta name="description" content="选择 Chrome、Edge 或 ZIP 手动安装 BUA 浏览器扩展。">
+  <meta name="description" content="安装 BUA 浏览器扩展：从 Chrome Web Store 一键安装，或下载 ZIP 在 Chrome、Edge 中手动加载。附 SHA-256 校验与逐步说明。">
+  <meta name="keywords" content="BUA 安装,Chrome 扩展安装,Edge 扩展,ZIP 手动安装,Browser Use Agent,浏览器插件,DeepSeek Harness">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <link rel="canonical" href="https://joohw.github.io/bua/install.html">
+  <meta name="theme-color" content="#faf9f7">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="BUA — Browser Use Agent">
+  <meta property="og:locale" content="zh_CN">
+  <meta property="og:title" content="安装 BUA 浏览器扩展 — Chrome / Edge / ZIP">
+  <meta property="og:description" content="从 Chrome Web Store 安装，或下载 ZIP 在 Chrome、Edge 中手动加载 BUA 扩展。">
+  <meta property="og:url" content="https://joohw.github.io/bua/install.html">
+  <meta property="og:image" content="https://joohw.github.io/bua/og-image.png">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="安装 BUA 浏览器扩展">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="安装 BUA 浏览器扩展 — Chrome / Edge / ZIP">
+  <meta name="twitter:description" content="Chrome Web Store 或 ZIP 手动安装 BUA，让 Agent 操作用户真实浏览器。">
+  <meta name="twitter:image" content="https://joohw.github.io/bua/og-image.png">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        "@id": "https://joohw.github.io/bua/install.html#breadcrumb",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "首页", "item": "https://joohw.github.io/bua/" },
+          { "@type": "ListItem", "position": 2, "name": "安装扩展", "item": "https://joohw.github.io/bua/install.html" }
+        ]
+      },
+      {
+        "@type": "HowTo",
+        "@id": "https://joohw.github.io/bua/install.html#howto",
+        "name": "在 Chrome 或 Edge 中手动安装 BUA 扩展",
+        "description": "下载 BUA 扩展 ZIP，解压后通过开发者模式加载已解压的扩展程序。",
+        "totalTime": "PT5M",
+        "tool": [{ "@type": "HowToTool", "name": "Chrome 或 Edge 浏览器" }],
+        "step": [
+          { "@type": "HowToStep", "position": 1, "name": "下载 ZIP", "text": "下载 BUA 扩展 ZIP 与 SHA-256 校验文件，解压到一个固定文件夹。" },
+          { "@type": "HowToStep", "position": 2, "name": "打开扩展管理页", "text": "在地址栏打开 chrome://extensions 或 edge://extensions。" },
+          { "@type": "HowToStep", "position": 3, "name": "加载扩展", "text": "开启开发者模式，点击“加载已解压的扩展程序”，选择包含 manifest.json 的文件夹。" },
+          { "@type": "HowToStep", "position": 4, "name": "阅读并同意披露", "text": "在扩展引导页阅读风险告知，确认后主动启用。" }
+        ]
+      }
+    ]
+  }
+  </script>
   <link rel="preload" href="assets/fonts/outfit-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="styles.css">
 </head>

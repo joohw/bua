@@ -3,38 +3,251 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>BUA — Browser Use Agent</title>
+<title>BUA — Browser Use Agent：让任意 Agent 操作用户真实浏览器</title>
+<meta name="description" content="BUA（Browser Use Agent）是开源的浏览器使用层：Chrome MV3 扩展 + 本地桥 + SDK 与 MCP，让 DeepSeek Harness、OpenClaw、Hermes 等 AI Agent 直接操作用户已登录的真实标签页，无需重启浏览器或开放 CDP 调试端口。">
+<meta name="keywords" content="BUA,Browser Use Agent,浏览器自动化,AI Agent 浏览器,DeepSeek Harness 插件,DSH 插件,dsh-plugin-bua,Chrome MV3,MCP,Cordis bundle,Codex 浏览器 API,OpenClaw,Hermes Agent">
+<meta name="author" content="joohw">
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+<link rel="canonical" href="https://joohw.github.io/bua/">
+<link rel="alternate" hreflang="zh-CN" href="https://joohw.github.io/bua/">
+<link rel="alternate" hreflang="x-default" href="https://joohw.github.io/bua/">
+<meta name="theme-color" content="#faf9f7">
+<meta name="application-name" content="BUA">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="BUA — Browser Use Agent">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:title" content="BUA — 让任意 Agent 操作用户真实浏览器">
+<meta property="og:description" content="开源浏览器使用层：Chrome MV3 扩展 + 本地桥 + SDK/MCP，让 AI Agent 沿用真实标签页、Cookie 与登录态，无需 CDP 调试端口。">
+<meta property="og:url" content="https://joohw.github.io/bua/">
+<meta property="og:image" content="https://joohw.github.io/bua/og-image.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="BUA — Browser Use Agent，让任意 Agent 操作用户真实浏览器">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="BUA — 让任意 Agent 操作用户真实浏览器">
+<meta name="twitter:description" content="开源浏览器使用层：Chrome MV3 扩展 + 本地桥 + SDK/MCP，让 AI Agent 沿用真实登录态，无需 CDP 调试端口。">
+<meta name="twitter:image" content="https://joohw.github.io/bua/og-image.png">
+<meta name="twitter:image:alt" content="BUA — Browser Use Agent">
 <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="128x128" href="assets/favicon-128.png">
-<meta name="description" content="让任意 Agent 操作用户真实浏览器的通用能力层。Chrome MV3 扩展 + 本地桥 + SDK。">
+<link rel="apple-touch-icon" href="assets/favicon-128.png">
 <link rel="preload" href="assets/fonts/outfit-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="styles.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://joohw.github.io/bua/#website",
+      "url": "https://joohw.github.io/bua/",
+      "name": "BUA — Browser Use Agent",
+      "alternateName": "BUA 浏览器使用 Agent",
+      "description": "开源的浏览器使用层，让 AI Agent 操作用户真实浏览器。",
+      "inLanguage": "zh-CN",
+      "publisher": { "@id": "https://joohw.github.io/bua/#author" }
+    },
+    {
+      "@type": "SoftwareApplication",
+      "@id": "https://joohw.github.io/bua/#app",
+      "name": "BUA",
+      "alternateName": ["Browser Use Agent", "BUA 浏览器扩展", "dsh-plugin-bua"],
+      "applicationCategory": "DeveloperApplication",
+      "applicationSubCategory": "浏览器自动化 / AI Agent 工具",
+      "operatingSystem": "Windows, macOS, Linux",
+      "description": "BUA 由 Chrome MV3 扩展、本地桥和 Agent 客户端组成。Agent 通过本地桥调用扩展，由扩展使用 chrome.debugger 操作用户真实页面，支持读取、截图、点击、输入、滚动与导航；可通过 DeepSeek Harness 原生插件、MCP 或 SDK 接入。",
+      "url": "https://joohw.github.io/bua/",
+      "downloadUrl": "https://joohw.github.io/bua/downloads/bua-extension-v0.1.1.zip",
+      "softwareVersion": "0.1.1",
+      "license": "https://opensource.org/license/mit",
+      "isAccessibleForFree": true,
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+      "featureList": [
+        "沿用用户真实标签页、Cookie 与登录态",
+        "无需重启浏览器或开放 CDP 调试端口",
+        "页面读取、截图、点击、输入、滚动与导航",
+        "DeepSeek Harness 原生插件 dsh-plugin-bua",
+        "MCP stdio 接入与 @bua/sdk"
+      ],
+      "sameAs": [
+        "https://github.com/joohw/bua",
+        "https://www.npmjs.com/package/dsh-plugin-bua"
+      ],
+      "author": { "@id": "https://joohw.github.io/bua/#author" }
+    },
+    {
+      "@type": "Person",
+      "@id": "https://joohw.github.io/bua/#author",
+      "name": "Joo",
+      "url": "https://github.com/joohw"
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://joohw.github.io/bua/#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "BUA 需要重启浏览器或开放 CDP 调试端口吗？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "不需要。BUA 通过 Chrome MV3 扩展使用 chrome.debugger 操作页面，Agent 通过本机回环地址上的本地桥调用扩展，不要求重启浏览器，也不要求开放远程调试端口。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "BUA 支持哪些 Agent 或框架？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "DeepSeek Harness 使用原生插件 dsh-plugin-bua，由插件自动管理本地桥；OpenClaw、Hermes Agent 及其他客户端通过 stdio MCP 接入；也可以使用 @bua/sdk 自行集成。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "BUA 和 Playwright、Puppeteer 有什么区别？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Playwright 和 Puppeteer 通常启动独立的浏览器实例；BUA 直接使用你现有的标签页、Cookie 和登录态，适合需要沿用真实会话的 Agent 任务，两者可以配合使用。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "BUA 会收集或上传浏览数据吗？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "不会。扩展不收集、不存储、不上传浏览数据，本地桥只监听 127.0.0.1，详情见隐私政策 https://joohw.github.io/bua/privacy.html。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "如何验证浏览器链路已经连通？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "让 Agent 调用 bua_browser_info，成功返回扩展后端即表示链路可用；随后调用 bua_tabs_list 只读列出标签，再用 bua_tab_info 核对标题和网址。"
+          }
+        }
+      ]
+    }
+  ]
+}
+</script>
 </head>
 <body>
+  <header class="site-head">
+    <a class="brand" href="./" aria-label="BUA 首页">
+      <span class="dot" aria-hidden="true"></span>
+      <b>BUA</b>
+      <span class="brand-sub">Browser Use Agent</span>
+    </a>
+    <nav aria-label="主导航">
+      <a href="install.html">安装扩展</a>
+      <a href="https://github.com/joohw/bua">GitHub</a>
+    </nav>
+  </header>
+
   <main class="content">
     <h1>让任意 Agent 操作用户真实浏览器</h1>
+    <p class="lede">BUA（Browser Use Agent）是面向 AI Agent 的浏览器使用层。扩展直接使用你已登录的标签页、Cookie 和会话，Agent 通过本地桥读取页面、截图、点击、输入、滚动与导航。无需重启浏览器，也无需开放 CDP 调试端口。</p>
+    <p class="cta">
+      <a class="btn" href="install.html">安装浏览器扩展</a>
+      <a class="btn ghost" href="dsh.html">接入 DeepSeek Harness</a>
+    </p>
 
-    <h2>开始使用</h2>
-    <ol>
-      <li><a href="install.html">安装 BUA 扩展</a>。</li>
-      <li>使用原生插件，或者安装通用客户端，参考<a href="https://github.com/joohw/bua/tree/main/docs/integrations#readme">安装指南</a>。</li>
-      <li>开始使用。</li>
-    </ol>
+    <section aria-labelledby="why">
+      <h2 id="why">为什么选择 BUA</h2>
+      <ul class="cards">
+        <li>
+          <h3>真实浏览器，真实登录态</h3>
+          <p>沿用用户正在使用的浏览器配置、Cookie 与登录状态，不必把账号密码交给新的自动化实例。</p>
+        </li>
+        <li>
+          <h3>不改调试配置</h3>
+          <p>通过 MV3 扩展的 <code>chrome.debugger</code> 操作页面，不需要重启浏览器，也不需要开放 CDP 端口。</p>
+        </li>
+        <li>
+          <h3>一套能力，多种接入</h3>
+          <p>DeepSeek Harness 原生插件、MCP stdio 与 <code>@bua/sdk</code> 共用同一套协议和工具。</p>
+        </li>
+        <li>
+          <h3>本地优先</h3>
+          <p>本地桥只监听 <code>127.0.0.1:17432</code>，操作记录可追溯，数据不离开本机。</p>
+        </li>
+      </ul>
+    </section>
 
-    <h2>Agent 安装与使用</h2>
-    <ul>
-      <li><a href="https://github.com/joohw/bua/blob/main/docs/integrations/dsh.md">DeepSeek Harness 安装与使用</a></li>
-      <li><a href="https://github.com/joohw/bua/blob/main/docs/integrations/openclaw.md">OpenClaw 安装与使用</a></li>
-      <li><a href="https://github.com/joohw/bua/blob/main/docs/integrations/hermes.md">Hermes Agent 安装与使用</a></li>
-      <li><a href="https://github.com/joohw/bua/tree/main/packages/mcp#readme">其他 MCP Agent 安装与使用</a></li>
-    </ul>
+    <section aria-labelledby="integrations">
+      <h2 id="integrations">支持的接入方式</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>接入方式</th><th>适用客户端</th><th>说明</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><a href="dsh.html">DeepSeek Harness 原生插件</a></td>
+              <td>DSH</td>
+              <td>安装 <code>dsh-plugin-bua</code>，插件自动启动或复用本地桥，工具以 <code>bua_*</code> 出现。</td>
+            </tr>
+            <tr>
+              <td><a href="https://github.com/joohw/bua/tree/main/packages/mcp#readme">MCP stdio</a></td>
+              <td>OpenClaw、Hermes Agent 等</td>
+              <td>手动启动本地桥，为客户端配置 stdio 入口。</td>
+            </tr>
+            <tr>
+              <td><a href="https://github.com/joohw/bua/tree/main/packages/sdk#readme">@bua/sdk</a></td>
+              <td>自研 Agent</td>
+              <td>在工作区内连接本地桥，按标签页调用读取、截图与操作能力。</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section aria-labelledby="quickstart">
+      <h2 id="quickstart">三步开始</h2>
+      <ol>
+        <li><a href="install.html">安装 BUA 浏览器扩展</a>，并在引导页阅读风险告知后主动启用。</li>
+        <li>接入 Agent：DSH 用户安装 <code>dsh-plugin-bua</code>；其他客户端按 <a href="https://github.com/joohw/bua/tree/main/docs/integrations#readme">接入指南</a>配置 MCP 或 SDK。</li>
+        <li>让 Agent 先调用 <code>bua_browser_info</code> 确认扩展后端，再用 <code>bua_tabs_list</code> 列出标签并开始只读验证。</li>
+      </ol>
+    </section>
+
+    <section aria-labelledby="security">
+      <h2 id="security">安全模型</h2>
+      <p>BUA 不做调用方身份认证。任何能访问本机回环地址的进程都可能通过本地桥操作浏览器，包括已登录页面。首次启用前请阅读并同意扩展引导页的披露；不要把本地桥暴露到公网。浏览器企业策略、受限页面或其他调试器占用可能使部分操作不可用。</p>
+    </section>
+
+    <section class="faq" aria-labelledby="faq">
+      <h2 id="faq">常见问题</h2>
+
+      <h3>BUA 需要重启浏览器或开放 CDP 调试端口吗？</h3>
+      <p>不需要。BUA 通过 Chrome MV3 扩展使用 <code>chrome.debugger</code> 操作页面，Agent 通过本机回环地址上的本地桥调用扩展，不要求重启浏览器，也不要求开放远程调试端口。</p>
+
+      <h3>BUA 支持哪些 Agent 或框架？</h3>
+      <p>DeepSeek Harness 使用原生插件 <code>dsh-plugin-bua</code>，由插件自动管理本地桥；OpenClaw、Hermes Agent 及其他客户端通过 stdio MCP 接入；也可以使用 <code>@bua/sdk</code> 自行集成。</p>
+
+      <h3>BUA 和 Playwright、Puppeteer 有什么区别？</h3>
+      <p>Playwright 和 Puppeteer 通常启动独立的浏览器实例；BUA 直接使用你现有的标签页、Cookie 和登录态，适合需要沿用真实会话的 Agent 任务，两者可以配合使用。</p>
+
+      <h3>BUA 会收集或上传浏览数据吗？</h3>
+      <p>不会。扩展不收集、不存储、不上传浏览数据，本地桥只监听 <code>127.0.0.1</code>，详情见<a href="privacy.html">隐私政策</a>。</p>
+
+      <h3>如何验证浏览器链路已经连通？</h3>
+      <p>让 Agent 调用 <code>bua_browser_info</code>，成功返回扩展后端即表示链路可用；随后调用 <code>bua_tabs_list</code> 只读列出标签，再用 <code>bua_tab_info</code> 核对标题和网址。</p>
+    </section>
 
     <div class="links">
+      <a href="install.html">安装扩展</a>
+      <a href="dsh.html">DeepSeek Harness 插件</a>
       <a href="privacy.html">隐私政策</a>
       <a href="https://github.com/joohw/bua">源码（MIT）</a>
       <a href="https://github.com/joohw/bua/tree/main/docs">设计文档</a>
     </div>
-
   </main>
+
+  <footer class="site-foot">
+    <p>BUA — Browser Use Agent · 让任意 Agent 操作用户真实浏览器 · MIT License</p>
+    <p><a href="https://github.com/joohw/bua">GitHub</a> · <a href="https://www.npmjs.com/package/dsh-plugin-bua">npm</a> · <a href="install.html">安装</a> · <a href="privacy.html">隐私</a></p>
+  </footer>
 </body>
 </html>

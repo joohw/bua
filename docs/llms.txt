@@ -1,0 +1,42 @@
+# BUA — Browser Use Agent
+
+> BUA 是开源的浏览器使用层，让任意 AI Agent 操作用户真实浏览器。它由 Chrome MV3 扩展、本地桥（WebSocket，默认 127.0.0.1:17432）与 Agent 客户端组成：Agent 通过本地桥调用扩展，扩展用 chrome.debugger 操作用户已登录的标签页，无需重启浏览器或开放 CDP 调试端口。支持页面读取、截图、点击、输入、滚动与导航。MIT License。
+
+## 官方页面
+
+- [首页](https://joohw.github.io/bua/): 产品介绍、接入方式、安全模型与常见问题。
+- [安装扩展](https://joohw.github.io/bua/install.html): Chrome Web Store、Edge、ZIP 手动安装与校验。
+- [DeepSeek Harness 插件](https://joohw.github.io/bua/dsh.html): 安装 `dsh-plugin-bua`，使用 `bua_*` 工具接入 DSH。
+- [隐私政策](https://joohw.github.io/bua/privacy.html): 不收集、不存储、不上传浏览数据。
+
+## 快速开始
+
+1. 安装并启用 BUA 浏览器扩展（Chrome / Edge）。
+2. DeepSeek Harness 用户安装原生插件：
+
+```sh
+dsh plugin --profile demo add dsh-plugin-bua
+dsh --profile demo
+```
+
+3. 让 Agent 先调用 `bua_browser_info` 确认扩展后端，再用 `bua_tabs_list` 列出标签。
+
+## 接入方式
+
+- DeepSeek Harness：原生插件 `dsh-plugin-bua`（npm），自动管理本地桥。
+- MCP 客户端（OpenClaw、Hermes Agent 等）：stdio 入口，需手动启动本地桥。
+- 自研 Agent：`@bua/sdk`。
+
+## 工具
+
+只读：`bua_browser_info`、`bua_tabs_list`、`bua_tab_info`、`bua_tab_dom_snapshot`、`bua_tab_text`、`bua_tab_screenshot`。
+操作：`bua_tab_click`、`bua_tab_fill`、`bua_tab_type`、`bua_tab_click_at`、`bua_tab_navigate`、`bua_tab_open`、`bua_tab_close`、`bua_tab_evaluate`（变更操作需 `targetDescription`）。
+
+## 安全模型
+
+本地桥只监听回环地址，但不做调用方身份认证：任何能访问本机回环地址的进程都可能操作浏览器，包括已登录页面。请勿将桥暴露到公网。
+
+## 源码
+
+- GitHub: https://github.com/joohw/bua
+- npm: https://www.npmjs.com/package/dsh-plugin-bua
