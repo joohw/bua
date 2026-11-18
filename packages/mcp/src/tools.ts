@@ -15,6 +15,8 @@
  *
  * **三、失败信息要能指导下一步。** MCP 工具的错误会回到模型上下文，所以
  * `describeError` 会按 `buaCode` 分派，写清「为什么」与「怎么办」，而不是抛原始异常。
+ * 唯一的例外是**入参 schema 校验**：它在 MCP SDK 内部完成，错误文本由 zod 渲染后直接
+ * 返回，不经过 `describeError` —— 所以「必填」既要在 schema 里声明，也要在 handler 里兜底。
  */
 
 import { z } from 'zod';
@@ -22,10 +24,31 @@ import type { McpServer } from '@modelcontextprotocol/server';
 
 import { BuaConnection, describeError, fail, ok } from './connection.js';
 
-/** 变更型工具共用的意图描述参数。 */
+/** 变更型工具缺少意图描述时的说明。 */
+const MISSING_INTENT =
+  '缺少 targetDescription（人类可读的操作意图）。\n' +
+  '\n' +
+  '所有变更型操作都必须说明「这次操作对用户意味着什么」，例如「结算按钮（￥299，含运费）」。\n' +
+  '必填的原因：坐标与选择器无法让人判断风险，描述可以 —— 它会进用户在扩展弹窗里看到的操作流水。\n' +
+  '请带上 targetDescription 重试。';
+
+/**
+ * 变更型工具共用的意图描述参数。
+ *
+ * 字段**声明为必填**：`tools/list` 下发的 JSON Schema 会把它放进 `required`，agent 从工具
+ * 目录就能读到「这个参数不能省」。（试过用 `.optional()` 或 `z.union([z.never(), …])` 换取
+ * 更友好的报错，两者都会让该字段从 `required` 里消失 —— 文案好一点，代价却是 agent 不再
+ * 知道它必填。这个交易不划算。）
+ *
+ * `error` 映射解决另一半问题：缺省时 MCP SDK 会把 zod 的原文
+ * （`Invalid input: expected string, received undefined`）直接当作工具结果返回，
+ * 不经过 `describeError`。把 zod 的报错换成 {@link MISSING_INTENT}，就能在**不削弱 schema**
+ * 的前提下把「为什么必填、怎么改」送到模型面前。
+ *
+ * 全空白（`'   '`）能通过 zod 的类型校验，由 {@link intentOrError} 在 handler 里拦下。
+ */
 const intentSchema = z
-  .string()
-  .min(1)
+  .string({ error: () => MISSING_INTENT })
   .describe(
     '人类可读的操作意图，例如「结算按钮（￥299，含运费）」。必填：坐标无法让人判断风险，描述可以。它会进用户在扩展弹窗里看到的操作流水。',
   );
@@ -47,6 +70,20 @@ function renderNodes(nodes: Array<{ id: number; tag: string; name?: string; role
       return `[${n.id}] <${role}> ${label !== '' ? JSON.stringify(label) : '(无文本)'}`;
     })
     .join('\n');
+}
+
+/**
+ * 取用 schema 已放行的意图描述，全空白时给出可操作的说明。
+ *
+ * 为什么还需要这一道：schema 保证的是**类型**，`targetDescription: '   '` 能通过校验却毫无
+ * 信息量，而缺省的情形已由 `intentSchema` 的 error 映射处理。返回字符串表示通过，
+ * 返回工具结果表示不通过（直接作为结果返回）。
+ */
+function intentOrError(
+  value: string | undefined,
+): string | { content: Array<{ type: 'text'; text: string }>; isError: true } {
+  if (value === undefined || value.trim().length === 0) return fail(MISSING_INTENT);
+  return value;
 }
 
 export interface RegisterOptions {
@@ -202,12 +239,15 @@ export function registerTools(server: McpServer, options: RegisterOptions = {}):
       }),
       annotations: { readOnlyHint: false },
     },
-    async ({ tabId, url, targetDescription }) =>
-      run(async (c) => {
+    async ({ tabId, url, targetDescription }) => {
+      const intent = intentOrError(targetDescription);
+      if (typeof intent !== 'string') return intent;
+      return run(async (c) => {
         const tab = await (await c.browser()).tabs.get(tabId);
-        await tab.goto(url, { targetDescription });
+        await tab.goto(url, { targetDescription: intent });
         return ok(`已导航到 ${url}`);
-      }),
+      });
+    },
   );
 
   server.registerTool(
@@ -219,16 +259,19 @@ export function registerTools(server: McpServer, options: RegisterOptions = {}):
         '除非用户明确要求。注意页面未保存的表单会随标签一起丢失。',
       inputSchema: z.object({
         tabId: tabIdSchema,
-        targetDescription: intentSchema.optional().describe('可选：说明为什么关闭这个标签。'),
+        targetDescription: intentSchema,
       }),
       annotations: { readOnlyHint: false },
     },
-    async ({ tabId, targetDescription }) =>
-      run(async (c) => {
+    async ({ tabId, targetDescription }) => {
+      const intent = intentOrError(targetDescription);
+      if (typeof intent !== 'string') return intent;
+      return run(async (c) => {
         const tab = await (await c.browser()).tabs.get(tabId);
-        await tab.close(targetDescription !== undefined ? { targetDescription } : undefined);
+        await tab.close({ targetDescription: intent });
         return ok(`已关闭标签页 ${tabId}`);
-      }),
+      });
+    },
   );
 
   /* ─────────────────────── 观察 ─────────────────────── */
@@ -338,12 +381,15 @@ export function registerTools(server: McpServer, options: RegisterOptions = {}):
       }),
       annotations: { readOnlyHint: false },
     },
-    async ({ tabId, selector, targetDescription }) =>
-      run(async (c) => {
+    async ({ tabId, selector, targetDescription }) => {
+      const intent = intentOrError(targetDescription);
+      if (typeof intent !== 'string') return intent;
+      return run(async (c) => {
         const tab = await (await c.browser()).tabs.get(tabId);
-        await tab.click(selector, { targetDescription });
+        await tab.click(selector, { targetDescription: intent });
         return ok(`已点击 ${selector}`);
-      }),
+      });
+    },
   );
 
   server.registerTool(
@@ -361,12 +407,15 @@ export function registerTools(server: McpServer, options: RegisterOptions = {}):
       }),
       annotations: { readOnlyHint: false },
     },
-    async ({ tabId, selector, value, targetDescription }) =>
-      run(async (c) => {
+    async ({ tabId, selector, value, targetDescription }) => {
+      const intent = intentOrError(targetDescription);
+      if (typeof intent !== 'string') return intent;
+      return run(async (c) => {
         const tab = await (await c.browser()).tabs.get(tabId);
-        await tab.fill(selector, value, { targetDescription });
+        await tab.fill(selector, value, { targetDescription: intent });
         return ok(`已填写 ${selector}`);
-      }),
+      });
+    },
   );
 
   server.registerTool(
@@ -384,12 +433,15 @@ export function registerTools(server: McpServer, options: RegisterOptions = {}):
       }),
       annotations: { readOnlyHint: false },
     },
-    async ({ tabId, text, targetDescription }) =>
-      run(async (c) => {
+    async ({ tabId, text, targetDescription }) => {
+      const intent = intentOrError(targetDescription);
+      if (typeof intent !== 'string') return intent;
+      return run(async (c) => {
         const tab = await (await c.browser()).tabs.get(tabId);
-        await tab.cua.type(text, { targetDescription });
+        await tab.cua.type(text, { targetDescription: intent });
         return ok(`已输入 ${text.length} 个字符`);
-      }),
+      });
+    },
   );
 
   /* ─────────────────────── 交互（坐标兜底） ─────────────────────── */
@@ -410,12 +462,15 @@ export function registerTools(server: McpServer, options: RegisterOptions = {}):
       }),
       annotations: { readOnlyHint: false },
     },
-    async ({ tabId, x, y, targetDescription }) =>
-      run(async (c) => {
+    async ({ tabId, x, y, targetDescription }) => {
+      const intent = intentOrError(targetDescription);
+      if (typeof intent !== 'string') return intent;
+      return run(async (c) => {
         const tab = await (await c.browser()).tabs.get(tabId);
-        await tab.cua.click(x, y, { targetDescription });
+        await tab.cua.click(x, y, { targetDescription: intent });
         return ok(`已在 (${x}, ${y}) 点击`);
-      }),
+      });
+    },
   );
 
   return conn;

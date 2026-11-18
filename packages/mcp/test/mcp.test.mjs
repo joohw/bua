@@ -374,6 +374,58 @@ test('桥的审计记录了经 MCP 发起的真实操作', async () => {
   }
 });
 
+/* ─────────────────────── 意图描述（必填契约） ─────────────────────── */
+
+test('变更型工具缺 targetDescription 时给出可操作说明，且不转发到扩展', async () => {
+  const s = await startStack(defaultRespond);
+  try {
+    const res = await s.client.callTool({ name: 'tab_click', arguments: { tabId: 11, selector: '#submit' } });
+    assert.equal(res.isError, true, '缺必填项应标记为错误');
+    const text = res.content[0]?.text ?? '';
+    // 文案必须解释「为什么」并说明怎么改 —— 而不是 zod 的 Invalid input
+    assert.match(text, /targetDescription/, `应点名缺失的参数：${text}`);
+    assert.match(text, /必填|必须/, `应说明是必填：${text}`);
+    assert.match(text, /风险/, `应给出理由：${text}`);
+    assert.doesNotMatch(text, /Invalid input|expected string/, `不应是 zod 的原始措辞：${text}`);
+    assert.equal(s.handled.some((m) => m.method === 'locator.click'), false, '不应转发到扩展');
+  } finally {
+    await s.close();
+  }
+});
+
+test('targetDescription 传了但全是空白，按缺失处理', async () => {
+  const s = await startStack(defaultRespond);
+  try {
+    const res = await s.client.callTool({
+      name: 'tab_fill',
+      arguments: { tabId: 11, selector: '#a', value: 'x', targetDescription: '   ' },
+    });
+    assert.equal(res.isError, true, '全空白不算有效意图');
+    assert.match(res.content[0]?.text ?? '', /targetDescription/);
+    assert.equal(s.handled.some((m) => m.method === 'locator.fill'), false, '不应转发到扩展');
+  } finally {
+    await s.close();
+  }
+});
+
+test('tools/list 把意图描述列进 required —— agent 从工具目录就能读到必填', async () => {
+  const s = await startStack(defaultRespond);
+  try {
+    const { tools } = await s.client.listTools();
+    const requiredOf = (name) => tools.find((t) => t.name === name)?.inputSchema?.required ?? [];
+    for (const name of ['tab_click', 'tab_fill', 'tab_type', 'tab_click_at', 'tab_navigate', 'tab_close']) {
+      assert.ok(
+        requiredOf(name).includes('targetDescription'),
+        `${name} 的 required 应包含 targetDescription，实际 [${requiredOf(name).join(', ')}]`,
+      );
+    }
+    // 只读工具不该被这条契约波及
+    assert.equal(requiredOf('tabs_list').length, 0);
+  } finally {
+    await s.close();
+  }
+});
+
 /* ─────────────────────── 错误路径 ─────────────────────── */
 
 test('无后端时 browser_info 给出可操作的指引而不是抛异常', async () => {

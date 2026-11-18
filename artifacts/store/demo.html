@@ -1,0 +1,180 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>BUA Browser Automation Demo</title><style>*{box-sizing:border-box}body{margin:0;background:#f5f7fb;color:#172338;font:16px/1.7 'Segoe UI','Microsoft YaHei',sans-serif}header{padding:24px 64px;background:white;border-bottom:1px solid #e0e6ef;display:flex;justify-content:space-between;align-items:center}header strong{font-size:22px}header span{font-size:14px;color:#748198}main{max-width:1000px;margin:56px auto}h1{font-size:36px;margin:10px 0}p{color:#637086;margin:0 0 30px}.grid{display:grid;grid-template-columns:1.4fr 1fr;gap:28px}section{background:white;padding:30px;border:1px solid #e0e6ef;border-radius:16px}h2{font-size:19px;margin:0 0 20px}label{display:block;font-size:14px;margin:18px 0;color:#59667a}input{display:block;width:100%;padding:12px 14px;margin-top:8px;border:1px solid #cdd7e5;border-radius:8px;font:inherit;color:#1f314f}button{padding:12px 22px;border:0;border-radius:8px;background:#2563eb;color:white;font:600 15px 'Microsoft YaHei',sans-serif}.note{font-size:13px;color:#7d8ba1;margin-top:18px}.item{padding:16px 0;border-bottom:1px solid #edf0f5}.item:last-child{border:0}.item b{display:block;font-size:15px}.item span{font-size:14px;color:#748198}</style><header><strong>Browser Automation Demo</strong><span>BUA · Demo page</span></header><main><h1>Let your agent use your browser</h1><p>A blue edge glow shows when BUA is operating this page.</p><div class="grid"><section><h2>Example task</h2><label>Task name<input value=""></label><label>Output format<input value="Summary with source links"></label><button>Save task</button><div class="note">Demo data only. No personal account information.</div></section><section><h2>What BUA can do</h2><div class="item"><b>Read pages</b><span>Read page content and structure</span></div><div class="item"><b>Take screenshots</b><span>Capture the current page</span></div><div class="item"><b>Click and type</b><span>Use buttons and fill out forms</span></div><div class="item"><b>Scroll and navigate</b><span>Browse pages and open target URLs</span></div></section></div></main><script>(function overlayMain(globalKey        )       {
+                                                             
+
+                        
+                                                                                  
+                    
+   
+
+  // 幂等：重复注入不应产生两层光晕
+  const bag = globalThis                                                     ;
+  if (bag[globalKey] !== undefined) return;
+
+  const HOST_ID = 'bua-edge-glow-host';
+
+  const COLORS                                                                  = {
+    active: { solid: 'rgba(59,130,246,0.95)', mid: 'rgba(96,165,250,0.55)', soft: 'rgba(37,99,235,0.30)' },
+    paused: { solid: 'rgba(148,163,184,0.78)', mid: 'rgba(148,163,184,0.36)', soft: 'rgba(100,116,139,0.18)' },
+    degraded: { solid: 'rgba(245,158,11,0.95)', mid: 'rgba(251,191,36,0.55)', soft: 'rgba(217,119,6,0.30)' },
+    idle: { solid: 'rgba(148,163,184,0.45)', mid: 'rgba(148,163,184,0.22)', soft: 'rgba(100,116,139,0.12)' },
+  };
+
+  const LABELS                            = {
+    active: 'BUA 正在操作',
+    paused: 'BUA 已暂停',
+    degraded: 'BUA 降级模式',
+    idle: 'BUA 待机',
+  };
+
+  const STYLES = [
+    ':host{all:initial;position:fixed;inset:0;z-index:2147483647;pointer-events:none;display:block;contain:strict}',
+    '.glow{position:absolute;inset:0;pointer-events:none;border-radius:2px;transition:box-shadow 320ms ease;animation:buaPulse 2.8s ease-in-out infinite}',
+    '@keyframes buaPulse{0%,100%{opacity:1}50%{opacity:.62}}',
+    // 徽标放**底部居中**而不是顶部：顶部是页面导航、通知条、聊天组件的密集区，
+    // 放那里会遮挡内容；底部居中在各类站点上冲突面最小，也是同类工具（浏览器
+    // 远程协助、录屏指示）的惯例位置。
+    '.badge{position:absolute;bottom:0;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:7px;',
+    'padding:5px 14px 6px;border-radius:9px 9px 0 0;color:#fff;white-space:nowrap;pointer-events:none;',
+    'font:600 11px/1.35 ui-sans-serif,-apple-system,"Segoe UI",Roboto,sans-serif;letter-spacing:.02em;',
+    'box-shadow:0 -2px 10px rgba(0,0,0,.35);transition:background 320ms ease}',
+    '.dot{width:6px;height:6px;border-radius:50%;background:#fff;animation:buaBlink 1.6s ease-in-out infinite}',
+    '@keyframes buaBlink{0%,100%{opacity:1}50%{opacity:.3}}',
+    // 警示行叠在徽标上方
+    '.warn{position:absolute;bottom:26px;left:50%;transform:translateX(-50%);max-width:min(560px,calc(100vw - 32px));',
+    'display:none;flex-direction:column;gap:3px;padding:8px 12px;border-radius:9px;',
+    'background:rgba(15,23,42,.95);border:1px solid rgba(251,191,36,.45);color:#fde68a;',
+    'font:400 11px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;box-shadow:0 6px 22px rgba(0,0,0,.45)}',
+    '.warn span{display:block}',
+    '@media (prefers-reduced-motion:reduce){.glow,.dot{animation:none !important}}',
+  ].join('');
+
+  let host                     = null;
+  let glow                     = null;
+  let badge                     = null;
+  let badgeText                     = null;
+  let warnBox                     = null;
+
+  /**
+   * 是否已经有调用方显式设过状态。
+   *
+   * 这个标志修掉一个真实竞态：`document.readyState === 'loading'` 时我们会注册
+   * DOMContentLoaded 回调去建立默认的 idle 外观；但页面里的业务脚本在**解析阶段**
+   * 往往已经调过 `set(active)`。若此时 DOMContentLoaded 再无条件 `apply(idle)`，
+   * 就会把已经设好的状态覆盖回去 —— 表现是「明明在操作，徽标却显示待机」。
+   */
+  let hasExplicitState = false;
+  let expiry                                           ;
+
+  function build()       {
+    // 除了「还没建立」之外，还要处理「曾被建立但已被页面移除」的情况。
+    //
+    // 真实场景：SPA 或任何执行 `document.body.innerHTML = ...` 的页面会把我们的
+    // 宿主元素一起清掉（它是 body 的子节点）。此时 host 引用仍指向一个已脱离文档
+    // 的节点 —— 若不检查 `isConnected`，覆盖层就永远消失了。
+    if (host !== null && host.isConnected) return;
+    if (host !== null) {
+      // 旧节点已脱离，丢弃后重建
+      host = null;
+      glow = null;
+      badge = null;
+      badgeText = null;
+      warnBox = null;
+    }
+
+    const parent = document.body ?? document.documentElement;
+    if (parent === null || parent === undefined) return;
+
+    host = document.createElement('div');
+    host.id = HOST_ID;
+    // 内联 all:initial 会覆盖 shadow 的 :host 定位规则，因此定位也必须放在
+    // 同一内联声明中；important 防止网页自己的规则改写覆盖层的几何与交互。
+    host.setAttribute('style', 'all:initial;position:fixed!important;inset:0!important;z-index:2147483647!important;pointer-events:none!important;display:block!important;contain:strict!important');
+    const shadow = host.attachShadow({ mode: 'closed' });
+
+    const style = document.createElement('style');
+    style.textContent = STYLES;
+
+    glow = document.createElement('div');
+    glow.className = 'glow';
+
+    badge = document.createElement('div');
+    badge.className = 'badge';
+    const dot = document.createElement('span');
+    dot.className = 'dot';
+    badgeText = document.createElement('span');
+    badge.append(dot, badgeText);
+
+    warnBox = document.createElement('div');
+    warnBox.className = 'warn';
+
+    shadow.append(style, glow, badge, warnBox);
+    parent.appendChild(host);
+  }
+
+  function apply(options                                                           )       {
+    clearTimeout(expiry);
+    expiry = setTimeout(destroy, 6_000);
+    hasExplicitState = true;
+    build();
+    if (glow === null || badge === null || badgeText === null || warnBox === null) return;
+
+    const key            =
+      options.state === 'active' ||
+      options.state === 'paused' ||
+      options.state === 'degraded' ||
+      options.state === 'idle'
+        ? options.state
+        : 'idle';
+    const c = COLORS[key];
+
+    glow.style.boxShadow = [
+      'inset 0 0 6px 1px ' + c.solid,
+      'inset 0 0 22px 4px ' + c.mid,
+      'inset 0 0 60px 14px ' + c.soft,
+      '0 0 30px 3px ' + c.soft,
+    ].join(',');
+
+    badge.style.background = c.solid;
+    badgeText.textContent = options.label !== undefined ? options.label : LABELS[key];
+
+    const warnings = options.warnings !== undefined ? options.warnings : [];
+    warnBox.textContent = '';
+    if (warnings.length === 0) {
+      warnBox.style.display = 'none';
+    } else {
+      warnBox.style.display = 'flex';
+      for (const line of warnings) {
+        const span = document.createElement('span');
+        span.textContent = line;
+        warnBox.appendChild(span);
+      }
+    }
+  }
+
+  function destroy()       {
+    clearTimeout(expiry);
+    if (host !== null) host.remove();
+    host = null;
+    glow = null;
+    badge = null;
+    badgeText = null;
+    warnBox = null;
+  }
+
+  bag[globalKey] = { set: apply, destroy };
+
+  if (document.readyState === 'loading') {
+    // 推迟建立，但**不覆盖**调用方已设过的状态
+    document.addEventListener(
+      'DOMContentLoaded',
+      () => {
+        if (!hasExplicitState) apply({ state: 'idle' });
+      },
+      { once: true },
+    );
+  } else {
+    // 已就绪时也只有在无人设过状态的情况下才自初始化，
+    // 否则晚注入的场景会把业务代码已经设好的状态覆盖掉
+    if (!hasExplicitState) apply({ state: 'idle' });
+  }
+})("__BUA_OVERLAY__");globalThis.__BUA_OVERLAY__.set({state:'active',label:'BUA is operating'});</script></html>

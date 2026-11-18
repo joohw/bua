@@ -27,8 +27,7 @@ node packages/mcp/dist/stdio.js
 
 ### 在 DSH 里安装
 
-用仓库里的组合包，见 [`packages/dsh-bundle`](../dsh-bundle/README.md)。装好后工具以
-`mcp__bua__*` 出现。
+DSH 优先使用独立的原生插件 [`dsh-plugin-bua`](../dsh-bundle/README.md)，自动管理本地桥，工具以 `bua_*` 出现。它不依赖本 MCP 入口。
 
 ### 手动配置（任何 MCP 客户端）
 
@@ -48,7 +47,7 @@ node packages/mcp/dist/stdio.js
 
 ## 工具清单
 
-工具名在 DSH 侧会带上服务器前缀，形如 `mcp__bua__tab_click`。
+通过 MCP 接入的客户端可能添加服务器前缀，例如 `mcp__bua__tab_click`；DSH 原生插件使用 `bua_*`。
 
 | 工具 | 作用 | 类型 |
 |---|---|---|
@@ -57,7 +56,7 @@ node packages/mcp/dist/stdio.js
 | `tab_open` | 新建标签（可带 URL） | 变更 |
 | `tab_info` | 某标签的 URL 与标题 | 读 |
 | `tab_navigate` | 导航到 URL | 变更 |
-| `tab_close` | 关闭标签 | 变更 |
+| `tab_close` | 关闭标签 | 变更（需 `targetDescription`） |
 | `tab_dom_snapshot` | **可交互元素清单**（带编号） | 读 |
 | `tab_text` | 页面可见正文（可截断） | 读 |
 | `tab_screenshot` | 截图（返回 MCP image 块） | 读 |
@@ -81,6 +80,12 @@ tab_click({ tabId, selector: "#checkout",
 
 理由：**坐标无法让人判断风险，描述可以**。它进用户在扩展弹窗里看到的操作流水。
 桥会在转发前校验非空，缺失直接拒绝（`BUA_MISSING_TARGET_DESCRIPTION`）。
+
+六个变更型工具（`tab_navigate` / `tab_close` / `tab_click` / `tab_fill` / `tab_type` /
+`tab_click_at`）的 schema 都把它列为**必填**，`tools/list` 的 `required` 里能看到它 —— agent
+从工具目录就知道不能省。另外两道防线：字段缺省时工具描述里的 error 映射会替换掉 zod 的
+原文（不再是 `Invalid input: expected string, received undefined`，而是说明「为什么必填、
+怎么改」），全空白（`'   '`）则由 handler 拦下。三者都由 `mcp.test.mjs` 的用例锁住。
 
 **三、按 `tabId` 显式寻址，不隐式操作「当前标签」。** 多 agent 并发时隐式寻址会让两个会话
 互相抢页面，而症状极难排查。所有需要标签的工具都强制要求 `tabId`。

@@ -33,6 +33,36 @@ const png = await tab.screenshot();
 await agent.close();
 ```
 
+## 接入其他 harness
+
+支持 MCP 的 harness 优先复用 [`@bua/mcp`](../mcp/README.md)，平台配置见
+[`docs/integrations`](../../docs/integrations/README.md)。SDK 适合自己注册工具的 Node.js harness。
+这些包目前作为本仓库工作区包使用，不要假定已发布到 npm。
+
+工具实现应先列出标签，让用户或 Agent 按标题和 URL 选择明确的 `tabId`，然后使用
+`browser.tabs.get(tabId)` 或 `browser.user.claimTab(tabId)`。`Tab` 的 Playwright、AX、CUA、
+DOM、content 及嵌套 locator 调用都会携带该标签 ID；切换浏览器活动标签不会改变它的目标。
+`user.getTabContext` 当前只返回标题和 URL，不附加 debugger；正文请用 `tab.text()`。
+`claimTab` 会拒绝其他会话已使用的标签，但不是身份认证或访问隔离机制。
+
+```ts
+const agent = await connect({ client: { name: 'my-harness' } });
+try {
+  const browser = await agent.browsers.getDefault();
+  const tabs = await browser.user.openTabs();
+  const chosen = tabs.find((tab) => tab.url?.startsWith('https://example.com/'));
+  if (!chosen) throw new Error('Open the target page first');
+  const tab = await browser.user.claimTab(chosen.id);
+  console.log(await tab.text());
+} finally {
+  // 释放会话，使扩展移除调试连接与页面提示。
+  await agent.close();
+}
+```
+
+长期运行的 MCP 进程会在多个工具调用之间复用连接，关闭进程时释放会话。
+自行集成的 harness 应在任务完成、失败或取消时执行 `agent.close()`，不要仅在成功分支清理。
+
 ## `targetDescription` 是必填的
 
 所有**变更型**方法（`click` / `fill` / `type` / `goto` / `cua.*` …）都必须传一个**人类可读的意图描述**：
